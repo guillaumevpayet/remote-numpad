@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="64dp"
+    tools:context="com.guillaumepayet.remotenumpad.NumpadActivity">
+
+    <!--<com.google.android.gms.ads.AdView
+        android:id="@+id/ad_banner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:adSize="SMART_BANNER"
+        app:adUnitId="@string/ad_unit_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/connection_controls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/connect_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_connect"
+            android:textSize="@dimen/font_size_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/status_disconnected"
+            android:textColor="@color/disconnected"
+            android:textSize="@dimen/font_size_status"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/disconnect_button"
+            app:layout_constraintStart_toEndOf="@+id/connect_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/disconnect_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_disconnect"
+            android:textSize="@dimen/font_size_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/numpad_keys"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connection_controls">
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_numlock"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_label_numlock"
+            android:textSize="@dimen/font_size_text_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_7"
+            app:layout_constraintEnd_toStartOf="@+id/key_divide"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:value="@string/key_value_numlock" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_divide"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_divide"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_8"
+            app:layout_constraintEnd_toStartOf="@+id/key_multiply"
+            app:layout_constraintStart_toEndOf="@+id/key_numlock"
+            app:layout_constraintTop_toTopOf="parent"
+            app:value="@string/key_divide" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_multiply"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_multiply"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_9"
+            app:layout_constraintEnd_toStartOf="@+id/key_subtract"
+            app:layout_constraintStart_toEndOf="@+id/key_divide"
+            app:layout_constraintTop_toTopOf="parent"
+            app:value="@string/key_multiply" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_subtract"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_subtract"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.726"
+            app:layout_constraintStart_toEndOf="@+id/key_multiply"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_weight="1"
+            app:value="@string/key_subtract" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_7"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_7"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_4"
+            app:layout_constraintEnd_toStartOf="@+id/key_8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/key_numlock"
+            app:value="@string/key_7" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_8"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_8"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_5"
+            app:layout_constraintEnd_toStartOf="@+id/key_9"
+            app:layout_constraintStart_toEndOf="@+id/key_7"
+            app:layout_constraintTop_toBottomOf="@+id/key_divide"
+            app:value="@string/key_8" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_9"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_9"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_6"
+            app:layout_constraintEnd_toStartOf="@+id/key_add"
+            app:layout_constraintStart_toEndOf="@+id/key_8"
+            app:layout_constraintTop_toBottomOf="@+id/key_multiply"
+            app:value="@string/key_9" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_add"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_add"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_enter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.952"
+            app:layout_constraintStart_toEndOf="@+id/key_9"
+            app:layout_constraintTop_toBottomOf="@+id/key_subtract"
+            app:layout_constraintVertical_weight="2"
+            app:value="@string/key_add" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_4"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_1"
+            app:layout_constraintEnd_toStartOf="@+id/key_5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/key_7"
+            app:value="@string/key_4" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_5"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_5"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_2"
+            app:layout_constraintEnd_toStartOf="@+id/key_6"
+            app:layout_constraintStart_toEndOf="@+id/key_4"
+            app:layout_constraintTop_toBottomOf="@+id/key_8"
+            app:value="@string/key_5" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_6"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_6"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_3"
+            app:layout_constraintEnd_toStartOf="@+id/key_add"
+            app:layout_constraintStart_toEndOf="@+id/key_5"
+            app:layout_constraintTop_toBottomOf="@+id/key_9"
+            app:value="@string/key_6" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_1"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_0"
+            app:layout_constraintEnd_toStartOf="@+id/key_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/key_4"
+            app:value="@string/key_1" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_2"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_0"
+            app:layout_constraintEnd_toStartOf="@+id/key_3"
+            app:layout_constraintStart_toEndOf="@+id/key_1"
+            app:layout_constraintTop_toBottomOf="@+id/key_5"
+            app:value="@string/key_2" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_3"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_decimal"
+            app:layout_constraintEnd_toStartOf="@+id/key_enter"
+            app:layout_constraintStart_toEndOf="@+id/key_2"
+            app:layout_constraintTop_toBottomOf="@+id/key_6"
+            app:value="@string/key_3" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_enter"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_label_enter"
+            android:textSize="@dimen/font_size_text_key"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/key_3"
+            app:layout_constraintTop_toBottomOf="@+id/key_add"
+            app:layout_constraintVertical_weight="2"
+            app:value="@string/key_value_enter" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_0"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_0"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/key_decimal"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/key_1"
+            app:value="@string/key_0" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_decimal"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_label_decimal"
+            android:textSize="@dimen/font_size_key"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/key_enter"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/key_0"
+            app:layout_constraintTop_toBottomOf="@+id/key_3"
+            app:value="@string/key_value_decimal" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Add a custom attribute 'value' to the Key widget -->
+    <declare-styleable name="Key">
+        <attr name="value" format="string" />
+    </declare-styleable>
+</resources>

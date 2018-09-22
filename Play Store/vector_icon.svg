@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+    <title>Remote Numpad Logo</title>
+
+    <rect fill="none" width="512" height="512" />
+
+    <rect fill="white" x="51" y="3" width="410" height="506" rx="32" />
+
+    <rect fill="#436AAA" x="77" y="29" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="173" y="29" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="269" y="29" width="70" height="70" rx="16" />
+
+    <rect fill="#436AAA" x="77" y="125" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="173" y="125" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="269" y="125" width="70" height="70" rx="16" />
+
+    <rect fill="#436AAA" x="77" y="221" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="173" y="221" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="269" y="221" width="70" height="70" rx="16" />
+
+    <rect fill="#436AAA" x="77" y="317" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="173" y="317" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="269" y="317" width="70" height="70" rx="16" />
+    
+    <rect fill="#436AAA" x="365" y="29" width="70" height="70" rx="16" />
+    <rect fill="#436AAA" x="365" y="125" width="70" height="166" rx="16" />
+    <rect fill="#436AAA" x="365" y="317" width="70" height="166" rx="16" />
+
+    <rect fill="#436AAA" x="77" y="413" width="166" height="70" rx="16" />
+    <rect fill="#436AAA" x="269" y="413" width="70" height="70" rx="16" />
+</svg>

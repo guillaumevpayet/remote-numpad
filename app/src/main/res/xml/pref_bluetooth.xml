@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_title_category_bluetooth">
+
+        <ListPreference
+            android:defaultValue="@string/pref_no_host_entry_value"
+            android:entries="@array/pref_bluetooth_host_titles"
+            android:entryValues="@array/pref_bluetooth_host_values"
+            android:key="@string/pref_key_bluetooth_host"
+            android:summary="@string/pref_no_host_entry"
+            android:title="@string/pref_title_host" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
