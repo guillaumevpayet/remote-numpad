@@ -28,6 +28,9 @@ future.
 The *SettingsActivity* is the activity which allows the user to select the
 interface through which to send the inputs and the location of the server.
 
+The lastest stable version can be obtained from the
+[Google Play Store](https://play.google.com/store/apps/details?id=com.guillaumepayet.remotenumpad&hl=en_US)
+
 ## Compilation
 
 The project is set up with Android Studio so it can be compiled using Gradle
