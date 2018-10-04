@@ -7,16 +7,6 @@
     android:layout_marginTop="64dp"
     tools:context="com.guillaumepayet.remotenumpad.NumpadActivity">
 
-    <!--<com.google.android.gms.ads.AdView
-        android:id="@+id/ad_banner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:adSize="SMART_BANNER"
-        app:adUnitId="@string/ad_unit_id"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />-->
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/connection_controls"
         android:layout_width="0dp"

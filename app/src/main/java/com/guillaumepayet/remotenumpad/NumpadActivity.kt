@@ -63,16 +63,6 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         keyEventSender = KeyEventSender(numpad)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
-
-
-//        MobileAds.initialize(this, getString(R.string.admod_app_id))
-//
-//        val adRequest = AdRequest.Builder()
-//                .addTestDevice("2314AA8E1C0BA1715609B4B01EF9DADC")  // Galaxy S7
-//                .addTestDevice("4FA927EE07877A544329D23688CE3D62")  // Nexus 9
-//                .build()
-//
-//        ad_banner.loadAd(adRequest)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
