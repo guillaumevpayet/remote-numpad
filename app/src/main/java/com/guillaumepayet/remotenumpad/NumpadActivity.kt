@@ -28,19 +28,17 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-//import com.google.android.gms.ads.AdRequest
-//import com.google.android.gms.ads.MobileAds
 import com.guillaumepayet.remotenumpad.connection.*
 import com.guillaumepayet.remotenumpad.controller.VirtualNumpad
 import kotlinx.android.synthetic.main.activity_numpad.*
 import kotlinx.android.synthetic.main.content_numpad.*
 import java.util.*
-import kotlin.concurrent.*
+import kotlin.concurrent.schedule
 
 class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionStatusListener {
 
     companion object {
-        private val CONNECTION_INTERFACE_PACKAGE = this::class.java.`package`.name + ".connection"
+        private val CONNECTION_INTERFACE_PACKAGE = this::class.java.`package`?.name + ".connection"
     }
 
 
@@ -123,7 +121,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
     private fun connect() {
         disconnect()
 
-        val host = preferences.getString(getString(R.string.pref_key_host), getString(R.string.pref_no_host_entry_value))
+        val host = preferences.getString(getString(R.string.pref_key_host), getString(R.string.pref_no_host_entry_value))!!
 
         if (host == getString(R.string.pref_no_host_entry_value)) {
             Snackbar.make(status_text, getString(R.string.snackbar_no_host_selected), Snackbar.LENGTH_SHORT).show()
@@ -132,7 +130,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
         val connectionInterfaceName = preferences.getString(getString(R.string.pref_key_connection_interface), getString(R.string.pref_socket_entry_value))
         val packageName = "$CONNECTION_INTERFACE_PACKAGE.$connectionInterfaceName"
-        val prefix = "$packageName.${connectionInterfaceName.capitalize()}"
+        val prefix = "$packageName.${connectionInterfaceName?.capitalize()}"
 
         val validatorClass = Class.forName("${prefix}HostValidator")
         val validator = validatorClass.newInstance() as IHostValidator

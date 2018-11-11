@@ -20,7 +20,7 @@ package com.guillaumepayet.remotenumpad.settings.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.os.Bundle
-import android.preference.ListPreference
+import android.support.v7.preference.ListPreference
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 
@@ -35,8 +35,8 @@ class BluetoothPreferenceFragment : BasePreferenceFragment() {
     private lateinit var hostPreference: ListPreference
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         addPreferencesFromResource(R.xml.pref_bluetooth)
 
         hostPreference = findPreference(getString(R.string.pref_key_bluetooth_host)) as ListPreference

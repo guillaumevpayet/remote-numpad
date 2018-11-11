@@ -18,15 +18,11 @@
 
 package com.guillaumepayet.remotenumpad
 
-import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.support.v4.app.NavUtils
 import android.view.MenuItem
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
-import com.guillaumepayet.remotenumpad.settings.bluetooth.BluetoothPreferenceFragment
-import com.guillaumepayet.remotenumpad.settings.socket.SocketPreferenceFragment
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -45,7 +41,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         setupActionBar()
 
         // Load the fragment
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .replace(android.R.id.content, BasePreferenceFragment())
                 .commit()
     }
@@ -67,34 +63,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 NavUtils.navigateUpFromSameTask(this)
 
             true
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    override fun onIsMultiPane(): Boolean {
-        return isXLargeTablet(this)
-    }
-
-    /**
-     * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
-     */
-    override fun isValidFragment(fragmentName: String): Boolean {
-        return fragmentName == BasePreferenceFragment::class.java.name
-                || fragmentName == SocketPreferenceFragment::class.java.name
-                || fragmentName == BluetoothPreferenceFragment::class.java.name
-    }
-
-    companion object {
-
-        /**
-         * Helper method to determine if the device has an extra-large screen. For
-         * example, 10" tablets are extra-large.
-         */
-        private fun isXLargeTablet(context: Context): Boolean {
-            return context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
         }
     }
 }

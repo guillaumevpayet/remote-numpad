@@ -20,8 +20,8 @@ package com.guillaumepayet.remotenumpad
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.preference.PreferenceActivity
 import android.support.annotation.LayoutRes
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatDelegate
 import android.view.MenuInflater
@@ -32,7 +32,7 @@ import android.view.ViewGroup
  * A [android.preference.PreferenceActivity] which implements and proxies the necessary calls
  * to be used with AppCompat.
  */
-abstract class AppCompatPreferenceActivity : PreferenceActivity() {
+abstract class AppCompatPreferenceActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         delegate.installViewFactory()

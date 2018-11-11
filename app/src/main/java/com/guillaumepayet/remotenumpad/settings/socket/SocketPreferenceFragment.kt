@@ -20,10 +20,10 @@ package com.guillaumepayet.remotenumpad.settings.socket
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.EditTextPreference
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceManager
+import android.support.v7.preference.EditTextPreference
+import android.support.v7.preference.ListPreference
+import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -54,8 +54,8 @@ class SocketPreferenceFragment : BasePreferenceFragment() {
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        super.onCreatePreferences(savedInstanceState, rootKey)
         addPreferencesFromResource(R.xml.pref_socket)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
@@ -126,7 +126,8 @@ class SocketPreferenceFragment : BasePreferenceFragment() {
         val length = sharedPreferences.getInt(key + "_length", 0)
 
         if (length == 0) {
-            hostPreference.editor.clear().apply()
+            hostPreference.entries = arrayOf()
+            hostPreference.entryValues = arrayOf()
         } else {
             val hosts = ArrayList<Pair<String, String>>()
 

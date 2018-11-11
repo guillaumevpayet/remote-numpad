@@ -25,7 +25,8 @@ import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
 import com.guillaumepayet.remotenumpad.connection.socket.SocketConnectionInterface
 import java.io.IOException
-import java.net.*
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.util.concurrent.Executors
 
 /**
@@ -42,7 +43,7 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
 
 
     init {
-        val context = preferenceFragment.activity.applicationContext
+        val context = preferenceFragment.activity!!.applicationContext
         val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val clientAddress = wifiManager.dhcpInfo.ipAddress
 

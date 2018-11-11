@@ -24,7 +24,6 @@ import java.io.IOException
 import java.io.Writer
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.net.SocketAddress
 
 /**
  * This class is an [AbstractConnectionTask] which handles opening a connection through IP.

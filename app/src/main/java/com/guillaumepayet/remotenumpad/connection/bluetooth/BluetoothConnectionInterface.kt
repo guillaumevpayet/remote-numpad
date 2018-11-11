@@ -20,7 +20,9 @@ package com.guillaumepayet.remotenumpad.connection.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
-import com.guillaumepayet.remotenumpad.connection.*
+import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
+import com.guillaumepayet.remotenumpad.connection.IConnectionTaskFactory
+import com.guillaumepayet.remotenumpad.connection.IDataSender
 import java.io.Writer
 import java.util.*
 

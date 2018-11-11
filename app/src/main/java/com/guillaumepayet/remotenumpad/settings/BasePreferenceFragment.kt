@@ -19,16 +19,19 @@
 package com.guillaumepayet.remotenumpad.settings
 
 import android.os.Bundle
-import android.preference.*
+import android.support.v7.preference.EditTextPreference
+import android.support.v7.preference.ListPreference
+import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceFragmentCompat
 import com.guillaumepayet.remotenumpad.R
 
 /**
  * Created by guillaume on 1/15/18.
  */
-open class BasePreferenceFragment : PreferenceFragment() {
+open class BasePreferenceFragment : PreferenceFragmentCompat() {
 
     companion object {
-        private val SETTINGS_PACKAGE = this::class.java.`package`.name!!
+        private val SETTINGS_PACKAGE = this::class.java.`package`?.name
     }
 
 
@@ -85,8 +88,7 @@ open class BasePreferenceFragment : PreferenceFragment() {
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setHasOptionsMenu(true)
 
         // Load the base preferences
