@@ -66,10 +66,9 @@ class VirtualNumpad
                 keyRelease(keyValue)
                 view.performClick()
             }
-            else -> return false
         }
 
-        return true
+        return false
     }
 
     /**
