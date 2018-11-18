@@ -63,7 +63,7 @@ class Key
 
         try {
             // Retrieve the value of the key and store it
-            value = attributes.getString(R.styleable.Key_value)
+            value = attributes.getString(R.styleable.Key_value)!!
         } finally {
             // Recycle the attributes no matter what
             attributes.recycle()

@@ -64,7 +64,7 @@ class SocketPreferenceFragment : BasePreferenceFragment() {
         bindPreferenceSummaryToValue(customHostPreference)
 
         hostPreference = findPreference(getString(R.string.pref_key_socket_host)) as ListPreference
-        restoreHosts()
+        startHostScan()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -74,18 +74,11 @@ class SocketPreferenceFragment : BasePreferenceFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.action_socket_refresh -> {
-                hostPreference.isEnabled = false
-                hostPreference.summary = getString(R.string.pref_summary_host_scanning)
-                SocketHostScanner(this).scan()
+                startHostScan()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        storeHosts()
     }
 
 
@@ -97,50 +90,17 @@ class SocketPreferenceFragment : BasePreferenceFragment() {
         hostPreference.entryValues = entryValues.toTypedArray()
 
         if (!entryValues.contains(hostPreference.value))
-            hostPreference.value = entryValues.first()
+            hostPreference.value = entryValues.last()
 
         bindPreferenceSummaryToValue(hostPreference, customHostPreferenceHider)
         hostPreference.isEnabled = true
     }
 
 
-    private fun storeHosts() {
-        val key = hostPreference.key
-        val entries = hostPreference.entries
-        val entryValues = hostPreference.entryValues
-        val length = entries.size
-        val editor = sharedPreferences.edit()
-
-        editor.putInt(key + "_length", length)
-
-        for (i in 0 until length - 1) {
-            editor.putString(key + "_" + i + "_entry", entries[i] as String?)
-            editor.putString(key + "_" + i + "_entry_value", entryValues[i] as String?)
-        }
-
-        editor.apply()
-    }
-
-    private fun restoreHosts() {
-        val key = hostPreference.key
-        val length = sharedPreferences.getInt(key + "_length", 0)
-
-        if (length == 0) {
-            hostPreference.entries = arrayOf()
-            hostPreference.entryValues = arrayOf()
-        } else {
-            val hosts = ArrayList<Pair<String, String>>()
-
-            for (i in 0 until length) {
-                val entry = sharedPreferences.getString(key + "_" + i + "_entry", null)
-                val entryValue = sharedPreferences.getString(key + "_" + i + "_entry_value", null)
-
-                if (entry != null && entryValue != null) {
-                    hosts += Pair(entry, entryValue)
-                }
-            }
-
-            updateHosts(hosts)
-        }
+    private fun startHostScan() {
+        customHostPreference.isEnabled = false
+        hostPreference.isEnabled = false
+        hostPreference.summary = getString(R.string.pref_summary_host_scanning)
+        SocketHostScanner(this).scan()
     }
 }
