@@ -50,6 +50,9 @@
 
     <!-- General settings -->
 
+    <string name="pref_key_vibrations" translatable="false">vibrations</string>
+    <string name="pref_title_vibrations">Vibrate on touch</string>
+
     <string name="pref_socket_entry_value" translatable="false">socket</string>
     <string name="pref_socket_entry">Socket (Wifi)</string>
 

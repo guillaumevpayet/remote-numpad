@@ -18,10 +18,17 @@
 
 package com.guillaumepayet.remotenumpad.controller
 
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.preference.PreferenceManager
+import android.support.annotation.RequiresApi
 import android.view.MotionEvent
 import android.view.SoundEffectConstants
 import android.view.View
 import android.view.ViewGroup
+import com.guillaumepayet.remotenumpad.R
 
 /**
  * The VirtualNumpad receives touch events directly from the Android [View] objects and notifies
@@ -39,7 +46,18 @@ class VirtualNumpad
  */
 (viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
 
+    companion object {
+        private const val VIBRATION_LENGTH = 25L
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        private val VIBRATION_EFFECT = VibrationEffect.createOneShot(VIBRATION_LENGTH, VibrationEffect.DEFAULT_AMPLITUDE)
+    }
+
     private val listeners: MutableCollection<IKeypadListener> = HashSet()
+
+    private val context = viewGroup.context
+    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
     init {
         // Register this object as the OnTouchListener to all the keys
@@ -65,6 +83,15 @@ class VirtualNumpad
             MotionEvent.ACTION_DOWN -> {
                 keyPress(keyValue)
                 view.playSoundEffect(SoundEffectConstants.CLICK)
+
+                if (preferences.getBoolean(context.getString(R.string.pref_key_vibrations), true)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(VIBRATION_EFFECT)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        vibrator.vibrate(VIBRATION_LENGTH)
+                    }
+                }
             }
             MotionEvent.ACTION_UP -> {
                 keyRelease(keyValue)

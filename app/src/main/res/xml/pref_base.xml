@@ -6,6 +6,10 @@
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_key_vibrations"
+        android:title="@string/pref_title_vibrations" />
     <ListPreference
         android:defaultValue="@string/pref_socket_entry_value"
         android:entries="@array/pref_connection_interface_titles"
