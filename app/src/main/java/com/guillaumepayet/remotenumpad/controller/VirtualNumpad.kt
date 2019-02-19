@@ -19,6 +19,7 @@
 package com.guillaumepayet.remotenumpad.controller
 
 import android.view.MotionEvent
+import android.view.SoundEffectConstants
 import android.view.View
 import android.view.ViewGroup
 
@@ -61,7 +62,10 @@ class VirtualNumpad
         val keyValue: String = (view as Key).value
 
         when (motionEvent?.action) {
-            MotionEvent.ACTION_DOWN -> keyPress(keyValue)
+            MotionEvent.ACTION_DOWN -> {
+                keyPress(keyValue)
+                view.playSoundEffect(SoundEffectConstants.CLICK)
+            }
             MotionEvent.ACTION_UP -> {
                 keyRelease(keyValue)
                 view.performClick()
