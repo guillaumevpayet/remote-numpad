@@ -22,9 +22,13 @@ import android.bluetooth.BluetoothAdapter
 import android.os.Bundle
 import android.support.v7.preference.ListPreference
 import com.guillaumepayet.remotenumpad.R
+import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 
 /**
+ * This settings page provides a way to list and select a paired device as the host for a
+ * [BluetoothConnectionInterface].
+ *
  * Created by guillaume on 1/17/18.
  */
 class BluetoothPreferenceFragment : BasePreferenceFragment() {
@@ -65,6 +69,9 @@ class BluetoothPreferenceFragment : BasePreferenceFragment() {
     }
 
 
+    /**
+     * Disables the bluetooth option in the settings page.
+     */
     private fun disableBluetooth() {
         hostPreference.entries = arrayOf(getString(R.string.pref_no_host_entry))
         hostPreference.entryValues = arrayOf(getString(R.string.pref_no_host_entry_value))

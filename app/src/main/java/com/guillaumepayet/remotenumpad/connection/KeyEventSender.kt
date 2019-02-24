@@ -20,9 +20,14 @@ package com.guillaumepayet.remotenumpad.connection
 
 import com.guillaumepayet.remotenumpad.controller.IKeypad
 import com.guillaumepayet.remotenumpad.controller.IKeypadListener
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * This class handles processing the key events for sending.
+ *
+ * @constructor Prepare the listener
+ * @param keypad The keypad to listen for key events
  *
  * Created by guillaume on 12/28/17.
  */
@@ -30,9 +35,11 @@ class KeyEventSender(keypad: IKeypad) : IKeypadListener, IDataSender {
 
     private val connectionInterfaces: MutableCollection<IConnectionInterface> = HashSet()
 
+
     init {
         keypad.registerKeypadListener(this)
     }
+
 
     override fun onKeyPress(keyValue: String) {
         sendString("+$keyValue\n")
@@ -50,8 +57,12 @@ class KeyEventSender(keypad: IKeypad) : IKeypadListener, IDataSender {
         connectionInterfaces.remove(connectionInterface)
     }
 
+
+    /**
+     * Send a string to all the registered [IConnectionInterface].
+     */
     private fun sendString(string: String) {
         for (connectionInterface in connectionInterfaces)
-            connectionInterface.sendString(string)
+            GlobalScope.launch { connectionInterface.sendString(string) }
     }
 }

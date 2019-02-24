@@ -28,9 +28,13 @@ import com.guillaumepayet.remotenumpad.connection.IHostValidator
 class SocketHostValidator : IHostValidator {
 
     companion object {
-        private const val num8bit = "(\\d|([1-9]\\d)|(1\\d{1,2})|(2[0-4]\\d)|(25[0-5]))"
+
+        /**
+         * The regex pattern for a byte in an IP address
+         */
+        private const val BYTE = "(\\d|([1-9]\\d)|(1\\d{1,2})|(2[0-4]\\d)|(25[0-5]))"
     }
 
     override fun isHostValid(address: String): Boolean =
-            address.isNotEmpty() && Regex("$num8bit(\\.$num8bit){3}").matches(address)
+            address.isNotEmpty() && Regex("$BYTE(\\.$BYTE){3}").matches(address)
 }

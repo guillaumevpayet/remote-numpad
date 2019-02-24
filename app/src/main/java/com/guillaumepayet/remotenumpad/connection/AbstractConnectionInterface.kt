@@ -19,17 +19,20 @@
 package com.guillaumepayet.remotenumpad.connection
 
 /**
+ * Common parent for [IConnectionInterface] which implements a basic observable behaviour.
+ *
+ * @constructor Adds itself as an observer of the [IDataSender]
+ * @param sender The [IDataSender] this class will listen to
+ *
  * Created by guillaume on 1/17/18.
  */
-open class AbstractConnectionInterface
-(sender: IDataSender, private val taskFactory: IConnectionTaskFactory)
-    : IConnectionInterface {
+abstract class AbstractConnectionInterface(sender: IDataSender) : IConnectionInterface {
 
     private val listeners: MutableCollection<IConnectionStatusListener> = HashSet()
 
 
     init {
-        registerWithSender(sender)
+        sender.registerConnectionInterface(this)
     }
 
 
@@ -41,25 +44,8 @@ open class AbstractConnectionInterface
         listeners.remove(listener)
     }
 
-    override fun open(host: String) {
-        taskFactory.createConnectTask(this).execute(host)
-    }
-
-    override fun close() {
-        taskFactory.createDisconnectTask(this).execute()
-    }
-
-    override fun sendString(string: String) {
-        taskFactory.createSendTask(this).execute(string)
-    }
-
     override fun onConnectionStatusChange(connectionStatus: Int) {
         for (listener in listeners)
             listener.onConnectionStatusChange(connectionStatus)
-    }
-
-
-    private fun registerWithSender(sender: IDataSender) {
-        sender.registerConnectionInterface(this)
     }
 }

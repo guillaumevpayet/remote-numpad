@@ -26,15 +26,25 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import com.guillaumepayet.remotenumpad.R
 
 /**
+ * The base of a settings page. This page contains the general settings and can be extended to
+ * provide more options.
+ *
  * Created by guillaume on 1/15/18.
  */
 open class BasePreferenceFragment : PreferenceFragmentCompat() {
 
     companion object {
+
+        /**
+         * The package where all the implementations' sub-packages are located.
+         */
         private val SETTINGS_PACKAGE = this::class.java.`package`?.name
     }
 
 
+    /**
+     * The selected host to which to connect.
+     */
     protected open val host: String
         get() = getString(R.string.pref_no_host_entry_value)
 

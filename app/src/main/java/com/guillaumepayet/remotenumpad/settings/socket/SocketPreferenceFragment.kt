@@ -28,10 +28,14 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import com.guillaumepayet.remotenumpad.R
+import com.guillaumepayet.remotenumpad.connection.socket.SocketConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 
 
 /**
+ * This preference screen provides a way to scan and pick the host to connect to via the
+ * [SocketConnectionInterface]. There is also an option to key in the host's IP address if known.
+ *
  * Created by guillaume on 1/15/18.
  */
 class SocketPreferenceFragment : BasePreferenceFragment() {
@@ -82,6 +86,11 @@ class SocketPreferenceFragment : BasePreferenceFragment() {
     }
 
 
+    /**
+     * Updates the list of hosts.
+     *
+     * @param hosts a list of hosts as pairs of (label, address)
+     */
     fun updateHosts(hosts: Iterable<Pair<String, String>>) {
         val entries = hosts.map { it.first } + getString(R.string.pref_manual_host_entry)
         val entryValues = hosts.map { it.second } + getString(R.string.pref_manual_host_entry_value)
@@ -97,6 +106,9 @@ class SocketPreferenceFragment : BasePreferenceFragment() {
     }
 
 
+    /**
+     * Starts scanning for hosts.
+     */
     private fun startHostScan() {
         customHostPreference.isEnabled = false
         hostPreference.isEnabled = false

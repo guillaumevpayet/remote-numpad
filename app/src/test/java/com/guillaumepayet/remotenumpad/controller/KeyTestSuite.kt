@@ -28,11 +28,9 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.verify
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.Mockito.times
-import org.mockito.junit.MockitoJUnitRunner
 import org.powermock.api.support.membermodification.MemberMatcher.constructor
 import org.powermock.api.support.membermodification.MemberModifier.suppress
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -49,14 +47,17 @@ import org.powermock.modules.junit4.PowerMockRunner
 @PrepareForTest(Key::class)
 class KeyTestSuite {
 
-    private val fakeValue: String = "TEST"
+    companion object {
+
+        private const val KEY_VALUE = "TEST"
+    }
+
 
     @Mock
     private val mockContext: Context? = null
 
     @Mock
     private val mockAttributeSet: AttributeSet? = null
-
 
     @Mock
     private val mockTypedArray: TypedArray? = null
@@ -72,10 +73,9 @@ class KeyTestSuite {
                 .willReturn(mockTypedArray)
 
         // ...that TypedArray contains the value of the Key.
-        given(mockTypedArray?.getString(R.styleable.Key_value)).willReturn(fakeValue)
+        given(mockTypedArray?.getString(R.styleable.Key_value)).willReturn(KEY_VALUE)
     }
 
-    // TODO Fix the NullPointerException when AppCompatButton is initialised
 
     @Test
     fun constructKeyWithContextAndAttributeSet_KeyRetrievedItsValue() {
@@ -83,7 +83,7 @@ class KeyTestSuite {
         val key = Key(mockContext!!, mockAttributeSet!!)
 
         // ...then the key should be able to retrieve its own value.
-        assertThat(key.value, `is`(fakeValue))
+        assertThat(key.value, `is`(KEY_VALUE))
     }
 
     @Test
@@ -92,6 +92,6 @@ class KeyTestSuite {
         Key(mockContext!!, mockAttributeSet!!)
 
         // ...then the attributes are used and recycled only once.
-        verify(mockTypedArray, times(1))?.recycle()
+        then(mockTypedArray).should(times(1))?.recycle()
     }
 }

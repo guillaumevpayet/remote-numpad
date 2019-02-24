@@ -26,17 +26,15 @@ import com.guillaumepayet.remotenumpad.R
 /**
  * A widget to be used as a key for the numpad.
  *
- * Created by guillaume on 12/25/17.
- */
-class Key
-/**
- * This constructor is called when the key is constructed from the XML layout.
+ * @constructor This constructor is called when the key is constructed from the XML layout.\
  * The key is constructed and its value is retrieved from the XML.
  *
  * @param context The context of the application
  * @param attrs   The attributes from the XML
+ *
+ * Created by guillaume on 12/25/17.
  */
-(context: Context, attrs: AttributeSet) : AppCompatButton(context, attrs) {
+class Key(context: Context, attrs: AttributeSet) : AppCompatButton(context, attrs) {
 
     /**
      * The value of the key to be sent to the computer.

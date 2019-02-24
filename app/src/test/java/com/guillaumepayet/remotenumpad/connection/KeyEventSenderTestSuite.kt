@@ -19,11 +19,13 @@
 package com.guillaumepayet.remotenumpad.connection
 
 import com.guillaumepayet.remotenumpad.controller.IKeypad
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 /**
@@ -36,7 +38,11 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class KeyEventSenderTestSuite {
 
-    private val fakeValue = "test"
+    companion object {
+
+        private const val KEY_VALUE = "TEST"
+    }
+
 
     @Mock
     private val mockKeypad: IKeypad? = null
@@ -44,41 +50,39 @@ class KeyEventSenderTestSuite {
     @Mock
     private val mockConnectionInterface: IConnectionInterface? = null
 
-    private var keyEventSender: KeyEventSender? = null
-
 
     @Test
     fun contructKeyEventSenderWithValidKeypad_keyEventSenderRegisteredInKeypad() {
         // When the keyEventSender is created with a non-null keypad...
-        keyEventSender = KeyEventSender(mockKeypad!!)
+        val keyEventSender = KeyEventSender(mockKeypad!!)
 
         // ...then the keyEventSender should register itself in the keypad.
-        verify(mockKeypad, times(1))?.registerKeypadListener(keyEventSender!!)
+        then(mockKeypad).should(times(1))?.registerKeypadListener(keyEventSender)
     }
 
     @Test
     fun sendKeyPressEventWithConnectionInterface_senderSendsTheEventToTheConnectionInterface() {
         // Given that the sender has a valid connection interface registered,...
-        keyEventSender = KeyEventSender(mockKeypad!!)
-        keyEventSender?.registerConnectionInterface(mockConnectionInterface!!)
+        val keyEventSender = KeyEventSender(mockKeypad!!)
+        keyEventSender.registerConnectionInterface(mockConnectionInterface!!)
 
         // ...when an event is to be sent...
-        keyEventSender?.onKeyPress(fakeValue)
+        runBlocking { keyEventSender.onKeyPress(KEY_VALUE) }
 
         // ...then the event is sent through the connection interface.
-        verify(mockConnectionInterface, times(1))?.sendString("+$fakeValue\n")
+        then(mockConnectionInterface).should(times(1))?.sendString("+$KEY_VALUE\n")
     }
 
     @Test
     fun sendKeyReleaseEventWithConnectionInterface_senderSendsTheEventToTheConnectionInterface() {
         // Given that the sender has a valid connection interface registered,...
-        keyEventSender = KeyEventSender(mockKeypad!!)
-        keyEventSender?.registerConnectionInterface(mockConnectionInterface!!)
+        val keyEventSender = KeyEventSender(mockKeypad!!)
+        keyEventSender.registerConnectionInterface(mockConnectionInterface!!)
 
         // ...when an event is to be sent...
-        keyEventSender?.onKeyRelease(fakeValue)
+        runBlocking { keyEventSender.onKeyRelease(KEY_VALUE) }
 
         // ...then the event is sent through the connection interface.
-        verify(mockConnectionInterface, times(1))?.sendString("-$fakeValue\n")
+        then(mockConnectionInterface).should(times(1))?.sendString("-$KEY_VALUE\n")
     }
 }

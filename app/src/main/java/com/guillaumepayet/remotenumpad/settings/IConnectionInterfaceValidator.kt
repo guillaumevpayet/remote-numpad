@@ -18,11 +18,26 @@
 
 package com.guillaumepayet.remotenumpad.settings
 
+import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
+import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionInterface
+import com.guillaumepayet.remotenumpad.settings.bluetooth.BluetoothValidator
+
 /**
+ * When an [IConnectionInterface] is developped. A validator can be created to verify whether the
+ * requirements are met.
+ *
+ * For example, the [BluetoothValidator] verifies that a Bluetooth exists to confirm that a
+ * [BluetoothConnectionInterface] can be used.
+ *
  * Created by guillaume on 28/04/18.
  */
 interface IConnectionInterfaceValidator {
 
+    /**
+     * Checks whether the [IConnectionInterface] associated is currently available.
+     *
+     * @return true if the [IConnectionInterface] can be used, false otherwise
+     */
     val isInterfaceAvailable: Boolean
         get() = true
 }

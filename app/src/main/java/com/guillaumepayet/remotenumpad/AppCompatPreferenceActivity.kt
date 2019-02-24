@@ -45,6 +45,9 @@ abstract class AppCompatPreferenceActivity : FragmentActivity() {
         delegate.onPostCreate(savedInstanceState)
     }
 
+    /**
+     * An accessor for convenience
+     */
     val supportActionBar: ActionBar?
         get() = delegate.supportActionBar
 

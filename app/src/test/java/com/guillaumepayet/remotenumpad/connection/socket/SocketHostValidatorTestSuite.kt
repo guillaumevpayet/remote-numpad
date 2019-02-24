@@ -21,31 +21,32 @@ package com.guillaumepayet.remotenumpad.connection.socket
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
 class SocketHostValidatorTestSuite {
 
-    private val invalidAddresses = listOf(
-            "",
-            ".",
-            "0.0.0",
-            "0.0.0.",
-            "0,0,0,0",
-            "...",
-            "0.0.0.0.",
-            "0.0.0.0.0",
-            "0.256.0.0",
-            "0.0.0.1000",
-            "00.00.00.00"
-    )
+    companion object {
 
-    private val validAddresses = listOf(
-            "0.0.0.0",
-            "1.1.1.1",
-            "255.255.255.255"
-    )
+        private val INVALID_ADDRESSES = listOf(
+                "",
+                ".",
+                "0.0.0",
+                "0.0.0.",
+                "0,0,0,0",
+                "...",
+                "0.0.0.0.",
+                "0.0.0.0.0",
+                "0.256.0.0",
+                "0.0.0.1000",
+                "00.00.00.00"
+        )
+
+        private val VALID_ADDRESSES = listOf(
+                "0.0.0.0",
+                "1.1.1.1",
+                "255.255.255.255"
+        )
+    }
+
 
     @Test
     fun requestValidationOnAnInvalidAddress_ValidatorReturnsFalse() {
@@ -53,11 +54,11 @@ class SocketHostValidatorTestSuite {
         val validator = SocketHostValidator()
 
         // ...when an invalid address is provided to the validator,...
-        val actual = invalidAddresses.map { validator.isHostValid(it) }
+        val actual = INVALID_ADDRESSES.map { validator.isHostValid(it) }
 
         // ...then the validator returns false
         actual.forEachIndexed { i, it ->
-            assertThat("'${invalidAddresses[i]}' should be invalid", it, `is`(false))
+            assertThat("'${INVALID_ADDRESSES[i]}' should be invalid", it, `is`(false))
         }
     }
 
@@ -67,11 +68,11 @@ class SocketHostValidatorTestSuite {
         val validator = SocketHostValidator()
 
         // ...when a valid adress is provided to the validator,...
-        val actual = validAddresses.map { validator.isHostValid(it) }
+        val actual = VALID_ADDRESSES.map { validator.isHostValid(it) }
 
         // ...then the validator returns true
         actual.forEachIndexed { i, it ->
-            assertThat("'${validAddresses[i]}' should be valid", it, `is`(true))
+            assertThat("'${VALID_ADDRESSES[i]}' should be valid", it, `is`(true))
         }
     }
 }

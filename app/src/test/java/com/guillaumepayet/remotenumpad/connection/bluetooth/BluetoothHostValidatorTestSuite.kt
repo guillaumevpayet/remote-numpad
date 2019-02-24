@@ -21,33 +21,34 @@ package com.guillaumepayet.remotenumpad.connection.bluetooth
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
 class BluetoothHostValidatorTestSuite {
 
-    private val invalidAddresses = listOf(
-            "",
-            ":",
-            ":::::",
-            "0:0:0:0:0:0",
-            "00:00:00:00:00",
-            "00:00:00:00:00:",
-            "00.00.00.00.00.00",
-            "00-00-00-00-00-00",
-            "00:00:00:00:00:00:00",
-            "00:00:FG:00:00:00",
-            "00:00:00:00:00:100",
-            "00:00:00:00:aa:00"
-    )
+    companion object {
 
-    private val validAddresses = listOf(
-            "00:00:00:00:00:00",
-            "99:99:99:99:99:99",
-            "AA:AA:AA:AA:AA:AA",
-            "FF:FF:FF:FF:FF:FF"
-    )
+        private val INVALID_ADDRESSES = listOf(
+                "",
+                ":",
+                ":::::",
+                "0:0:0:0:0:0",
+                "00:00:00:00:00",
+                "00:00:00:00:00:",
+                "00.00.00.00.00.00",
+                "00-00-00-00-00-00",
+                "00:00:00:00:00:00:00",
+                "00:00:FG:00:00:00",
+                "00:00:00:00:00:100",
+                "00:00:00:00:aa:00"
+        )
+
+        private val VALID_ADDRESSES = listOf(
+                "00:00:00:00:00:00",
+                "99:99:99:99:99:99",
+                "AA:AA:AA:AA:AA:AA",
+                "FF:FF:FF:FF:FF:FF"
+        )
+    }
+
 
     @Test
     fun requestValidationOnAnInvalidAddress_ValidatorReturnsFalse() {
@@ -55,11 +56,11 @@ class BluetoothHostValidatorTestSuite {
         val validator = BluetoothHostValidator()
 
         // ...when an invalid address is provided to the validator,...
-        val actual = invalidAddresses.map { validator.isHostValid(it) }
+        val actual = INVALID_ADDRESSES.map { validator.isHostValid(it) }
 
         // ...then the validator returns false
         actual.forEachIndexed { i, it ->
-            assertThat("'${invalidAddresses[i]}' should be invalid", it, `is`(false))
+            assertThat("'${INVALID_ADDRESSES[i]}' should be invalid", it, `is`(false))
         }
     }
 
@@ -69,11 +70,11 @@ class BluetoothHostValidatorTestSuite {
         val validator = BluetoothHostValidator()
 
         // ...when a valid adress is provided to the validator,...
-        val actual = validAddresses.map { validator.isHostValid(it) }
+        val actual = VALID_ADDRESSES.map { validator.isHostValid(it) }
 
         // ...then the validator returns true
         actual.forEachIndexed { i, it ->
-            assertThat("'${validAddresses[i]}' should be valid", it, `is`(true))
+            assertThat("'${VALID_ADDRESSES[i]}' should be valid", it, `is`(true))
         }
     }
 }

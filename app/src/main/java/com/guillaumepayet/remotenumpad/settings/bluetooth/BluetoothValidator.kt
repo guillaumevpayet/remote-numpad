@@ -19,8 +19,13 @@
 package com.guillaumepayet.remotenumpad.settings.bluetooth
 
 import android.bluetooth.BluetoothAdapter
+import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.IConnectionInterfaceValidator
 
+/**
+ * Validator used to check whether a [BluetoothAdapter] is available and hence whether the
+ * [BluetoothConnectionInterface] can be used.
+ */
 class BluetoothValidator : IConnectionInterfaceValidator {
 
     override val isInterfaceAvailable: Boolean

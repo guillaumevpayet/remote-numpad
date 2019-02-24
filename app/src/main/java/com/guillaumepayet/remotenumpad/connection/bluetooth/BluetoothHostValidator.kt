@@ -28,9 +28,13 @@ import com.guillaumepayet.remotenumpad.connection.IHostValidator
 class BluetoothHostValidator : IHostValidator {
 
     companion object {
-        private const val hexNum = "(\\d|[A-F]){2}"
+
+        /**
+         * The regex pattern for a byte in a Bluetooth address
+         */
+        private const val BYTE = "(\\d|[A-F]){2}"
     }
 
     override fun isHostValid(address: String): Boolean =
-            address.isNotEmpty() && Regex("$hexNum(:$hexNum){5}").matches(address)
+            address.isNotEmpty() && Regex("$BYTE(:$BYTE){5}").matches(address)
 }

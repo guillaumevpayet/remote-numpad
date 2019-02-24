@@ -32,13 +32,27 @@ import com.guillaumepayet.remotenumpad.connection.*
 import com.guillaumepayet.remotenumpad.controller.VirtualNumpad
 import kotlinx.android.synthetic.main.activity_numpad.*
 import kotlinx.android.synthetic.main.content_numpad.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import kotlin.concurrent.schedule
 
+/**
+ * The app's main activity.
+ * This class sets up the UI, instantiates the [IDataSender] and the correct [IConnectionInterface]
+ * by reading the shared preferences. The status text is also updated by this activity through the
+ * [IConnectionStatusListener] interface.
+ */
 class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionStatusListener {
 
     companion object {
-        private val CONNECTION_INTERFACE_PACKAGE = this::class.java.`package`?.name + ".connection"
+
+        /**
+         * The package where all the [IConnectionInterface] implementations can be found.
+         */
+        private val CONNECTION_INTERFACES_PACKAGE = this::class.java.`package`?.name + ".connection"
     }
 
 
@@ -120,7 +134,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
             else -> R.color.connected
         }
 
-        status_text.text = getString(connectionStatus)
+        runBlocking(Dispatchers.Main) { status_text.text = getString(connectionStatus) }
         status_text.setTextColor(ContextCompat.getColor(this, colorId))
 
         if (connectionStatus == R.string.status_could_not_connect)
@@ -130,6 +144,10 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
     }
 
 
+    /**
+     * Attempts to connect to the host address stored in the shared preferences using the selected
+     * [IConnectionInterface]. Closes any open connections before attempting a new connection.
+     */
     private fun connect() {
         disconnect()
 
@@ -141,7 +159,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         }
 
         val connectionInterfaceName = preferences.getString(getString(R.string.pref_key_connection_interface), getString(R.string.pref_socket_entry_value))
-        val packageName = "$CONNECTION_INTERFACE_PACKAGE.$connectionInterfaceName"
+        val packageName = "$CONNECTION_INTERFACES_PACKAGE.$connectionInterfaceName"
         val prefix = "$packageName.${connectionInterfaceName?.capitalize()}"
 
         val validatorClass = Class.forName("${prefix}HostValidator")
@@ -154,20 +172,24 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
         connectionInterface = try {
             val clazz = Class.forName("${prefix}ConnectionInterface")
-            val constructor = clazz.getConstructor(IDataSender::class.java, IConnectionTaskFactory::class.java)
-            val connectionTaskFactory = Class.forName("${prefix}ConnectionTaskFactory")
-            constructor.newInstance(keyEventSender, connectionTaskFactory.newInstance()) as IConnectionInterface
+            val constructor = clazz.getConstructor(IDataSender::class.java)
+            constructor.newInstance(keyEventSender) as IConnectionInterface
         } catch (e: Exception) {
             Snackbar.make(status_text, getString(R.string.snackbar_invalid_connection_interface), Snackbar.LENGTH_SHORT).show()
             null
         }
 
         connectionInterface?.registerConnectionStatusListener(this)
-        connectionInterface?.open(host)
+        GlobalScope.launch { connectionInterface?.open(host) }
     }
 
+    /**
+     * Closes an open connection.
+     */
     private fun disconnect() {
-        connectionInterface?.close()
-        connectionInterface = null
+        GlobalScope.launch {
+            connectionInterface?.close()
+            connectionInterface = null
+        }
     }
 }

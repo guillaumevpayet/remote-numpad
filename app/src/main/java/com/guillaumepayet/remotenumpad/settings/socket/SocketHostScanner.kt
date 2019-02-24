@@ -20,23 +20,27 @@ package com.guillaumepayet.remotenumpad.settings.socket
 
 import android.content.Context
 import android.net.wifi.WifiManager
-import android.os.Handler
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
 import com.guillaumepayet.remotenumpad.connection.socket.SocketConnectionInterface
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.util.concurrent.Executors
 
 /**
+ * This scanner can search IP addresses and test ports to find potential hosts with a Remote Numpad
+ * Server running on them.
+ *
+ * @constructor Prepare the address range to scan
+ * @param preferenceFragment The fragment which intends to start the scan and know its result
+ *
  * Created by guillaume on 1/17/18.
  */
 class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment) : IDataSender {
 
     private val hostAddressStart: String
 
-    private val handler = Handler()
     private val hosts = ArrayList<Pair<String, String>>()
 
     private var probeCount = 0
@@ -55,15 +59,15 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
     override fun registerConnectionInterface(connectionInterface: IConnectionInterface) {}
     override fun unregisterConnectionInterface(connectionInterface: IConnectionInterface) {}
 
+    /**
+     * Start to scan the IP addresses for a Remote Numpad Server.
+     */
     fun scan() {
         probeCount = 256
-        val addresses = (0..255).map { hostAddressStart + it }
 
-        val nCores = Runtime.getRuntime().availableProcessors()
-        val threadPool = Executors.newFixedThreadPool(nCores)
-
-        for (address in addresses) {
-            threadPool.submit {
+        for (i in 0 until probeCount) {
+            GlobalScope.launch {
+                val address = hostAddressStart + i
                 val endpoint = InetSocketAddress(address, SocketConnectionInterface.PORT)
 
                 Socket().use { socket ->
@@ -90,12 +94,16 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
     }
 
 
+    /**
+     * Decrement the probe count and send all the found hosts to the [SocketPreferenceFragment] if
+     * there are no more probes.
+     */
     @Synchronized
     private fun decrementProbeCount() {
         probeCount--
 
         if (probeCount == 0) {
-            handler.post {
+            runBlocking(Dispatchers.Main) {
                 if (preferenceFragment.isResumed)
                     preferenceFragment.updateHosts(hosts)
             }

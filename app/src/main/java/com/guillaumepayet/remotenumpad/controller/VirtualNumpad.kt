@@ -34,21 +34,25 @@ import com.guillaumepayet.remotenumpad.R
  * The VirtualNumpad receives touch events directly from the Android [View] objects and notifies
  * the [IKeypadListener] objects of the events.
  *
- * Created by guillaume on 12/27/17.
+ * @constructor Construct the virtual numpad with the keys contained in the given ViewGroup.
+ * @param viewGroup a container containing all the keys
  *
  * @see IKeypadListener
- */
-class VirtualNumpad
-/**
- * Construct the virtual numpad with the keys contained in the given ViewGroup.
  *
- * @param viewGroup a container containing all the keys
+ * Created by guillaume on 12/27/17.
  */
-(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
+class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
 
     companion object {
+        /**
+         * The length of a vibration when a key is pressed (in ms)
+         */
         private const val VIBRATION_LENGTH = 25L
 
+        /**
+         * From API 26, vibration effects are required instead of just giving a duration and
+         * intensity to the vibrator.
+         */
         @RequiresApi(Build.VERSION_CODES.O)
         private val VIBRATION_EFFECT = VibrationEffect.createOneShot(VIBRATION_LENGTH, VibrationEffect.DEFAULT_AMPLITUDE)
     }
