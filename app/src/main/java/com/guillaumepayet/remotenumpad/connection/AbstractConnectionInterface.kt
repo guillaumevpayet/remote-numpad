@@ -45,7 +45,6 @@ abstract class AbstractConnectionInterface(sender: IDataSender) : IConnectionInt
     }
 
     override fun onConnectionStatusChange(connectionStatus: Int) {
-        for (listener in listeners)
-            listener.onConnectionStatusChange(connectionStatus)
+        listeners.forEach { it.onConnectionStatusChange(connectionStatus) }
     }
 }

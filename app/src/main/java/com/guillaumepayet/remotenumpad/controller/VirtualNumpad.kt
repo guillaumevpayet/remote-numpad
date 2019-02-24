@@ -67,9 +67,8 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
         // Register this object as the OnTouchListener to all the keys
         val nKeys = viewGroup.childCount
 
-        for (i in 0..(nKeys - 1)) {
+        for (i in 0 until nKeys)
             viewGroup.getChildAt(i).setOnTouchListener(this)
-        }
     }
 
     override fun registerKeypadListener(listener: IKeypadListener) {
@@ -112,8 +111,7 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
      * @param keyValue the value of the {@link Key} pressed
      */
     private fun keyPress(keyValue: String) {
-        for (listener in listeners)
-            listener.onKeyPress(keyValue)
+        listeners.forEach { it.onKeyPress(keyValue) }
     }
 
     /**
@@ -122,7 +120,6 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
      * @param keyValue the value of the {@link Key} released
      */
     private fun keyRelease(keyValue: String) {
-        for (listener in listeners)
-            listener.onKeyRelease(keyValue)
+        listeners.forEach { it.onKeyRelease(keyValue) }
     }
 }

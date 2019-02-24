@@ -108,7 +108,7 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
         val entries = preference.entries.toMutableList()
         val entryValues = preference.entryValues.toMutableList()
 
-        for ((entry, entryValue) in entries.zip(entryValues)) {
+        entries.zip(entryValues).forEach { (entry, entryValue) ->
             val packageName = "$SETTINGS_PACKAGE.$entryValue"
             val className = entryValue.toString().capitalize() + "Validator"
 
