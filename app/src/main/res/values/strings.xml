@@ -35,23 +35,23 @@
     <string name="key_divide" translatable="false">/</string>
     <string name="key_multiply" translatable="false">*</string>
     <string name="key_subtract" translatable="false">-</string>
+    <string name="key_backspace" translatable="false">&lt;-</string>
 
     <!-- The values for the "translateable" keys on the numpad -->
     <string name="key_value_enter" translatable="false">enter</string>
     <string name="key_value_decimal" translatable="false">.</string>
-    <string name="key_value_numlock" translatable="false">num lock</string>
+    <string name="key_value_numlock" translatable="false">numlock</string>
+    <string name="key_value_backspace" translatable="false">backspace</string>
 
     <!-- The labels for the "translateable" keys on the numpad -->
     <string name="key_label_enter">enter</string>
     <string name="key_label_decimal">.</string>
     <string name="key_label_numlock">num lock</string>
+    <string name="key_label_backspace">back space</string>
 
     <!-- Strings related to Settings -->
 
     <!-- General settings -->
-
-    <string name="pref_key_vibrations" translatable="false">vibrations</string>
-    <string name="pref_title_vibrations">Vibrate on touch</string>
 
     <string name="pref_socket_entry_value" translatable="false">socket</string>
     <string name="pref_socket_entry">Socket (Wifi)</string>
@@ -71,6 +71,12 @@
         <item>@string/pref_socket_entry</item>
         <item>@string/pref_bluetooth_entry</item>
     </string-array>
+
+    <string name="pref_key_vibrations" translatable="false">vibrations</string>
+    <string name="pref_title_vibrations">Vibrate on touch</string>
+
+    <string name="pref_key_backspace" translatable="false">backspace</string>
+    <string name="pref_title_backspace">\"backspace\" instead of \"numlock\"</string>
 
     <!-- General host-related settings -->
 

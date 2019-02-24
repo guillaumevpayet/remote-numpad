@@ -84,6 +84,18 @@
             app:value="@string/key_value_numlock" />
 
         <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_backspace"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/key_label_backspace"
+            android:textSize="@dimen/font_size_text_key"
+            app:layout_constraintBottom_toTopOf="@+id/key_7"
+            app:layout_constraintEnd_toStartOf="@+id/key_divide"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:value="@string/key_value_backspace"/>
+
+        <com.guillaumepayet.remotenumpad.controller.Key
             android:id="@+id/key_divide"
             android:layout_width="0dp"
             android:layout_height="0dp"

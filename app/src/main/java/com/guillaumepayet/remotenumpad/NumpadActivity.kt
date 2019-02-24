@@ -63,6 +63,18 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        if (preferences.getBoolean(getString(R.string.pref_key_backspace), false)) {
+            key_numlock.visibility = View.INVISIBLE
+            key_backspace.visibility = View.VISIBLE
+        } else {
+            key_numlock.visibility = View.VISIBLE
+            key_backspace.visibility = View.INVISIBLE
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_numpad, menu)
