@@ -23,7 +23,6 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.preference.PreferenceManager
-import android.support.annotation.RequiresApi
 import android.view.MotionEvent
 import android.view.SoundEffectConstants
 import android.view.View
@@ -48,13 +47,6 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
          * The length of a vibration when a key is pressed (in ms)
          */
         private const val VIBRATION_LENGTH = 25L
-
-        /**
-         * From API 26, vibration effects are required instead of just giving a duration and
-         * intensity to the vibrator.
-         */
-        @RequiresApi(Build.VERSION_CODES.O)
-        private val VIBRATION_EFFECT = VibrationEffect.createOneShot(VIBRATION_LENGTH, VibrationEffect.DEFAULT_AMPLITUDE)
     }
 
     private val listeners: MutableCollection<IKeypadListener> = HashSet()
@@ -89,7 +81,8 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
 
                 if (preferences.getBoolean(context.getString(R.string.pref_key_vibrations), true)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(VIBRATION_EFFECT)
+                        val vibrationEffect = VibrationEffect.createOneShot(VIBRATION_LENGTH, VibrationEffect.DEFAULT_AMPLITUDE)
+                        vibrator.vibrate(vibrationEffect)
                     } else {
                         @Suppress("DEPRECATION")
                         vibrator.vibrate(VIBRATION_LENGTH)
