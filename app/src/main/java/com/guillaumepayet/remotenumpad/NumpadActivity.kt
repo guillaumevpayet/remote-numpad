@@ -134,8 +134,12 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
             else -> R.color.connected
         }
 
-        runBlocking(Dispatchers.Main) { status_text.text = getString(connectionStatus) }
-        status_text.setTextColor(ContextCompat.getColor(this, colorId))
+        val color = ContextCompat.getColor(this, colorId)
+
+        runBlocking(Dispatchers.Main) {
+            status_text.text = getString(connectionStatus)
+            status_text.setTextColor(color)
+        }
 
         if (connectionStatus == R.string.status_could_not_connect)
             task = Timer().schedule(2000) {
