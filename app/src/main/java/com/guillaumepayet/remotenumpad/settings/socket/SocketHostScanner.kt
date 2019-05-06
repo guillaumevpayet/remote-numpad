@@ -69,26 +69,26 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
             GlobalScope.launch {
                 val address = hostAddressStart + i
                 val endpoint = InetSocketAddress(address, SocketConnectionInterface.PORT)
+                val socket = Socket()
 
-                Socket().use { socket ->
-                    try {
-                        socket.connect(endpoint, 250)
-                    } catch (e: IOException) {}
+                try {
+                    socket.connect(endpoint, 250)
+                } catch (e: IOException) {}
 
-                    if (socket.isConnected) {
-                        socket.outputStream.writer().use { writer ->
-                            socket.inputStream.reader().buffered().use { reader ->
-                                writer.write("name\n")
-                                writer.flush()
+                if (socket.isConnected) {
+                    socket.outputStream.writer().use { writer ->
+                        socket.inputStream.reader().buffered().use { reader ->
+                            writer.write("name\n")
+                            writer.flush()
 
-                                val name = reader.readLine()
-                                hosts.add(Pair(name, address))
-                            }
+                            val name = reader.readLine()
+                            hosts.add(Pair(name, address))
                         }
                     }
-
-                    decrementProbeCount()
                 }
+
+                decrementProbeCount()
+                socket.close()
             }
         }
     }

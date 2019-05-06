@@ -20,7 +20,7 @@ package com.guillaumepayet.remotenumpad.settings.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.os.Bundle
-import android.support.v7.preference.ListPreference
+import androidx.preference.ListPreference
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
