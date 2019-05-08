@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.guillaumepayet.remotenumpad.SettingsActivity">
 
     <item
         android:id="@+id/action_socket_refresh"
-        android:title="@string/action_socket_refresh" />
+        android:title="@string/action_socket_refresh"
+        app:showAsAction="never" />
 </menu>

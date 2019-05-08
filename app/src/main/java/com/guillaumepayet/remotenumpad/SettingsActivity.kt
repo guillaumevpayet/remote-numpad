@@ -20,9 +20,7 @@ package com.guillaumepayet.remotenumpad
 
 import android.os.Bundle
 import android.preference.PreferenceActivity
-import androidx.core.app.NavUtils
-import android.view.MenuItem
-import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
+import androidx.appcompat.app.AppCompatActivity
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -34,35 +32,10 @@ import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
  * for design guidelines and the [Settings API Guide](http://developer.android.com/guide/topics/ui/settings.html)
  * for more information on developing a Settings UI.
  */
-class SettingsActivity : AppCompatPreferenceActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupActionBar()
-
-        // Load the fragment
-        supportFragmentManager.beginTransaction()
-                .replace(android.R.id.content, BasePreferenceFragment())
-                .commit()
-    }
-
-    /**
-     * Set up the [android.app.ActionBar], if the API is available.
-     */
-    private fun setupActionBar() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onMenuItemSelected(featureId: Int, item: MenuItem): Boolean {
-        val handled = super.onMenuItemSelected(featureId, item)
-
-        return if (item.itemId != android.R.id.home) {
-            handled
-        } else {
-            if (!handled)
-                NavUtils.navigateUpFromSameTask(this)
-
-            true
-        }
+        setContentView(R.layout.activity_settings)
     }
 }

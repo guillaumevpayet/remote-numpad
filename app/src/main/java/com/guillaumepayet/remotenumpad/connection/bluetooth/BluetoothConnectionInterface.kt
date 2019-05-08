@@ -64,7 +64,7 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
 
             try {
                 val device = bluetoothAdapter.getRemoteDevice(host)
-                socket = device.createRfcommSocketToServiceRecord(BluetoothConnectionInterface.NUMPAD_UUID)
+                socket = device.createRfcommSocketToServiceRecord(NUMPAD_UUID)
                 socket?.connect()
                 writer = socket?.outputStream?.writer()
                 onConnectionStatusChange(R.string.status_connected)
