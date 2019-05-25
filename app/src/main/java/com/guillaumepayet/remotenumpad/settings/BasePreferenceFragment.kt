@@ -19,6 +19,8 @@
 package com.guillaumepayet.remotenumpad.settings
 
 import android.os.Bundle
+import androidx.core.content.edit
+import androidx.fragment.app.transaction
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -83,9 +85,7 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
                 }
 
                 if (fragment::class.java.canonicalName != this::class.java.canonicalName) {
-                    fragmentManager?.beginTransaction()
-                            ?.replace(android.R.id.content, fragment)
-                            ?.commit()
+                    fragmentManager?.transaction { replace(android.R.id.content, fragment) }
                 }
             }
         } else {
@@ -139,7 +139,9 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onDestroy() {
         super.onDestroy()
-        preferenceManager.sharedPreferences.edit().putString(getString(R.string.pref_key_host), host).apply()
+        preferenceManager.sharedPreferences.edit {
+            putString(getString(R.string.pref_key_host), host)
+        }
     }
 
 
