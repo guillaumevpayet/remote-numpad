@@ -32,7 +32,7 @@ abstract class AbstractConnectionInterface(sender: IDataSender) : IConnectionInt
 
 
     init {
-        sender.registerConnectionInterface(this)
+        registerWithSender(sender)
     }
 
 
@@ -46,5 +46,9 @@ abstract class AbstractConnectionInterface(sender: IDataSender) : IConnectionInt
 
     override fun onConnectionStatusChange(connectionStatus: Int) {
         listeners.forEach { it.onConnectionStatusChange(connectionStatus) }
+    }
+
+    private fun registerWithSender(sender: IDataSender) {
+        sender.registerConnectionInterface(this)
     }
 }

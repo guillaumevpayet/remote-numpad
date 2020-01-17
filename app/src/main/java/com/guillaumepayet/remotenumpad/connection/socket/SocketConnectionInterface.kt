@@ -23,7 +23,6 @@ import com.guillaumepayet.remotenumpad.connection.*
 import java.io.IOException
 import java.io.Writer
 import java.net.InetSocketAddress
-import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketException
 

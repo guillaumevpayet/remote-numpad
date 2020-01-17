@@ -19,7 +19,6 @@
 package com.guillaumepayet.remotenumpad.connection
 
 import com.guillaumepayet.remotenumpad.controller.IKeypad
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
