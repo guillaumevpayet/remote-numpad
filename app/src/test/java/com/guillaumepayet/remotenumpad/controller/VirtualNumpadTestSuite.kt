@@ -22,10 +22,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.preference.PreferenceManager
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.preference.PreferenceManager
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

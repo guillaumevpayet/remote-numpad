@@ -22,11 +22,11 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.preference.PreferenceManager
 import android.view.MotionEvent
 import android.view.SoundEffectConstants
 import android.view.View
 import android.view.ViewGroup
+import androidx.preference.PreferenceManager
 import com.guillaumepayet.remotenumpad.R
 
 /**

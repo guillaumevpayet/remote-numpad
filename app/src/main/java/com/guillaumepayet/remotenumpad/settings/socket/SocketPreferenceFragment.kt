@@ -64,19 +64,19 @@ class SocketPreferenceFragment : BasePreferenceFragment() {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
-        customHostPreference = findPreference(getString(R.string.pref_key_custom_host)) as EditTextPreference
+        customHostPreference = findPreference(getString(R.string.pref_key_custom_host))!!
         bindPreferenceSummaryToValue(customHostPreference)
 
-        hostPreference = findPreference(getString(R.string.pref_key_socket_host)) as ListPreference
+        hostPreference = findPreference(getString(R.string.pref_key_socket_host))!!
         startHostScan()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_socket_settings, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_socket_settings, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
             R.id.action_socket_refresh -> {
                 startHostScan()
                 true

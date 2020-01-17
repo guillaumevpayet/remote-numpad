@@ -19,11 +19,12 @@
 package com.guillaumepayet.remotenumpad
 
 import android.os.Bundle
-import android.preference.PreferenceActivity
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
+import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 
 /**
- * A [PreferenceActivity] that presents a set of application settings. On
+ * An [AppCompatActivity] that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
  * settings are split by category, with category headers shown to the left of
  * the list of settings.
@@ -36,6 +37,6 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        supportFragmentManager.commit { replace(android.R.id.content, BasePreferenceFragment()) }
     }
 }

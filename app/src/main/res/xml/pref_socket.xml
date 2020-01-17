@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        android:title="@string/pref_title_category_socket">
+        app:title="@string/pref_title_category_socket">
 
         <ListPreference
-            android:defaultValue="@string/pref_no_host_entry_value"
-            android:entries="@array/pref_socket_host_titles"
-            android:entryValues="@array/pref_socket_host_values"
-            android:key="@string/pref_key_socket_host"
-            android:summary="@string/pref_manual_host_entry"
-            android:title="@string/pref_title_host" />
+            app:defaultValue="@string/pref_no_host_entry_value"
+            app:entries="@array/pref_socket_host_titles"
+            app:entryValues="@array/pref_socket_host_values"
+            app:key="@string/pref_key_socket_host"
+            app:summary="@string/pref_manual_host_entry"
+            app:title="@string/pref_title_host" />
         <EditTextPreference
-            android:defaultValue="192.168.1.1"
-            android:key="@string/pref_key_custom_host"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:summary="192.168.1.1"
-            android:title="@string/pref_manual_host_entry" />
+            app:defaultValue="192.168.1.1"
+            app:key="@string/pref_key_custom_host"
+            app:singleLine="true"
+            app:summary="192.168.1.1"
+            app:title="@string/pref_manual_host_entry" />
 
     </PreferenceCategory>
 

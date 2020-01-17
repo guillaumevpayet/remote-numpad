@@ -43,7 +43,7 @@ class BluetoothPreferenceFragment : BasePreferenceFragment() {
         super.onCreatePreferences(savedInstanceState, rootKey)
         addPreferencesFromResource(R.xml.pref_bluetooth)
 
-        hostPreference = findPreference(getString(R.string.pref_key_bluetooth_host)) as ListPreference
+        hostPreference = findPreference(getString(R.string.pref_key_bluetooth_host))!!
 
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 

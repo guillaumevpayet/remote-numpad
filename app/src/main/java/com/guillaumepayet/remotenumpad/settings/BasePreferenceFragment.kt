@@ -20,7 +20,7 @@ package com.guillaumepayet.remotenumpad.settings
 
 import android.os.Bundle
 import androidx.core.content.edit
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commit
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -85,7 +85,7 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
                 }
 
                 if (fragment::class.java.canonicalName != this::class.java.canonicalName) {
-                    fragmentManager?.transaction { replace(android.R.id.content, fragment) }
+                    fragmentManager?.commit { replace(android.R.id.content, fragment) }
                 }
             }
         } else {
@@ -102,9 +102,9 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
         setHasOptionsMenu(true)
 
         // Load the base preferences
-        addPreferencesFromResource(R.xml.pref_base)
+        setPreferencesFromResource(R.xml.pref_base, rootKey)
 
-        val preference = findPreference(getString(R.string.pref_key_connection_interface)) as ListPreference
+        val preference: ListPreference = findPreference(getString(R.string.pref_key_connection_interface))!!
         val entries = preference.entries.toMutableList()
         val entryValues = preference.entryValues.toMutableList()
 
