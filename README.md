@@ -28,7 +28,9 @@ future.
 The *SettingsActivity* is the activity which allows the user to select the
 interface through which to send the inputs and the location of the server.
 
-The lastest stable release can be obtained from the
+A short tutorial on how to use Remote Numpad can be found
+[on Youtube](https://www.youtube.com/watch?v=xTfQparcgg4) and the latest stable release can be
+obtained from the
 [Google Play Store](https://play.google.com/store/apps/details?id=com.guillaumepayet.remotenumpad&hl=en_US)
 
 ## Compilation
