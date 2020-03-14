@@ -66,13 +66,12 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
         probeCount = 256
 
         for (i in 0 until probeCount) {
-            GlobalScope.launch {
+            GlobalScope.launch(Dispatchers.IO) {
                 val address = hostAddressStart + i
                 val endpoint = InetSocketAddress(address, SocketConnectionInterface.PORT)
                 val socket = Socket()
 
                 try {
-                    // TODO Find a way to properly integrate Socket connection with subroutines
                     socket.connect(endpoint, 250)
                 } catch (e: IOException) {}
 
