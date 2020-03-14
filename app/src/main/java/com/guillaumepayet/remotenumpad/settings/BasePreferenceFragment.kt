@@ -85,7 +85,7 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
                 }
 
                 if (fragment::class.java.canonicalName != this::class.java.canonicalName) {
-                    fragmentManager?.commit { replace(android.R.id.content, fragment) }
+                    parentFragmentManager.commit { replace(android.R.id.content, fragment) }
                 }
             }
         } else {

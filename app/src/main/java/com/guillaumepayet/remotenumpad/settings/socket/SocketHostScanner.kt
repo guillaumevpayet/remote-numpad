@@ -47,7 +47,7 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
 
 
     init {
-        val context = preferenceFragment.activity!!.applicationContext
+        val context = preferenceFragment.requireActivity().applicationContext
         val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val clientAddress = wifiManager.dhcpInfo.ipAddress
 
