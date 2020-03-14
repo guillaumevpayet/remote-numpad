@@ -24,6 +24,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
+import org.mockito.Mockito.timeout
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 
@@ -69,7 +70,7 @@ class KeyEventSenderTestSuite {
         runBlocking { keyEventSender.onKeyPress(KEY_VALUE) }
 
         // ...then the event is sent through the connection interface.
-        then(mockConnectionInterface).should(times(1))?.sendString("+$KEY_VALUE\n")
+        then(mockConnectionInterface).should(timeout(100).times(1))?.sendString("+$KEY_VALUE\n")
     }
 
     @Test
@@ -82,6 +83,6 @@ class KeyEventSenderTestSuite {
         runBlocking { keyEventSender.onKeyRelease(KEY_VALUE) }
 
         // ...then the event is sent through the connection interface.
-        then(mockConnectionInterface).should(times(1))?.sendString("-$KEY_VALUE\n")
+        then(mockConnectionInterface).should(timeout(100).times(1))?.sendString("-$KEY_VALUE\n")
     }
 }
