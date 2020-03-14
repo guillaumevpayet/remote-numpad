@@ -12,11 +12,11 @@
         app:entryValues="@array/pref_connection_interface_values"
         app:key="@string/pref_key_connection_interface"
         app:title="@string/pref_title_connection_interface" />
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         app:defaultValue="true"
         app:key="@string/pref_key_vibrations"
         app:title="@string/pref_title_vibrations" />
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         app:defaultValue="false"
         app:key="@string/pref_key_backspace"
         app:title="@string/pref_title_backspace" />
