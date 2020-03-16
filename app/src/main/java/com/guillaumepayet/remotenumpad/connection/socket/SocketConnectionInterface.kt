@@ -18,6 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.connection.socket
 
+import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.*
 import java.io.IOException
@@ -35,6 +36,7 @@ import java.net.SocketException
  *
  * @see IDataSender
  */
+@Keep
 open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
 
     companion object {

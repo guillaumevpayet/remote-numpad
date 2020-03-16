@@ -18,6 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.connection.socket
 
+import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.connection.IHostValidator
 
 /**
@@ -25,6 +26,7 @@ import com.guillaumepayet.remotenumpad.connection.IHostValidator
  * Hosts are valid if they are made of four integers in the range [0-255] separated by points and
  * with no leading zeroes.
  */
+@Keep
 class SocketHostValidator : IHostValidator {
 
     companion object {

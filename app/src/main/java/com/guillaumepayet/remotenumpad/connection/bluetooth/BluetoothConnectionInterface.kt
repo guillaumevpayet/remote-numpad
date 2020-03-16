@@ -20,6 +20,7 @@ package com.guillaumepayet.remotenumpad.connection.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
+import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
@@ -36,6 +37,7 @@ import java.util.*
  *
  * Created by guillaume on 1/17/18.
  */
+@Keep
 class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
 
     companion object {

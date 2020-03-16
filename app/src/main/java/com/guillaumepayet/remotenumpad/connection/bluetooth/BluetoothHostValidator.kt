@@ -18,6 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.connection.bluetooth
 
+import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.connection.IHostValidator
 
 /**
@@ -25,6 +26,7 @@ import com.guillaumepayet.remotenumpad.connection.IHostValidator
  * Hosts are valid if they are made of six two-digit uppercase hexadecimal integers separated by
  * colons.
  */
+@Keep
 class BluetoothHostValidator : IHostValidator {
 
     companion object {
