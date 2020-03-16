@@ -62,6 +62,8 @@ class KeyEventSender(keypad: IKeypad) : IKeypadListener, IDataSender {
      * Send a string to all the registered [IConnectionInterface].
      */
     private fun sendString(string: String) {
-        connectionInterfaces.forEach { GlobalScope.launch { it.sendString(string) } }
+        connectionInterfaces.forEach {
+            GlobalScope.launch { it.sendString(string) }
+        }
     }
 }

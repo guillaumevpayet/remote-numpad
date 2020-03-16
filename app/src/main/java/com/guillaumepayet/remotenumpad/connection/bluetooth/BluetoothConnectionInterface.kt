@@ -25,6 +25,8 @@ import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.Writer
 import java.util.*
@@ -58,7 +60,7 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
     private var writer: Writer? = null
 
 
-    override fun open(host: String) {
+    override suspend fun open(host: String) = withContext(Dispatchers.IO) {
         if (writer != null) {
             onConnectionStatusChange(R.string.status_already_connected)
         } else {
@@ -81,7 +83,7 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
         }
     }
 
-    override fun close() {
+    override suspend fun close() = withContext(Dispatchers.IO) {
         onConnectionStatusChange(R.string.status_disconnecting)
 
         writer?.close()
@@ -93,12 +95,14 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
         onConnectionStatusChange(R.string.status_disconnected)
     }
 
-    override fun sendString(string: String) {
+    override suspend fun sendString(string: String): Boolean = withContext(Dispatchers.IO) {
         try {
             writer?.write(string)
             writer?.flush()
+            true
         } catch (e: IOException) {
             onConnectionStatusChange(R.string.status_connection_lost)
+            false
         }
     }
 }

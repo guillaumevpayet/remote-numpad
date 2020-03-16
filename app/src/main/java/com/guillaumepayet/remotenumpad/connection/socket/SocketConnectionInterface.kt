@@ -21,6 +21,7 @@ package com.guillaumepayet.remotenumpad.connection.socket
 import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.*
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.io.Writer
 import java.net.InetSocketAddress
@@ -55,7 +56,7 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
     private var writer: Writer? = null
 
 
-    override fun open(host: String) {
+    override suspend fun open(host: String) = withContext(Dispatchers.IO) {
         if (writer != null) {
             onConnectionStatusChange(R.string.status_already_connected)
         } else {
@@ -76,7 +77,7 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
         }
     }
 
-    override fun close() {
+    override suspend fun close() = withContext(Dispatchers.IO) {
         onConnectionStatusChange(R.string.status_disconnecting)
 
         writer?.close()
@@ -88,12 +89,14 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
         onConnectionStatusChange(R.string.status_disconnected)
     }
 
-    override fun sendString(string: String) {
+    override suspend fun sendString(string: String): Boolean = withContext(Dispatchers.IO) {
         try {
             writer?.write(string)
             writer?.flush()
+            true
         } catch (e: SocketException) {
             onConnectionStatusChange(R.string.status_connection_lost)
+            false
         }
     }
 
@@ -105,10 +108,10 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
      * @param port The port through which to connect
      * @param timeout The time to wait before the host/port is considered unresponsive
      */
-    protected open fun openSocket(host: String, port: Int = PORT, timeout: Int = 3000): Socket {
+    protected open suspend fun openSocket(host: String, port: Int = PORT, timeout: Int = 3000): Socket = withContext(Dispatchers.IO) {
         val endpoint = InetSocketAddress(host, port)
         val socket = Socket()
         socket.connect(endpoint, timeout)
-        return socket
+        return@withContext socket
     }
 }

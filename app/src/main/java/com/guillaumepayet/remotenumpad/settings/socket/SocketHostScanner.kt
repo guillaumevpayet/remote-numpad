@@ -72,7 +72,7 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
                 val socket = Socket()
 
                 try {
-                    socket.connect(endpoint, 250)
+                    socket.connect(endpoint, 500)
                 } catch (e: IOException) {}
 
                 if (socket.isConnected) {
@@ -99,14 +99,12 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
      * there are no more probes.
      */
     @Synchronized
-    private fun decrementProbeCount() {
+    private suspend fun decrementProbeCount() = withContext(Dispatchers.Main) {
         probeCount--
 
         if (probeCount == 0) {
-            runBlocking(Dispatchers.Main) {
-                if (preferenceFragment.isResumed)
-                    preferenceFragment.updateHosts(hosts)
-            }
+            if (preferenceFragment.isResumed)
+                preferenceFragment.updateHosts(hosts)
         }
     }
 }

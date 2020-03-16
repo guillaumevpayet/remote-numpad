@@ -50,17 +50,18 @@ interface IConnectionInterface : IConnectionStatusListener {
      *
      * @param host the name or address of the host (the format depends on the connection interface)
      */
-    fun open(host: String)
+    suspend fun open(host: String)
 
     /**
      * Close the connection (if one is open).
      */
-    fun close()
+    suspend fun close()
 
     /**
      * Send a string through the interface.
      *
      * @param string the string to be sent
+     * @return A boolean that is true if the string was sent successfully, false otherwise.
      */
-    fun sendString(string: String)
+    suspend fun sendString(string: String): Boolean
 }

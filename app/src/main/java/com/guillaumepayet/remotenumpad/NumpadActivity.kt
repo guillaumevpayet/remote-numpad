@@ -35,7 +35,6 @@ import kotlinx.android.synthetic.main.content_numpad.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -136,7 +135,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
         val color = ContextCompat.getColor(this, colorId)
 
-        runBlocking(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             status_text.text = getString(connectionStatus)
             status_text.setTextColor(color)
         }

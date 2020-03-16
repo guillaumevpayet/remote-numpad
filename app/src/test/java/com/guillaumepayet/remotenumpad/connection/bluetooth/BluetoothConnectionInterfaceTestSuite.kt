@@ -142,11 +142,13 @@ class BluetoothConnectionInterfaceTestSuite {
         val connectionInterface = BluetoothConnectionInterface(mockDataSender!!)
         connectionInterface.registerConnectionStatusListener(mockListener!!)
 
-        // ...and a valid connection is already open...
-        connectionInterface.open(VALID_HOST)
+        runBlocking {
+            // ...and a valid connection is already open...
+            connectionInterface.open(VALID_HOST)
 
-        // ...when the connection interface opens a connection with a valid host...
-        connectionInterface.open(VALID_HOST)
+            // ...when the connection interface opens a connection with a valid host...
+            connectionInterface.open(VALID_HOST)
+        }
 
         // ...then the connection interface does not attempt a second connection.
         val inOrder = inOrder(mockListener, mockSocket)
@@ -165,7 +167,7 @@ class BluetoothConnectionInterfaceTestSuite {
         // ...and no connection is open,
 
         // ...when the connection interface attempts to close the connection...
-        connectionInterface.close()
+        runBlocking { connectionInterface.close() }
 
         // ...then the connection interface closes no connection.
         val inOrder = inOrder(mockListener)
@@ -180,11 +182,13 @@ class BluetoothConnectionInterfaceTestSuite {
         val connectionInterface = BluetoothConnectionInterface(mockDataSender!!)
         connectionInterface.registerConnectionStatusListener(mockListener!!)
 
-        // ...and a valid connection is open...
-        connectionInterface.open(VALID_HOST)
+        runBlocking {
+            // ...and a valid connection is open...
+            connectionInterface.open(VALID_HOST)
 
-        // ...when the connection interface closes the connection...
-        connectionInterface.close()
+            // ...when the connection interface closes the connection...
+            connectionInterface.close()
+        }
 
         // ...then the connection interface connects to the host...
         val inOrder = inOrder(mockListener, mockSocket)
