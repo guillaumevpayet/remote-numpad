@@ -24,6 +24,7 @@ import android.util.Log
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import com.guillaumepayet.remotenumpad.NumpadActivity
+import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
@@ -40,30 +41,35 @@ import com.guillaumepayet.remotenumpad.connection.IDataSender
 @RequiresApi(Build.VERSION_CODES.P)
 class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
 
-    var bluetoothHidDevice: BluetoothHidDevice? = null
+    private var bluetoothHidDevice: BluetoothHidDevice? = null
     private var host: BluetoothDevice? = null
 
     private val callback = object: BluetoothHidDevice.Callback() {
 
         override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
             super.onAppStatusChanged(pluggedDevice, registered)
-            Log.i("HIID", "BluetoothHidDevice.Callback.onAppStatusChanged(${pluggedDevice?.name}, $registered)")
+            Log.i(TAG, "BluetoothHidDevice.Callback.onAppStatusChanged(${pluggedDevice?.name}, $registered)")
 
             if (pluggedDevice == null) return
 
             if (bluetoothHidDevice?.getConnectionState(pluggedDevice) == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.i("HIID", "Attempting to connect to ${pluggedDevice.name}")
+                Log.i(TAG, "Attempting to connect to ${pluggedDevice.name}")
                 bluetoothHidDevice!!.connect(pluggedDevice)
             }
         }
 
         override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
             super.onConnectionStateChanged(device, state)
-            Log.i("HIID", "BluetoothHidDevice.Callback.onConnectionStateChanged(${device?.name}, $state)")
+            Log.i(TAG, "BluetoothHidDevice.Callback.onConnectionStateChanged(${device?.name}, $state)")
 
-            if (state == BluetoothProfile.STATE_CONNECTED) {
-                host = device
-                Log.i("HIID", "Now connected to ${host?.name}")
+            when (state) {
+                BluetoothProfile.STATE_DISCONNECTED ->
+                    onConnectionStatusChange(R.string.status_could_not_connect)
+                BluetoothProfile.STATE_CONNECTED -> {
+                    host = device
+                    Log.i(TAG, "Now connected to ${host?.name}")
+                    onConnectionStatusChange(R.string.status_connected)
+                }
             }
         }
     }
@@ -71,36 +77,46 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
     private val profileListener = object: BluetoothProfile.ServiceListener {
 
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
-            Log.i("HIID", "BluetoothProfile.ServiceListener.onServiceConnected")
+            Log.i(TAG, "BluetoothProfile.ServiceListener.onServiceConnected")
             bluetoothHidDevice = proxy as BluetoothHidDevice
             bluetoothHidDevice!!.registerApp(SDP, null, null, { it.run() }, callback)
         }
 
         override fun onServiceDisconnected(profile: Int) {
-            Log.i("HIID", "BluetoothProfile.ServiceListener.onServiceDisconnected")
+            Log.i(TAG, "BluetoothProfile.ServiceListener.onServiceDisconnected")
             bluetoothHidDevice = null
         }
     }
 
     override suspend fun open(host: String) {
+        Log.i(TAG, "HidConnectionInterface.open(\"${host}\")")
+        onConnectionStatusChange(R.string.status_connecting)
         bluetoothAdapter.getProfileProxy(NumpadActivity.context, profileListener, BluetoothProfile.HID_DEVICE)
     }
 
     override suspend fun close() {
+        Log.i(TAG, "HidConnectionInterface.close()")
+        onConnectionStatusChange(R.string.status_disconnecting)
         bluetoothHidDevice?.unregisterApp()
         bluetoothAdapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, bluetoothHidDevice)
+        onConnectionStatusChange(R.string.status_disconnected)
     }
 
     override suspend fun sendString(string: String): Boolean {
+        Log.i(TAG, "HidConnectionInterface.sendString(\"${string}\")")
         val keyboardReport = KeyboardReport(string)
 
-        if (!bluetoothHidDevice?.sendReport(host, KeyboardReport.ID, keyboardReport.bytes)!!)
-            Log.e("HIID", "Failed to send the report")
+        if (!bluetoothHidDevice?.sendReport(host, KeyboardReport.ID, keyboardReport.bytes)!!) {
+            Log.e(TAG, "Failed to send the report")
+            return false
+        }
 
         return true
     }
 
     companion object {
+
+        private const val TAG = "HidConnectionInterface"
 
         private val bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 

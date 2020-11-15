@@ -21,6 +21,14 @@ package com.guillaumepayet.remotenumpad.connection.hid
 import com.guillaumepayet.remotenumpad.NumpadActivity
 import com.guillaumepayet.remotenumpad.R
 
+/**
+ * The HID report for a key event. This is simply a container for an array of bytes to be sent
+ * through the Bluetooth HID protocol.
+ *
+ * @param string The string representation of the key event
+ *
+ * Created by guillaume on 11/15/20.
+ */
 class KeyboardReport(string: String) {
 
     val bytes = ByteArray(3) { 0 }
