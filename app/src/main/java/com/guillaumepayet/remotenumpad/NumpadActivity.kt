@@ -18,6 +18,7 @@
 
 package com.guillaumepayet.remotenumpad
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -52,6 +53,9 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
          * The package where all the [IConnectionInterface] implementations can be found.
          */
         private val CONNECTION_INTERFACES_PACKAGE = this::class.java.`package`?.name + ".connection"
+
+        var context: Context? = null
+            private set
     }
 
 
@@ -64,6 +68,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context = baseContext
         setContentView(R.layout.activity_numpad)
         setSupportActionBar(toolbar)
 
