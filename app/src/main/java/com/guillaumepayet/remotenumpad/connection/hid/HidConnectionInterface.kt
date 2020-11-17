@@ -23,11 +23,12 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
-import com.guillaumepayet.remotenumpad.NumpadActivity
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
+import java.lang.IllegalStateException
+import java.util.*
 
 /**
  * This [IConnectionInterface] handles a Bluetooth connection with the HID profile added to Android
@@ -41,122 +42,95 @@ import com.guillaumepayet.remotenumpad.connection.IDataSender
 @RequiresApi(Build.VERSION_CODES.P)
 class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
 
-    private var bluetoothHidDevice: BluetoothHidDevice? = null
-    private var host: BluetoothDevice? = null
+    private var hostDevice: BluetoothDevice? = null
 
-    private val callback = object: BluetoothHidDevice.Callback() {
+    private var timer: Timer? = null
+
+    private val timeout = object: TimerTask() {
+        override fun run() { connectionState = BluetoothProfile.STATE_DISCONNECTED }
+    }
+
+    private var connectionState: Int = BluetoothProfile.STATE_DISCONNECTED
+        set(value) {
+            Log.i(TAG, "connectionState($value), $field")
+            when (value) {
+                BluetoothProfile.STATE_CONNECTED -> {
+                    timer?.cancel()
+                    timer = null
+                    onConnectionStatusChange(R.string.status_connected)
+                }
+                BluetoothProfile.STATE_DISCONNECTED ->
+                    if (field == BluetoothProfile.STATE_CONNECTING)
+                        onConnectionStatusChange(R.string.status_could_not_connect)
+                    else {
+                        hostDevice = null
+                        onConnectionStatusChange(R.string.status_disconnected)
+                        HidServiceFacade.unregisterHidDeviceListener(hidDeviceListener)
+                    }
+            }
+
+            field = value
+        }
+
+    private val hidDeviceListener = object: BluetoothHidDevice.Callback() {
 
         override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
             super.onAppStatusChanged(pluggedDevice, registered)
-            Log.i(TAG, "BluetoothHidDevice.Callback.onAppStatusChanged(${pluggedDevice?.name}, $registered)")
+            service = HidServiceFacade.service
 
-            if (pluggedDevice == null) return
-
-            if (bluetoothHidDevice?.getConnectionState(pluggedDevice) == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.i(TAG, "Attempting to connect to ${pluggedDevice.name}")
-                bluetoothHidDevice!!.connect(pluggedDevice)
+            if (service!!.getConnectionState(hostDevice) == BluetoothProfile.STATE_DISCONNECTED) {
+                service!!.connect(hostDevice)
+                timer = Timer()
+                timer!!.schedule(timeout, TIMEOUT_DELAY)
             }
         }
 
         override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
             super.onConnectionStateChanged(device, state)
-            Log.i(TAG, "BluetoothHidDevice.Callback.onConnectionStateChanged(${device?.name}, $state)")
+            Log.i(TAG, "BluetoothHidDevice.Callback.onConnectionStateChanged(<${device?.name}>, $state) on ${Thread.currentThread().name}")
 
-            when (state) {
-                BluetoothProfile.STATE_DISCONNECTED ->
-                    onConnectionStatusChange(R.string.status_could_not_connect)
-                BluetoothProfile.STATE_CONNECTED -> {
-                    host = device
-                    Log.i(TAG, "Now connected to ${host?.name}")
-                    onConnectionStatusChange(R.string.status_connected)
-                }
-            }
+            if (device == hostDevice)
+                connectionState = state
         }
     }
 
-    private val profileListener = object: BluetoothProfile.ServiceListener {
-
-        override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
-            Log.i(TAG, "BluetoothProfile.ServiceListener.onServiceConnected")
-            bluetoothHidDevice = proxy as BluetoothHidDevice
-            bluetoothHidDevice!!.registerApp(SDP, null, null, { it.run() }, callback)
-        }
-
-        override fun onServiceDisconnected(profile: Int) {
-            Log.i(TAG, "BluetoothProfile.ServiceListener.onServiceDisconnected")
-            bluetoothHidDevice = null
-        }
-    }
 
     override suspend fun open(host: String) {
-        Log.i(TAG, "HidConnectionInterface.open(\"${host}\")")
+        Log.i(TAG, "HidConnectionInterface.open(\"$host\") on ${Thread.currentThread().name}")
         onConnectionStatusChange(R.string.status_connecting)
-        bluetoothAdapter.getProfileProxy(NumpadActivity.context, profileListener, BluetoothProfile.HID_DEVICE)
+        hostDevice = bluetoothAdapter.getRemoteDevice(host)
+        HidServiceFacade.registerHidDeviceListener(hidDeviceListener)
     }
 
     override suspend fun close() {
-        Log.i(TAG, "HidConnectionInterface.close()")
+        super.close()
+        Log.i(TAG, "HidConnectionInterface.close() on ${Thread.currentThread().name}")
         onConnectionStatusChange(R.string.status_disconnecting)
-        bluetoothHidDevice?.unregisterApp()
-        bluetoothAdapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, bluetoothHidDevice)
-        onConnectionStatusChange(R.string.status_disconnected)
+        service?.disconnect(hostDevice)
     }
 
     override suspend fun sendString(string: String): Boolean {
-        Log.i(TAG, "HidConnectionInterface.sendString(\"${string}\")")
         val keyboardReport = KeyboardReport(string)
 
-        if (!bluetoothHidDevice?.sendReport(host, KeyboardReport.ID, keyboardReport.bytes)!!) {
-            Log.e(TAG, "Failed to send the report")
-            return false
-        }
-
-        return true
+        return if (hostDevice == null) {
+            Log.e(TAG, "No host device")
+            false
+        } else if (!service!!.sendReport(hostDevice, KeyboardReport.ID, keyboardReport.bytes)) {
+            Log.e(TAG, "Failed to send the HID report")
+            false
+        } else true
     }
 
-    companion object {
 
+    companion object {
         private const val TAG = "HidConnectionInterface"
 
-        private val bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        private const val TIMEOUT_DELAY = 3000L
 
-        private val SDP: BluetoothHidDeviceAppSdpSettings? by lazy {
-            BluetoothHidDeviceAppSdpSettings(
-                    "Remote Numpad",
-                    "Remote Numpad",
-                    "Guillaume Payet",
-                    BluetoothHidDevice.SUBCLASS1_KEYBOARD,
-                    KEYBOARD_DESCRIPTOR
-            )
+        private val bluetoothAdapter: BluetoothAdapter by lazy {
+            BluetoothAdapter.getDefaultAdapter()
         }
 
-        private val KEYBOARD_DESCRIPTOR = byteArrayOf(
-                0x05.toByte(), 0x01.toByte(),       // Usage Page (Generic Desktop)
-                0x09.toByte(), 0x06.toByte(),       // Usage (Keyboard)
-                0xA1.toByte(), 0x01.toByte(),       // Collection (Application)
-                0x85.toByte(), 0x08.toByte(),       //     REPORT_ID (Keyboard)
-                0x05.toByte(), 0x07.toByte(),       //     Usage Page (Key Codes)
-                0x19.toByte(), 0xe0.toByte(),       //     Usage Minimum (224)
-                0x29.toByte(), 0xe7.toByte(),       //     Usage Maximum (231)
-                0x15.toByte(), 0x00.toByte(),       //     Logical Minimum (0)
-                0x25.toByte(), 0x01.toByte(),       //     Logical Maximum (1)
-                0x75.toByte(), 0x01.toByte(),       //     Report Size (1)
-                0x95.toByte(), 0x08.toByte(),       //     Report Count (8)
-                0x81.toByte(), 0x02.toByte(),       //     Input (Data, Variable, Absolute)
-
-                0x95.toByte(), 0x01.toByte(),       //     Report Count (1)
-                0x75.toByte(), 0x08.toByte(),       //     Report Size (8)
-                0x81.toByte(), 0x01.toByte(),       //     Input (Constant) reserved byte(1)
-
-                0x95.toByte(), 0x01.toByte(),       //     Report Count (1)
-                0x75.toByte(), 0x08.toByte(),       //     Report Size (8)
-                0x15.toByte(), 0x00.toByte(),       //     Logical Minimum (0)
-                0x25.toByte(), 0x65.toByte(),       //     Logical Maximum (101)
-                0x05.toByte(), 0x07.toByte(),       //     Usage Page (Key codes)
-                0x19.toByte(), 0x00.toByte(),       //     Usage Minimum (0)
-                0x29.toByte(), 0x65.toByte(),       //     Usage Maximum (101)
-                0x81.toByte(), 0x00.toByte(),       //     Input (Data, Array) Key array(6 bytes)
-                0xc0.toByte()                       // End Collection (Application)
-        )
+        private var service: BluetoothHidDevice? = null
     }
 }

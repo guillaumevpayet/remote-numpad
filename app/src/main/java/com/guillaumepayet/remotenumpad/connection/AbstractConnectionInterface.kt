@@ -18,6 +18,9 @@
 
 package com.guillaumepayet.remotenumpad.connection
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 /**
  * Common parent for [IConnectionInterface] which implements a basic observable behaviour.
  *
@@ -26,14 +29,12 @@ package com.guillaumepayet.remotenumpad.connection
  *
  * Created by guillaume on 1/17/18.
  */
-abstract class AbstractConnectionInterface(sender: IDataSender) : IConnectionInterface {
+abstract class AbstractConnectionInterface(private val sender: IDataSender) : IConnectionInterface {
 
     private val listeners: MutableCollection<IConnectionStatusListener> = HashSet()
 
 
-    init {
-        registerWithSender(sender)
-    }
+    init { registerWithSender(sender) }
 
 
     override fun registerConnectionStatusListener(listener: IConnectionStatusListener) {
@@ -48,7 +49,17 @@ abstract class AbstractConnectionInterface(sender: IDataSender) : IConnectionInt
         listeners.forEach { it.onConnectionStatusChange(connectionStatus) }
     }
 
+
+    override suspend fun close() {
+        unregisterWithSender(sender)
+    }
+
+
     private fun registerWithSender(sender: IDataSender) {
         sender.registerConnectionInterface(this)
+    }
+
+    private fun unregisterWithSender(sender: IDataSender) {
+        sender.unregisterConnectionInterface(this)
     }
 }

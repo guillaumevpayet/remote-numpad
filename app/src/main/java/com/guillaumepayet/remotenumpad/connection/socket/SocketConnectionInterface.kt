@@ -78,6 +78,7 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
     }
 
     override suspend fun close() = withContext(Dispatchers.IO) {
+        super.close()
         onConnectionStatusChange(R.string.status_disconnecting)
 
         writer?.close()

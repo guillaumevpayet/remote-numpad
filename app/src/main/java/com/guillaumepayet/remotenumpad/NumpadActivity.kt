@@ -54,7 +54,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
          */
         private val CONNECTION_INTERFACES_PACKAGE = this::class.java.`package`?.name + ".connection"
 
-        var context: Context? = null
+        lateinit var context: Context
             private set
     }
 
@@ -168,7 +168,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
         val connectionInterfaceName = preferences.getString(getString(R.string.pref_key_connection_interface), getString(R.string.pref_socket_entry_value))
         val packageName = "$CONNECTION_INTERFACES_PACKAGE.$connectionInterfaceName"
-        val prefix = "$packageName.${connectionInterfaceName?.capitalize()}"
+        val prefix = "$packageName.${connectionInterfaceName?.capitalize(Locale.ROOT)}"
 
         val validatorClass = Class.forName("${prefix}HostValidator")
         val validator = validatorClass.newInstance() as IHostValidator
@@ -194,10 +194,8 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
     /**
      * Closes an open connection.
      */
-    private fun disconnect() {
-        GlobalScope.launch {
-            connectionInterface?.close()
-            connectionInterface = null
-        }
+    private fun disconnect() = GlobalScope.launch {
+        connectionInterface?.close()
+        connectionInterface = null
     }
 }

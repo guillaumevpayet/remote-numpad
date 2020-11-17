@@ -20,6 +20,7 @@ package com.guillaumepayet.remotenumpad.connection.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
+import android.util.Log
 import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
@@ -84,6 +85,7 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
     }
 
     override suspend fun close() = withContext(Dispatchers.IO) {
+        super.close()
         onConnectionStatusChange(R.string.status_disconnecting)
 
         writer?.close()
@@ -96,6 +98,7 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
     }
 
     override suspend fun sendString(string: String): Boolean = withContext(Dispatchers.IO) {
+        Log.i("HidConnectionInterface", "BluetoothConnectionInterface.sendString($string)")
         try {
             writer?.write(string)
             writer?.flush()

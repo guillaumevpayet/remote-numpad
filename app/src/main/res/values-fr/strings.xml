@@ -32,4 +32,5 @@
     <string name="snackbar_invalid_connection_interface">Interface de connection invalide</string>
     <string name="pref_no_host_entry">Aucun jumelé</string>
     <string name="snackbar_invalid_host">Hôte invalide</string>
+    <string name="action_hid_pair">Jumeler</string>
 </resources>

@@ -7,5 +7,5 @@
     <item
         android:id="@+id/action_socket_refresh"
         android:title="@string/action_socket_refresh"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>

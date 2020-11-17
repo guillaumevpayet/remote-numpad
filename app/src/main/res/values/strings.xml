@@ -123,4 +123,7 @@
     <!-- HID settings -->
 
     <string name="pref_title_category_hid">HID settings</string>
+    <string name="pref_key_hid_host" translatable="false">hid_host</string>
+    <string name="action_hid_pair">Pair</string>
+
 </resources>
