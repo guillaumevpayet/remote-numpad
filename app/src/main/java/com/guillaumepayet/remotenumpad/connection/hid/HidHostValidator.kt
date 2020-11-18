@@ -18,13 +18,24 @@
 
 package com.guillaumepayet.remotenumpad.connection.hid
 
+import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.connection.IHostValidator
 
 /**
  * [IHostValidator] implementation for the [HidConnectionInterface] hosts.
- * Hosts are valid if they are ...
+ * Hosts are valid if they are valid Bluetooth addresses.
  */
+@Keep
 class HidHostValidator : IHostValidator {
 
-    override fun isHostValid(address: String): Boolean = address.length > 1
+    companion object {
+
+        /**
+         * The regex pattern for a byte in a Bluetooth address
+         */
+        private const val BYTE = "(\\d|[A-F]){2}"
+    }
+
+    override fun isHostValid(address: String): Boolean =
+            address.isNotEmpty() && Regex("$BYTE(:$BYTE){5}").matches(address)
 }

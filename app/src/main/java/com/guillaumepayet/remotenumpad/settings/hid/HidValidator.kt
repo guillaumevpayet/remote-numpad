@@ -20,8 +20,10 @@ package com.guillaumepayet.remotenumpad.settings.hid
 
 import android.bluetooth.BluetoothAdapter
 import android.os.Build
+import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.settings.IConnectionInterfaceValidator
 
+@Keep
 class HidValidator : IConnectionInterfaceValidator {
 
     override val isInterfaceAvailable: Boolean

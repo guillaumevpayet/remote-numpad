@@ -27,46 +27,47 @@ import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
-import java.lang.IllegalStateException
 import java.util.*
+import kotlin.concurrent.schedule
 
 /**
  * This [IConnectionInterface] handles a Bluetooth connection with the HID profile added to Android
  * in the API level 28 (Android P) through which an [IDataSender] object can send data.
  *
  * @param sender The [IDataSender] to listen for data to send
- *
- * Created by guillaume on 11/15/20.
  */
 @Keep
 @RequiresApi(Build.VERSION_CODES.P)
 class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
 
     private var hostDevice: BluetoothDevice? = null
-
-    private var timer: Timer? = null
-
-    private val timeout = object: TimerTask() {
-        override fun run() { connectionState = BluetoothProfile.STATE_DISCONNECTED }
-    }
+    private var timeoutTask: TimerTask? = null
 
     private var connectionState: Int = BluetoothProfile.STATE_DISCONNECTED
         set(value) {
-            Log.i(TAG, "connectionState($value), $field")
             when (value) {
+                BluetoothProfile.STATE_CONNECTING -> {
+                    timeoutTask = Timer().schedule(TIMEOUT_DELAY) {
+                        connectionState = BluetoothProfile.STATE_DISCONNECTED
+                    }
+                }
                 BluetoothProfile.STATE_CONNECTED -> {
-                    timer?.cancel()
-                    timer = null
+                    timeoutTask?.cancel()
+                    timeoutTask = null
                     onConnectionStatusChange(R.string.status_connected)
                 }
-                BluetoothProfile.STATE_DISCONNECTED ->
+                BluetoothProfile.STATE_DISCONNECTED -> {
+                    timeoutTask?.cancel()
+                    timeoutTask = null
+
                     if (field == BluetoothProfile.STATE_CONNECTING)
                         onConnectionStatusChange(R.string.status_could_not_connect)
                     else {
-                        hostDevice = null
-                        onConnectionStatusChange(R.string.status_disconnected)
                         HidServiceFacade.unregisterHidDeviceListener(hidDeviceListener)
+                        onConnectionStatusChange(R.string.status_disconnected)
+                        hostDevice = null
                     }
+                }
             }
 
             field = value
@@ -78,16 +79,15 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
             super.onAppStatusChanged(pluggedDevice, registered)
             service = HidServiceFacade.service
 
-            if (service!!.getConnectionState(hostDevice) == BluetoothProfile.STATE_DISCONNECTED) {
+            if (service!!.getConnectionState(hostDevice) == BluetoothProfile.STATE_CONNECTED) {
+                connectionState = BluetoothProfile.STATE_CONNECTED
+            } else {
                 service!!.connect(hostDevice)
-                timer = Timer()
-                timer!!.schedule(timeout, TIMEOUT_DELAY)
             }
         }
 
         override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
             super.onConnectionStateChanged(device, state)
-            Log.i(TAG, "BluetoothHidDevice.Callback.onConnectionStateChanged(<${device?.name}>, $state) on ${Thread.currentThread().name}")
 
             if (device == hostDevice)
                 connectionState = state
@@ -96,7 +96,6 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
 
 
     override suspend fun open(host: String) {
-        Log.i(TAG, "HidConnectionInterface.open(\"$host\") on ${Thread.currentThread().name}")
         onConnectionStatusChange(R.string.status_connecting)
         hostDevice = bluetoothAdapter.getRemoteDevice(host)
         HidServiceFacade.registerHidDeviceListener(hidDeviceListener)
@@ -104,7 +103,6 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
 
     override suspend fun close() {
         super.close()
-        Log.i(TAG, "HidConnectionInterface.close() on ${Thread.currentThread().name}")
         onConnectionStatusChange(R.string.status_disconnecting)
         service?.disconnect(hostDevice)
     }

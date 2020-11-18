@@ -1,15 +1,31 @@
+/*
+ * Remote Numpad - a numpad application on Android for PCs lacking one.
+ * Copyright (C) 2016-2018 Guillaume Payet
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.guillaumepayet.remotenumpad.connection.hid
 
 import android.bluetooth.*
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.guillaumepayet.remotenumpad.NumpadActivity
+import kotlin.collections.HashSet
 
 @RequiresApi(Build.VERSION_CODES.P)
 object HidServiceFacade : BluetoothHidDevice.Callback() {
-
-    private const val TAG = "HidServiceFacade"
 
     private val KEYBOARD_DESCRIPTOR = byteArrayOf(
             0x05.toByte(), 0x01.toByte(),       // Usage Page (Generic Desktop)
@@ -49,17 +65,14 @@ object HidServiceFacade : BluetoothHidDevice.Callback() {
                     KEYBOARD_DESCRIPTOR
             )
 
-    private val SERVICE_LISTENER = object: BluetoothProfile.ServiceListener {
+    private val serviceListener = object: BluetoothProfile.ServiceListener {
 
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
             service = proxy as BluetoothHidDevice
-            service.registerApp(SDP, null, null, { it.run() }, HidServiceFacade)
+            registerApp()
         }
 
-        override fun onServiceDisconnected(profile: Int) {
-            Log.i(TAG, "onServiceDisconnected($profile)")
-            service.unregisterApp()
-        }
+        override fun onServiceDisconnected(profile: Int) { }
     }
 
     lateinit var service: BluetoothHidDevice
@@ -69,24 +82,25 @@ object HidServiceFacade : BluetoothHidDevice.Callback() {
     private val listeners: MutableCollection<BluetoothHidDevice.Callback> = HashSet()
     private var lastAppStatus: Pair<BluetoothDevice?, Boolean>? = null
 
+    val isRegistered: Boolean
+        get() = lastAppStatus!!.second
+
 
     init {
         bluetoothAdapter.getProfileProxy(
                 NumpadActivity.context,
-                SERVICE_LISTENER,
+                serviceListener,
                 BluetoothProfile.HID_DEVICE)
     }
 
     override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
         super.onAppStatusChanged(pluggedDevice, registered)
-        Log.i(TAG, "onAppStatusChanged(<${pluggedDevice?.name}>, $registered)")
         listeners.forEach { it.onAppStatusChanged(pluggedDevice, registered) }
         lastAppStatus = Pair(pluggedDevice, registered)
     }
 
     override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
         super.onConnectionStateChanged(device, state)
-        Log.i(TAG, "onConnectionStateChanged(<${device?.name}>, $state)")
         listeners.forEach { it.onConnectionStateChanged(device, state) }
     }
 
@@ -99,5 +113,7 @@ object HidServiceFacade : BluetoothHidDevice.Callback() {
     }
 
     fun unregisterHidDeviceListener(listener: BluetoothHidDevice.Callback) =
-        listeners.remove(listener)
+            listeners.remove(listener)
+
+    fun registerApp() = service.registerApp(SDP, null, null, { it.run() }, HidServiceFacade)
 }

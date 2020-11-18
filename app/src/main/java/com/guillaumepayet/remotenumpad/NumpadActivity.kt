@@ -49,6 +49,8 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
     companion object {
 
+        private const val COULD_NOT_CONNECT_DISPLAY_TIME = 2000L
+
         /**
          * The package where all the [IConnectionInterface] implementations can be found.
          */
@@ -131,24 +133,29 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         task?.cancel()
         task = null
 
-        val colorId = when (connectionStatus) {
-            R.string.status_disconnected -> R.color.disconnected
-            R.string.status_connecting, R.string.status_disconnecting -> R.color.working
-            R.string.status_connection_lost, R.string.status_could_not_connect -> R.color.failed
-            else -> R.color.connected
-        }
-
-        val color = ContextCompat.getColor(this, colorId)
-
         GlobalScope.launch(Dispatchers.Main) {
+            val colorId = when (connectionStatus) {
+                R.string.status_disconnecting -> R.color.working
+                R.string.status_connection_lost -> R.color.failed
+                R.string.status_connecting -> {
+                    connect_button.isEnabled = false
+                    R.color.working
+                }
+                R.string.status_disconnected -> {
+                    connect_button.isEnabled = true
+                    R.color.disconnected
+                }
+                R.string.status_could_not_connect -> {
+                    task = Timer().schedule(COULD_NOT_CONNECT_DISPLAY_TIME) { disconnect() }
+                    R.color.failed
+                }
+                else -> R.color.connected
+            }
+
+            val color = ContextCompat.getColor(context, colorId)
             status_text.text = getString(connectionStatus)
             status_text.setTextColor(color)
         }
-
-        if (connectionStatus == R.string.status_could_not_connect)
-            task = Timer().schedule(2000) {
-                disconnect()
-            }
     }
 
 
@@ -195,6 +202,9 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
      * Closes an open connection.
      */
     private fun disconnect() = GlobalScope.launch {
+        task?.cancel()
+        task = null
+
         connectionInterface?.close()
         connectionInterface = null
     }
