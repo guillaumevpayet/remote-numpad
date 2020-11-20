@@ -19,6 +19,7 @@
 package com.guillaumepayet.remotenumpad.settings
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.fragment.app.commit
 import androidx.preference.EditTextPreference
@@ -26,6 +27,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.guillaumepayet.remotenumpad.R
+import java.util.*
 
 /**
  * The base of a settings page. This page contains the general settings and can be extended to
@@ -72,20 +74,31 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
 
             val context = preference.context
 
-            if (preference.key == context.getString(R.string.pref_key_connection_interface)) {
+            when (preference.key) {
+                context.getString(R.string.pref_key_connection_interface) -> {
+                    val packageName = "$SETTINGS_PACKAGE.$stringValue"
+                    val className = stringValue.capitalize(Locale.ROOT) + "PreferenceFragment"
 
-                val packageName = "$SETTINGS_PACKAGE.$stringValue"
-                val className = stringValue.capitalize() + "PreferenceFragment"
+                    val fragment = try {
+                        val clazz = Class.forName("$packageName.$className")
+                        clazz.newInstance() as BasePreferenceFragment
+                    } catch (e: Exception) {
+                        BasePreferenceFragment()
+                    }
 
-                val fragment = try {
-                    val clazz = Class.forName("$packageName.$className")
-                    clazz.newInstance() as BasePreferenceFragment
-                } catch (e: Exception) {
-                    BasePreferenceFragment()
+                    if (fragment::class.java.canonicalName != this::class.java.canonicalName) {
+                        parentFragmentManager.commit { replace(android.R.id.content, fragment) }
+                    }
                 }
+                context.getString(R.string.pref_key_theme) -> {
+                    val nightMode = when (stringValue) {
+                        context.getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
+                        context.getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
+                        else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                    }
 
-                if (fragment::class.java.canonicalName != this::class.java.canonicalName) {
-                    parentFragmentManager.commit { replace(android.R.id.content, fragment) }
+                    if (AppCompatDelegate.getDefaultNightMode() != nightMode)
+                        AppCompatDelegate.setDefaultNightMode(nightMode)
                 }
             }
         } else {
@@ -110,7 +123,7 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
 
         entries.zip(entryValues).forEach { (entry, entryValue) ->
             val packageName = "$SETTINGS_PACKAGE.$entryValue"
-            val className = entryValue.toString().capitalize() + "Validator"
+            val className = entryValue.toString().capitalize(Locale.ROOT) + "Validator"
 
             try {
                 val clazz = Class.forName("$packageName.$className")
@@ -135,6 +148,9 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         bindPreferenceSummaryToValue(preference)
+
+        val themePreference: ListPreference = findPreference(getString(R.string.pref_key_theme))!!
+        bindPreferenceSummaryToValue(themePreference)
     }
 
     override fun onDestroy() {

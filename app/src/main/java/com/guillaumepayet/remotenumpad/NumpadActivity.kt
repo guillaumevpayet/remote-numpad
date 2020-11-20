@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.guillaumepayet.remotenumpad.connection.*
 import com.guillaumepayet.remotenumpad.controller.VirtualNumpad
@@ -93,6 +94,15 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
             key_numlock.visibility = View.VISIBLE
             key_backspace.visibility = View.INVISIBLE
         }
+
+        val nightMode = when (preferences.getString(getString(R.string.pref_key_theme), getString(R.string.pref_system_theme_mode_entry_value))) {
+            getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
+            getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+
+        if (AppCompatDelegate.getDefaultNightMode() != nightMode)
+            AppCompatDelegate.setDefaultNightMode(nightMode)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

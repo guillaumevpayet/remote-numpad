@@ -82,6 +82,30 @@
     <string name="pref_key_backspace" translatable="false">backspace</string>
     <string name="pref_title_backspace">\"backspace\" instead of \"numlock\"</string>
 
+    <string name="pref_light_mode_entry_value" translatable="false">light</string>
+    <string name="pref_light_mode_entry">Light</string>
+
+    <string name="pref_dark_mode_entry_value" translatable="false">dark</string>
+    <string name="pref_dark_mode_entry">Dark</string>
+
+    <string name="pref_system_theme_mode_entry_value" translatable="false">default</string>
+    <string name="pref_system_theme_mode_entry">System default</string>
+
+    <string name="pref_key_theme" translatable="false">theme</string>
+    <string name="pref_title_theme">Theme</string>
+
+    <string-array name="pref_theme_values">
+        <item>@string/pref_light_mode_entry_value</item>
+        <item>@string/pref_dark_mode_entry_value</item>
+        <item>@string/pref_system_theme_mode_entry_value</item>
+    </string-array>
+
+    <string-array name="pref_theme_titles">
+        <item>@string/pref_light_mode_entry</item>
+        <item>@string/pref_dark_mode_entry</item>
+        <item>@string/pref_system_theme_mode_entry</item>
+    </string-array>
+
     <!-- General host-related settings -->
 
     <string name="pref_title_host">Host</string>

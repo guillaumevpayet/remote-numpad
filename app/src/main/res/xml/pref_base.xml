@@ -1,4 +1,4 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
@@ -7,18 +7,24 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        app:defaultValue="@string/pref_socket_entry_value"
-        app:entries="@array/pref_connection_interface_titles"
-        app:entryValues="@array/pref_connection_interface_values"
-        app:key="@string/pref_key_connection_interface"
-        app:title="@string/pref_title_connection_interface" />
+        android:defaultValue="@string/pref_socket_entry_value"
+        android:entries="@array/pref_connection_interface_titles"
+        android:entryValues="@array/pref_connection_interface_values"
+        android:key="@string/pref_key_connection_interface"
+        android:title="@string/pref_title_connection_interface" />
     <SwitchPreferenceCompat
-        app:defaultValue="true"
-        app:key="@string/pref_key_vibrations"
-        app:title="@string/pref_title_vibrations" />
+        android:defaultValue="true"
+        android:key="@string/pref_key_vibrations"
+        android:title="@string/pref_title_vibrations" />
     <SwitchPreferenceCompat
-        app:defaultValue="false"
-        app:key="@string/pref_key_backspace"
-        app:title="@string/pref_title_backspace" />
+        android:defaultValue="false"
+        android:key="@string/pref_key_backspace"
+        android:title="@string/pref_title_backspace" />
+    <ListPreference
+        android:defaultValue="@string/pref_system_theme_mode_entry_value"
+        android:entries="@array/pref_theme_titles"
+        android:entryValues="@array/pref_theme_values"
+        android:key="@string/pref_key_theme"
+        android:title="@string/pref_title_theme" />
 
 </PreferenceScreen>
