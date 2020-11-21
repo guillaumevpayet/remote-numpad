@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,10 +57,18 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
          */
         private val CONNECTION_INTERFACES_PACKAGE = this::class.java.`package`?.name + ".connection"
 
+        /**
+         * The Activity's context.
+         */
         lateinit var context: Context
             private set
 
 
+        /**
+         * Sets the application's night mode based on the preferences.
+         *
+         * @param nightModeString The string from the preferences
+         */
         fun setNightMode(nightModeString: String?) {
             val nightMode = when (nightModeString) {
                 context.getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO

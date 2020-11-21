@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,7 @@ import kotlinx.coroutines.launch
  *
  * @constructor Prepare the listener
  * @param keypad The keypad to listen for key events
- *
- * Created by guillaume on 12/28/17.
- */
+ **/
 class KeyEventSender(keypad: IKeypad) : IKeypadListener, IDataSender {
 
     private val connectionInterfaces: MutableCollection<IConnectionInterface> = HashSet()

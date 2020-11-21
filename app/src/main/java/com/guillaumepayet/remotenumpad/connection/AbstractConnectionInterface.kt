@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,7 @@ import kotlinx.coroutines.withContext
  *
  * @constructor Adds itself as an observer of the [IDataSender]
  * @param sender The [IDataSender] this class will listen to
- *
- * Created by guillaume on 1/17/18.
- */
+ **/
 abstract class AbstractConnectionInterface(private val sender: IDataSender) : IConnectionInterface {
 
     private val listeners: MutableCollection<IConnectionStatusListener> = HashSet()

@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,7 @@ import com.guillaumepayet.remotenumpad.R
  * through the Bluetooth HID protocol.
  *
  * @param string The string representation of the key event
- *
- * Created by guillaume on 11/15/20.
- */
+ **/
 class KeyboardReport(string: String) {
 
     val bytes = ByteArray(3) { 0 }
@@ -45,7 +43,7 @@ class KeyboardReport(string: String) {
         const val ID = 8
 
         private fun getKeyCode(keyString: String): Byte {
-            val context = NumpadActivity.context!!
+            val context = NumpadActivity.context
 
             return when (keyString) {
                 context.getString(R.string.key_value_numlock) -> 83

@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,7 @@ import java.util.*
 /**
  * The base of a settings page. This page contains the general settings and can be extended to
  * provide more options.
- *
- * Created by guillaume on 1/15/18.
- */
+ **/
 open class BasePreferenceFragment : PreferenceFragmentCompat() {
 
     companion object {

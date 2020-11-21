@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ import androidx.annotation.RequiresApi
 import com.guillaumepayet.remotenumpad.NumpadActivity
 import kotlin.collections.HashSet
 
+/**
+ * A service facade (singleton) to interface with the Bluetooth HID profile.
+ */
 @RequiresApi(Build.VERSION_CODES.P)
 object HidServiceFacade : BluetoothHidDevice.Callback() {
 

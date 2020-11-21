@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,10 @@ import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionI
 import com.guillaumepayet.remotenumpad.settings.bluetooth.BluetoothValidator
 
 /**
- * When an [IConnectionInterface] is developped. A validator can be created to verify whether the
- * requirements are met.
+ * When an [IConnectionInterface] is developed. A validator can be* requirements are met.
  *
  * For example, the [BluetoothValidator] verifies that a Bluetooth exists to confirm that a
  * [BluetoothConnectionInterface] can be used.
- *
- * Created by guillaume on 28/04/18.
  */
 interface IConnectionInterfaceValidator {
 

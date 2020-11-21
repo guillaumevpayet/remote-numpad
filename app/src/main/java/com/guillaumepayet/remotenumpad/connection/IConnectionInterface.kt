@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@ package com.guillaumepayet.remotenumpad.connection
  * This interface describes how an object can send data to a network or other interface for cross-
  * -application communication. When the connection status of the connection changes,
  * [IConnectionStatusListener] objects are notified.
- *
- * Created by guillaume on 12/28/17.
  *
  * @see IConnectionStatusListener
  */

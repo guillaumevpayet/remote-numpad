@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@ package com.guillaumepayet.remotenumpad.controller
 
 /**
  * Keypads notify [IKeypadListener] objects about key events.
- *
- * Created by guillaume on 12/27/17.
  *
  * @see IKeypadListener
  */

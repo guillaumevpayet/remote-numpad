@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,7 @@ import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 /**
  * This preference screen provides a way to scan and pick the host to connect to via the
  * [SocketConnectionInterface]. There is also an option to key in the host's IP address if known.
- *
- * Created by guillaume on 1/15/18.
- */
+ **/
 class SocketPreferenceFragment : BasePreferenceFragment() {
 
     override val host: String

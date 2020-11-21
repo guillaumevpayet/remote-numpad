@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,13 @@ package com.guillaumepayet.remotenumpad.settings.hid
 import android.bluetooth.BluetoothAdapter
 import android.os.Build
 import androidx.annotation.Keep
+import com.guillaumepayet.remotenumpad.connection.hid.HidConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.IConnectionInterfaceValidator
 
+/**
+ * Validator used to check whether a [BluetoothAdapter] is available and the Android version is at
+ * least Android P (API 28) in which case the [HidConnectionInterface] can be used.
+ */
 @Keep
 class HidValidator : IConnectionInterfaceValidator {
 

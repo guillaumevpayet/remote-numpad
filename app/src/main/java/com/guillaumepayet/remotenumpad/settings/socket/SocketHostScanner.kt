@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,7 @@ import java.net.Socket
  *
  * @constructor Prepare the address range to scan
  * @param preferenceFragment The fragment which intends to start the scan and know its result
- *
- * Created by guillaume on 1/17/18.
- */
+ **/
 class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment) : IDataSender {
 
     private val hostAddressStart: String

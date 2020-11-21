@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,6 @@ import org.powermock.modules.junit4.PowerMockRunner
 
 /**
  * Test suite for testing the [Key] widget.
- *
- * Created by guillaume on 12/26/17.
  *
  * @see Key
  */

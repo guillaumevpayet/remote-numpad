@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,14 @@ import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.preference.ListPreference
 import com.guillaumepayet.remotenumpad.R
+import com.guillaumepayet.remotenumpad.connection.hid.HidConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.hid.HidServiceFacade
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 
+/**
+ * This settings page provides a way to list and select a paired device as the host for a
+ * [HidConnectionInterface].
+ **/
 @Keep
 @RequiresApi(Build.VERSION_CODES.P)
 class HidPreferenceFragment : BasePreferenceFragment() {

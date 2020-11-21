@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,6 @@ import java.net.SocketException
  * This class handles the IP connection through which a [IDataSender] object sends data.
  *
  * @param sender The [IDataSender] to listen for data to send
- *
- * Created by guillaume on 12/29/17.
  *
  * @see IDataSender
  */

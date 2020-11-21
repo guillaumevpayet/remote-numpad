@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,6 @@ import java.io.OutputStreamWriter
 
 /**
  * This test suite tests the [BluetoothConnectionInterface] class.
- *
- * Created by guillaume on 12/29/17.
  *
  * @see BluetoothConnectionInterface
  */

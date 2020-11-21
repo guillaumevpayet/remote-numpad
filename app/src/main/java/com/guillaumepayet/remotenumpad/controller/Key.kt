@@ -1,6 +1,6 @@
 /*
  * Remote Numpad - a numpad application on Android for PCs lacking one.
- * Copyright (C) 2016-2018 Guillaume Payet
+ * Copyright (C) 2016-2020 Guillaume Payet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,7 @@ import com.guillaumepayet.remotenumpad.R
  *
  * @param context The context of the application
  * @param attrs   The attributes from the XML
- *
- * Created by guillaume on 12/25/17.
- */
+ **/
 class Key(context: Context, attrs: AttributeSet) : AppCompatButton(context, attrs) {
 
     /**
