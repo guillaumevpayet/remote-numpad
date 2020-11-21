@@ -26,6 +26,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.guillaumepayet.remotenumpad.NumpadActivity
 import com.guillaumepayet.remotenumpad.R
 import java.util.*
 
@@ -75,6 +76,7 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
             val context = preference.context
 
             when (preference.key) {
+                context.getString(R.string.pref_key_theme) -> NumpadActivity.setNightMode(stringValue)
                 context.getString(R.string.pref_key_connection_interface) -> {
                     val packageName = "$SETTINGS_PACKAGE.$stringValue"
                     val className = stringValue.capitalize(Locale.ROOT) + "PreferenceFragment"
@@ -89,16 +91,6 @@ open class BasePreferenceFragment : PreferenceFragmentCompat() {
                     if (fragment::class.java.canonicalName != this::class.java.canonicalName) {
                         parentFragmentManager.commit { replace(android.R.id.content, fragment) }
                     }
-                }
-                context.getString(R.string.pref_key_theme) -> {
-                    val nightMode = when (stringValue) {
-                        context.getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
-                        context.getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
-                        else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-                    }
-
-                    if (AppCompatDelegate.getDefaultNightMode() != nightMode)
-                        AppCompatDelegate.setDefaultNightMode(nightMode)
                 }
             }
         } else {

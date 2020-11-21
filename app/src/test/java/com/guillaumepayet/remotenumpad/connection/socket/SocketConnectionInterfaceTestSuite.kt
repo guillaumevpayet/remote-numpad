@@ -129,27 +129,6 @@ class SocketConnectionInterfaceTestSuite {
     }
 
     @Test
-    fun openingConnectionWithValidConnectionOpen_ConnectingThenConnectedThenAlreadyConnected() {
-        // Given that a working listener was injected...
-        val connectionInterface = createConnectionInterface()
-
-        runBlocking {
-            // ...and a valid connection is already open...
-            connectionInterface.open(VALID_HOST)
-
-            // ...when the connection interface opens a connection with a valid host...
-            connectionInterface.open(VALID_HOST)
-        }
-
-        // ...then the connection interface does not attempt a second connection.
-        val inOrder = inOrder(mockListener, mockSocket)
-        then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_connecting)
-        then(mockSocket).should(inOrder, times(1))?.outputStream
-        then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_connected)
-        then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_already_connected)
-    }
-
-    @Test
     fun closingConnectionWithNoneOpen_NothingHappens() {
         // Given that a working listener was injected...
         val connectionInterface = createConnectionInterface()

@@ -20,7 +20,6 @@ package com.guillaumepayet.remotenumpad.connection.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
-import android.util.Log
 import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
@@ -62,50 +61,45 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
 
 
     override suspend fun open(host: String) = withContext(Dispatchers.IO) {
-        if (writer != null) {
-            onConnectionStatusChange(R.string.status_already_connected)
-        } else {
-            onConnectionStatusChange(R.string.status_connecting)
+        onConnectionStatusChange(R.string.status_connecting)
 
-            try {
-                val device = bluetoothAdapter.getRemoteDevice(host)
-                socket = device.createRfcommSocketToServiceRecord(NUMPAD_UUID)
-                socket?.connect()
-                writer = socket?.outputStream?.writer()
-                onConnectionStatusChange(R.string.status_connected)
-            } catch (e: IOException) {
-                onConnectionStatusChange(R.string.status_could_not_connect)
-
-                writer = null
-
-                socket?.close()
-                socket = null
-            }
+        try {
+            val device = bluetoothAdapter.getRemoteDevice(host)
+            socket = device.createRfcommSocketToServiceRecord(NUMPAD_UUID)
+            socket?.connect()
+            writer = socket?.outputStream?.writer()
+            onConnectionStatusChange(R.string.status_connected)
+        } catch (e: IOException) {
+            closeConnection()
+            onConnectionStatusChange(R.string.status_could_not_connect)
         }
     }
 
     override suspend fun close() = withContext(Dispatchers.IO) {
         super.close()
         onConnectionStatusChange(R.string.status_disconnecting)
-
-        writer?.close()
-        writer = null
-
-        socket?.close()
-        socket = null
-
+        closeConnection()
         onConnectionStatusChange(R.string.status_disconnected)
     }
 
     override suspend fun sendString(string: String): Boolean = withContext(Dispatchers.IO) {
-        Log.i("HidConnectionInterface", "BluetoothConnectionInterface.sendString($string)")
         try {
             writer?.write(string)
             writer?.flush()
             true
         } catch (e: IOException) {
+            closeConnection()
             onConnectionStatusChange(R.string.status_connection_lost)
             false
         }
+    }
+
+
+    private fun closeConnection() {
+        writer?.close()
+        writer = null
+
+        socket?.close()
+        socket = null
     }
 }

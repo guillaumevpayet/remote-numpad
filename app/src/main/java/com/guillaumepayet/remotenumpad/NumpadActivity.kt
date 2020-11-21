@@ -59,6 +59,18 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
         lateinit var context: Context
             private set
+
+
+        fun setNightMode(nightModeString: String?) {
+            val nightMode = when (nightModeString) {
+                context.getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
+                context.getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
+                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
+
+            if (AppCompatDelegate.getDefaultNightMode() != nightMode)
+                AppCompatDelegate.setDefaultNightMode(nightMode)
+        }
     }
 
 
@@ -71,7 +83,9 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         context = baseContext
+
         setContentView(R.layout.activity_numpad)
         setSupportActionBar(toolbar)
 
@@ -95,14 +109,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
             key_backspace.visibility = View.INVISIBLE
         }
 
-        val nightMode = when (preferences.getString(getString(R.string.pref_key_theme), getString(R.string.pref_system_theme_mode_entry_value))) {
-            getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
-            getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
-            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        }
-
-        if (AppCompatDelegate.getDefaultNightMode() != nightMode)
-            AppCompatDelegate.setDefaultNightMode(nightMode)
+        setNightMode(preferences.getString(getString(R.string.pref_key_theme), getString(R.string.pref_system_theme_mode_entry_value)))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -140,23 +147,30 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
 
     override fun onConnectionStatusChange(connectionStatus: Int) {
-        task?.cancel()
-        task = null
-
         GlobalScope.launch(Dispatchers.Main) {
             val colorId = when (connectionStatus) {
-                R.string.status_disconnecting -> R.color.working
-                R.string.status_connection_lost -> R.color.failed
-                R.string.status_connecting -> {
-                    connect_button.isEnabled = false
-                    R.color.working
-                }
                 R.string.status_disconnected -> {
                     connect_button.isEnabled = true
                     R.color.disconnected
                 }
+                R.string.status_disconnecting -> {
+                    disconnect_button.isEnabled = false
+                    R.color.working
+                }
+                R.string.status_connecting -> {
+                    connect_button.isEnabled = false
+                    disconnect_button.isEnabled = true
+                    R.color.working
+                }
+                R.string.status_connection_lost,
                 R.string.status_could_not_connect -> {
-                    task = Timer().schedule(COULD_NOT_CONNECT_DISPLAY_TIME) { disconnect() }
+                    task = Timer().schedule(COULD_NOT_CONNECT_DISPLAY_TIME) {
+                        onConnectionStatusChange(R.string.status_disconnected)
+                    }
+
+                    connectionInterface = null
+                    connect_button.isEnabled = true
+                    disconnect_button.isEnabled = false
                     R.color.failed
                 }
                 else -> R.color.connected
@@ -174,8 +188,6 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
      * [IConnectionInterface]. Closes any open connections before attempting a new connection.
      */
     private fun connect() {
-        disconnect()
-
         val host = preferences.getString(getString(R.string.pref_key_host), getString(R.string.pref_no_host_entry_value))!!
 
         if (host == getString(R.string.pref_no_host_entry_value)) {
@@ -187,7 +199,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         val packageName = "$CONNECTION_INTERFACES_PACKAGE.$connectionInterfaceName"
         val prefix = "$packageName.${connectionInterfaceName?.capitalize(Locale.ROOT)}"
 
-        val validatorClass = Class.forName("${prefix}HostValidator")
+        val validatorClass = Class.forName(prefix + "HostValidator")
         val validator = validatorClass.newInstance() as IHostValidator
 
         if (!validator.isHostValid(host)) {
@@ -196,7 +208,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         }
 
         connectionInterface = try {
-            val clazz = Class.forName("${prefix}ConnectionInterface")
+            val clazz = Class.forName(prefix + "ConnectionInterface")
             val constructor = clazz.getConstructor(IDataSender::class.java)
             constructor.newInstance(keyEventSender) as IConnectionInterface
         } catch (e: Exception) {
@@ -204,18 +216,26 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
             null
         }
 
-        connectionInterface?.registerConnectionStatusListener(this)
-        GlobalScope.launch { connectionInterface?.open(host) }
+        if (connectionInterface != null) {
+            task?.cancel()
+            task = null
+
+            connectionInterface!!.registerConnectionStatusListener(this)
+            GlobalScope.launch { connectionInterface!!.open(host) }
+        }
+
     }
 
     /**
      * Closes an open connection.
      */
-    private fun disconnect() = GlobalScope.launch {
+    private fun disconnect() {
         task?.cancel()
         task = null
 
-        connectionInterface?.close()
-        connectionInterface = null
+        GlobalScope.launch {
+            connectionInterface?.close()
+            connectionInterface = null
+        }
     }
 }

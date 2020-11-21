@@ -8,7 +8,6 @@
     <string name="status_disconnected">Déconnecté</string>
     <string name="status_disconnecting">Déconnexion …</string>
     <string name="status_connection_lost">Connexion perdue</string>
-    <string name="status_already_connected">Déjà connecté</string>
     <string name="status_could_not_connect">Echec de la connexion</string>
     <string name="key_label_enter">entrée</string>
     <string name="key_label_decimal">,</string>

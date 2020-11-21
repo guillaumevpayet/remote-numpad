@@ -57,36 +57,22 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
 
 
     override suspend fun open(host: String) = withContext(Dispatchers.IO) {
-        if (writer != null) {
-            onConnectionStatusChange(R.string.status_already_connected)
-        } else {
-            onConnectionStatusChange(R.string.status_connecting)
+        onConnectionStatusChange(R.string.status_connecting)
 
-            try {
-                socket = openSocket(host)
-                writer = socket?.outputStream?.writer()
-                onConnectionStatusChange(R.string.status_connected)
-            } catch (e: IOException) {
-                onConnectionStatusChange(R.string.status_could_not_connect)
-
-                writer = null
-
-                socket?.close()
-                socket = null
-            }
+        try {
+            socket = openSocket(host)
+            writer = socket?.outputStream?.writer()
+            onConnectionStatusChange(R.string.status_connected)
+        } catch (e: IOException) {
+            closeConnection()
+            onConnectionStatusChange(R.string.status_could_not_connect)
         }
     }
 
     override suspend fun close() = withContext(Dispatchers.IO) {
         super.close()
         onConnectionStatusChange(R.string.status_disconnecting)
-
-        writer?.close()
-        writer = null
-
-        socket?.close()
-        socket = null
-
+        closeConnection()
         onConnectionStatusChange(R.string.status_disconnected)
     }
 
@@ -96,6 +82,7 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
             writer?.flush()
             true
         } catch (e: SocketException) {
+            closeConnection()
             onConnectionStatusChange(R.string.status_connection_lost)
             false
         }
@@ -114,5 +101,14 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
         val socket = Socket()
         socket.connect(endpoint, timeout)
         return@withContext socket
+    }
+
+
+    private fun closeConnection() {
+        writer?.close()
+        writer = null
+
+        socket?.close()
+        socket = null
     }
 }

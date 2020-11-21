@@ -12,7 +12,6 @@
     <string name="status_disconnected">Disconnected</string>
     <string name="status_disconnecting">Disconnecting…</string>
     <string name="status_connection_lost">Connection lost</string>
-    <string name="status_already_connected">Already connected</string>
     <string name="status_could_not_connect">Could not connect</string>
 
     <!-- Snackbar messages -->

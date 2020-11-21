@@ -20,7 +20,6 @@ package com.guillaumepayet.remotenumpad.connection.hid
 
 import android.bluetooth.*
 import android.os.Build
-import android.util.Log
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import com.guillaumepayet.remotenumpad.R
@@ -40,15 +39,25 @@ import kotlin.concurrent.schedule
 @RequiresApi(Build.VERSION_CODES.P)
 class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
 
-    private var hostDevice: BluetoothDevice? = null
+    companion object {
+        private const val TIMEOUT_DELAY = 3000L
+    }
+
+
+    private val bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
+    private var service: BluetoothHidDevice? = null
     private var timeoutTask: TimerTask? = null
+
+    private lateinit var hostDevice: BluetoothDevice
+
 
     private var connectionState: Int = BluetoothProfile.STATE_DISCONNECTED
         set(value) {
             when (value) {
                 BluetoothProfile.STATE_CONNECTING -> {
                     timeoutTask = Timer().schedule(TIMEOUT_DELAY) {
-                        connectionState = BluetoothProfile.STATE_DISCONNECTED
+                        service!!.disconnect(hostDevice)
                     }
                 }
                 BluetoothProfile.STATE_CONNECTED -> {
@@ -56,33 +65,43 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
                     timeoutTask = null
                     onConnectionStatusChange(R.string.status_connected)
                 }
+                BluetoothProfile.STATE_DISCONNECTING ->
+                    if (field == BluetoothProfile.STATE_CONNECTING || field == R.string.status_connection_lost)
+                        return
                 BluetoothProfile.STATE_DISCONNECTED -> {
                     timeoutTask?.cancel()
                     timeoutTask = null
 
+                    HidServiceFacade.unregisterHidDeviceListener(hidDeviceListener)
+
                     if (field == BluetoothProfile.STATE_CONNECTING)
                         onConnectionStatusChange(R.string.status_could_not_connect)
-                    else {
-                        HidServiceFacade.unregisterHidDeviceListener(hidDeviceListener)
+                    else if (field == BluetoothProfile.STATE_DISCONNECTING)
                         onConnectionStatusChange(R.string.status_disconnected)
-                        hostDevice = null
-                    }
+                }
+                R.string.status_connection_lost -> {
+                    service?.disconnect(hostDevice)
+                    onConnectionStatusChange(value)
                 }
             }
 
             field = value
         }
 
+
     private val hidDeviceListener = object: BluetoothHidDevice.Callback() {
 
         override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
             super.onAppStatusChanged(pluggedDevice, registered)
+
+            if (service != null) return
+
             service = HidServiceFacade.service
 
-            if (service!!.getConnectionState(hostDevice) == BluetoothProfile.STATE_CONNECTED) {
-                connectionState = BluetoothProfile.STATE_CONNECTED
-            } else {
-                service!!.connect(hostDevice)
+            when (val state = service!!.getConnectionState(hostDevice)) {
+                BluetoothProfile.STATE_CONNECTED,
+                BluetoothProfile.STATE_CONNECTING -> connectionState = state
+                else -> service!!.connect(hostDevice)
             }
         }
 
@@ -104,31 +123,19 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
     override suspend fun close() {
         super.close()
         onConnectionStatusChange(R.string.status_disconnecting)
-        service?.disconnect(hostDevice)
+
+        if (service == null || !service!!.disconnect(hostDevice))
+            connectionState = BluetoothProfile.STATE_DISCONNECTED
     }
 
     override suspend fun sendString(string: String): Boolean {
         val keyboardReport = KeyboardReport(string)
 
-        return if (hostDevice == null) {
-            Log.e(TAG, "No host device")
-            false
-        } else if (!service!!.sendReport(hostDevice, KeyboardReport.ID, keyboardReport.bytes)) {
-            Log.e(TAG, "Failed to send the HID report")
-            false
-        } else true
-    }
-
-
-    companion object {
-        private const val TAG = "HidConnectionInterface"
-
-        private const val TIMEOUT_DELAY = 3000L
-
-        private val bluetoothAdapter: BluetoothAdapter by lazy {
-            BluetoothAdapter.getDefaultAdapter()
+        if (service == null || !service!!.sendReport(hostDevice, KeyboardReport.ID, keyboardReport.bytes)) {
+            connectionState = R.string.status_connection_lost
+            return false
         }
 
-        private var service: BluetoothHidDevice? = null
+        return true
     }
 }
