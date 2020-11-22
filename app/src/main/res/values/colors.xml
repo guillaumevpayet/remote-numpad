@@ -19,11 +19,11 @@
 
 <resources>
     <color name="colorPrimary">#436AAA</color>
-    <color name="colorAccent">#8567AA</color>
+    <color name="colorAccent">#AC92F3</color>
 
     <!-- Colors for the status label -->
     <color name="disconnected">#888</color>
-    <color name="connected">#00F</color>
+    <color name="connected">#48F</color>
     <color name="working">#FA0</color>
     <color name="failed">#F00</color>
 </resources>
