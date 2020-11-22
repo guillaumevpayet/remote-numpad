@@ -1,0 +1,9 @@
+Avec Remote Numpad, vous pouvez profiter du confort d'un pavé numérique sur votre ordinateur portable.
+
+IMPORTANT: Pour pouvoir utiliser Remote Numpad avec un ordinateur, vous aurez besoin de télécharger l'application serveur depuis "https://github.com/theolizard/remote-numpad-server/releases" et vous assurer que celle-ci est en route quand vous essayez de vous connecter. Le serveur requiert Java pour fonctionner. Si vous ne l'avez pas, vous pouvez le telecharger depuis "java.com". Une vidéo tutorielle se trouve à "https://youtu.be/xTfQparcgg4".
+
+L'application serveur est disponible en tant qu'un simple fichier executable sur Windows, MacOS et Linux. Tout ce que vous devez faire est double-cliquer sur celui-ci et le serveur apparaîtra dans la barre d'état système.
+
+Vous avez le choix de vous connecter à votre ordinateur via TCP (WiFi sur reseaux local) ou Bluetooth (sauf sur Linux).
+
+Le projet est open source et toutes contributions sont les bienvenues à "https://github.com/theolizard/remote-numpad".
