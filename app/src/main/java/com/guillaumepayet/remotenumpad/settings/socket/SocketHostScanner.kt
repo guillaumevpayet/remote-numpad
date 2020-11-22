@@ -20,8 +20,6 @@ package com.guillaumepayet.remotenumpad.settings.socket
 
 import android.content.Context
 import android.net.wifi.WifiManager
-import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
-import com.guillaumepayet.remotenumpad.connection.IDataSender
 import com.guillaumepayet.remotenumpad.connection.socket.SocketConnectionInterface
 import kotlinx.coroutines.*
 import java.io.IOException
@@ -35,7 +33,7 @@ import java.net.Socket
  * @constructor Prepare the address range to scan
  * @param preferenceFragment The fragment which intends to start the scan and know its result
  **/
-class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment) : IDataSender {
+class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment) {
 
     private val hostAddressStart: String
 
@@ -53,9 +51,6 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
                 ((clientAddress shr 8) and 0xFF).toString() + '.' +
                 ((clientAddress shr 16) and 0xFF).toString() + '.'
     }
-
-    override fun registerConnectionInterface(connectionInterface: IConnectionInterface) {}
-    override fun unregisterConnectionInterface(connectionInterface: IConnectionInterface) {}
 
     /**
      * Start to scan the IP addresses for a Remote Numpad Server.

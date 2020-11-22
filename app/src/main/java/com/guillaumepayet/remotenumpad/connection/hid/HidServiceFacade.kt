@@ -75,7 +75,7 @@ object HidServiceFacade : BluetoothHidDevice.Callback() {
             registerApp()
         }
 
-        override fun onServiceDisconnected(profile: Int) { }
+        override fun onServiceDisconnected(profile: Int) {}
     }
 
     lateinit var service: BluetoothHidDevice
@@ -85,16 +85,6 @@ object HidServiceFacade : BluetoothHidDevice.Callback() {
     private val listeners: MutableCollection<BluetoothHidDevice.Callback> = HashSet()
     private var lastAppStatus: Pair<BluetoothDevice?, Boolean>? = null
 
-    val isRegistered: Boolean
-        get() = lastAppStatus!!.second
-
-
-    init {
-        bluetoothAdapter.getProfileProxy(
-                NumpadActivity.context,
-                serviceListener,
-                BluetoothProfile.HID_DEVICE)
-    }
 
     override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
         super.onAppStatusChanged(pluggedDevice, registered)
@@ -108,6 +98,36 @@ object HidServiceFacade : BluetoothHidDevice.Callback() {
     }
 
 
+    /**
+     * Opens a connection (proxy) to the Bluetooth HID service (profile).
+     */
+    fun openService() {
+        bluetoothAdapter.getProfileProxy(
+                NumpadActivity.context,
+                serviceListener,
+                BluetoothProfile.HID_DEVICE)
+    }
+
+    /**
+     * Closes the connection (proxy) to the Bluetooth HID device service (profile).
+     */
+//    fun closeService() {
+//        bluetoothAdapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, service)
+//    }
+
+    /**
+     * Registers the app SDP into the HID profile descriptor.
+     */
+    fun registerApp() {
+        if (lastAppStatus?.second != true && this::service.isInitialized)
+            service.registerApp(SDP, null, null, { it.run() }, HidServiceFacade)
+    }
+
+    /**
+     * Registers an HID device listener for device connection events.
+     *
+     * @param listener The listener to register
+     */
     fun registerHidDeviceListener(listener: BluetoothHidDevice.Callback) {
         listeners.add(listener)
 
@@ -115,8 +135,11 @@ object HidServiceFacade : BluetoothHidDevice.Callback() {
             listener.onAppStatusChanged(lastAppStatus!!.first, lastAppStatus!!.second)
     }
 
+    /**
+     * Unregister a previously registered HID device listener.
+     *
+     * @param listener The listener to unregister
+     */
     fun unregisterHidDeviceListener(listener: BluetoothHidDevice.Callback) =
             listeners.remove(listener)
-
-    fun registerApp() = service.registerApp(SDP, null, null, { it.run() }, HidServiceFacade)
 }

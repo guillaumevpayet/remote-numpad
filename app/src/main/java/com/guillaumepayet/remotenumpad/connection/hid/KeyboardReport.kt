@@ -43,9 +43,12 @@ class KeyboardReport(string: String) {
         const val ID = 8
 
         private fun getKeyCode(keyString: String): Byte {
-            val context = NumpadActivity.context
+            if (NumpadActivity.context == null) return 156.toByte()  // Clear
+
+            val context = NumpadActivity.context!!
 
             return when (keyString) {
+                context.getString(R.string.key_value_backspace) -> 42
                 context.getString(R.string.key_value_numlock) -> 83
                 context.getString(R.string.key_divide) -> 84
                 context.getString(R.string.key_multiply) -> 85
@@ -63,7 +66,7 @@ class KeyboardReport(string: String) {
                 context.getString(R.string.key_9) -> 97
                 context.getString(R.string.key_0) -> 98
                 context.getString(R.string.key_value_decimal) -> 99
-                else -> 42  // Backspace
+                else -> 156.toByte()    // Clear
             }.toByte()
         }
     }

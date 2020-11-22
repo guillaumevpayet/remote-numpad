@@ -21,15 +21,10 @@ package com.guillaumepayet.remotenumpad.settings.hid
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothHidDevice
-import android.bluetooth.BluetoothProfile
-import android.companion.AssociationRequest
-import android.companion.BluetoothDeviceFilter
 import android.companion.CompanionDeviceManager
 import android.content.*
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -38,7 +33,6 @@ import androidx.annotation.RequiresApi
 import androidx.preference.ListPreference
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.HidConnectionInterface
-import com.guillaumepayet.remotenumpad.connection.hid.HidServiceFacade
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 
 /**
@@ -49,6 +43,12 @@ import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 @RequiresApi(Build.VERSION_CODES.P)
 class HidPreferenceFragment : BasePreferenceFragment() {
 
+    companion object {
+        private val bluetoothAdapter: BluetoothAdapter by lazy {
+            BluetoothAdapter.getDefaultAdapter()
+        }
+    }
+
     override val host: String
         get() = hostPreference.value
 
@@ -57,50 +57,14 @@ class HidPreferenceFragment : BasePreferenceFragment() {
         findPreference(getString(R.string.pref_key_hid_host))!!
     }
 
-    private val companionDeviceManager: CompanionDeviceManager by lazy {
-        requireContext().getSystemService(CompanionDeviceManager::class.java)
-    }
-
-    private val hidDeviceListener = object: BluetoothHidDevice.Callback() {
-
-        override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
-            super.onConnectionStateChanged(device, state)
-
-            when (state) {
-                BluetoothProfile.STATE_CONNECTED -> HidServiceFacade.service.disconnect(device)
-                BluetoothProfile.STATE_DISCONNECTED -> updateDeviceList()
-            }
-        }
-    }
-
-    private val companionDeviceManagerListener = object: CompanionDeviceManager.Callback() {
-
-        override fun onDeviceFound(chooserLauncher: IntentSender?) {
-            startIntentSenderForResult(
-                    chooserLauncher,
-                    PAIRING_REQUEST_CODE,
-                    null,
-                    0,
-                    0,
-                    0,
-                    null)
-        }
-
-        override fun onFailure(error: CharSequence?) {
-            Log.e(TAG, "Failed to pair with device: $error")
-        }
-    }
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         super.onCreatePreferences(savedInstanceState, rootKey)
         addPreferencesFromResource(R.xml.pref_hid)
 
-        if (!bluetoothAdapter.isEnabled) {
+        if (!bluetoothAdapter.isEnabled)
             disableHid()
-        } else {
+        else
             updateDeviceList()
-            HidServiceFacade.registerHidDeviceListener(hidDeviceListener)
-        }
 
         bindPreferenceSummaryToValue(hostPreference)
     }
@@ -111,41 +75,26 @@ class HidPreferenceFragment : BasePreferenceFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId != R.id.action_hid_pair)
-            return super.onOptionsItemSelected(item)
-
-        if (!HidServiceFacade.isRegistered)
-            HidServiceFacade.registerApp()
-
-        val deviceFilter = BluetoothDeviceFilter.Builder().build()
-
-        val pairingRequest = AssociationRequest.Builder()
-                .addDeviceFilter(deviceFilter)
-                .build()
-
-        companionDeviceManager.associate(
-                pairingRequest,
-                companionDeviceManagerListener,
-                null)
-
-        return true
+        return if (item.itemId == R.id.action_hid_pair) {
+            HidPairingManager(this).openDialog()
+            true
+        } else
+            super.onOptionsItemSelected(item)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != PAIRING_REQUEST_CODE || resultCode != Activity.RESULT_OK)
+        if (requestCode != HidPairingManager.PAIRING_REQUEST_CODE || resultCode != Activity.RESULT_OK)
             return super.onActivityResult(requestCode, resultCode, data)
 
         val device: BluetoothDevice? = data?.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE)
         device!!.createBond()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        HidServiceFacade.unregisterHidDeviceListener(hidDeviceListener)
-    }
 
-
-    private fun updateDeviceList() {
+    /**
+     * Updates the [ListPreference] entries for devices.
+     */
+    fun updateDeviceList() {
         val devices = bluetoothAdapter.bondedDevices
 
         val (entries, entryValues) = if (devices.isEmpty()) {
@@ -161,6 +110,7 @@ class HidPreferenceFragment : BasePreferenceFragment() {
             hostPreference.value = entryValues[0]
     }
 
+
     /**
      * Disables the HID option in the settings page.
      */
@@ -168,15 +118,5 @@ class HidPreferenceFragment : BasePreferenceFragment() {
         hostPreference.entries = arrayOf(getString(R.string.pref_no_host_entry))
         hostPreference.entryValues = arrayOf(getString(R.string.pref_no_host_entry_value))
         hostPreference.value = getString(R.string.pref_no_host_entry_value)
-    }
-
-    companion object {
-
-        private const val TAG = "HidPreferenceFragment"
-        private const val PAIRING_REQUEST_CODE = 3
-
-        private val bluetoothAdapter: BluetoothAdapter by lazy {
-            BluetoothAdapter.getDefaultAdapter()
-        }
     }
 }

@@ -21,9 +21,9 @@ devices down to API level 16. It is made up of 2 activities, the main
 
 The *NumpadActivity* is the activity that displays the numpad using a
 *ConstraintLayout* and sending them through an *IConnectionInterface* that is
-decided by the user preferences. So far, wifi and classic Bluetooth (RFCOMM)
-are supported but BLE and Wifi-Direct are intended to be implemented in the
-future.
+decided by the user preferences. So far, wifi, classic Bluetooth (RFCOMM) and
+the Bluetooth HID profile are supported but BLE and Wifi-Direct are intended
+to be implemented in the future.
 
 The *SettingsActivity* is the activity which allows the user to select the
 interface through which to send the inputs and the location of the server.
@@ -41,5 +41,5 @@ Studio, IntelliJ, Eclipse) and then compiled.
 
 ## Contributing
 
-This is not a main project for me so help is very apreciated. Anyone is
+This is not a main project for me so help is very appreciated. Anyone is
 welcome to contribute to this project (issues, requests, pull requests).

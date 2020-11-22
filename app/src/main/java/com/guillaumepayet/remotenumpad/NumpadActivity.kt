@@ -60,7 +60,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         /**
          * The Activity's context.
          */
-        lateinit var context: Context
+        var context: Context? = null
             private set
 
 
@@ -70,9 +70,11 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
          * @param nightModeString The string from the preferences
          */
         fun setNightMode(nightModeString: String?) {
+            if (context == null) return
+
             val nightMode = when (nightModeString) {
-                context.getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
-                context.getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
+                context!!.getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
+                context!!.getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
 
@@ -184,7 +186,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
                 else -> R.color.connected
             }
 
-            val color = ContextCompat.getColor(context, colorId)
+            val color = ContextCompat.getColor(baseContext, colorId)
             status_text.text = getString(connectionStatus)
             status_text.setTextColor(color)
         }
