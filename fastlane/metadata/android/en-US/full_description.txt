@@ -1,9 +1,15 @@
+Server download: https://github.com/theolizard/remote-numpad-server/releases
+
 With Remote Numpad, you can add the convenience of a numeric keypad to your laptop.
 
-IMPORTANT: In order to use Remote Numpad with a laptop, you need to download the server application from "https://github.com/theolizard/remote-numpad-server/releases" and make sure it is running when attempting to connect. The server requires Java to operate. If you do not have it, you can download it from "java.com". A tutorial video can be found at "https://youtu.be/xTfQparcgg4".
+You can use this numpad in 3 different ways.
 
-The server application is available as a single file which will run on Windows, MacOS and Linux. All you have to do is double-click it and the server will appear in the system tray.
+Using the Bluetooth HID profile (experimental), you can use Remote Numpad with any Bluetooth-enabled device (Android P or more required).
 
-You can connect to the computer using either TCP (WiFi over local network) or Bluetooth (except on Linux).
+Using the classic Bluetooth or TCP (Wi-Fi) connections, a server application needs to be running on the device. The server can be downloaded from "https://github.com/theolizard/remote-numpad-server/releases" where you will also find more information.
+
+IMPORTANT: The classic Bluetoooth and TCP (Wi-Fi) connections WILL NOT WORK if the server is not running on the other device.
+
+A tutorial video can be found at "https://youtu.be/xTfQparcgg4".
 
 The project is open source and all contributions are welcome over at "https://github.com/theolizard/remote-numpad".
