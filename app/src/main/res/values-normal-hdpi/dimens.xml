@@ -2,6 +2,6 @@
 <resources>
     <dimen name="font_size_button">11sp</dimen>
     <dimen name="font_size_status">13sp</dimen>
-    <dimen name="font_size_key">26sp</dimen>
-    <dimen name="font_size_text_key">13sp</dimen>
+    <dimen name="font_size_key">32sp</dimen>
+    <dimen name="font_size_text_key">16sp</dimen>
 </resources>

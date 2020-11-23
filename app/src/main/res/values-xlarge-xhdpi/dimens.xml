@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="font_size_button">36sp</dimen>
-    <dimen name="font_size_status">38sp</dimen>
-    <dimen name="font_size_key">88sp</dimen>
-    <dimen name="font_size_text_key">44sp</dimen>
+    <dimen name="font_size_button">32sp</dimen>
+    <dimen name="font_size_status">40sp</dimen>
+    <dimen name="font_size_key">80sp</dimen>
+    <dimen name="font_size_text_key">48sp</dimen>
 </resources>
