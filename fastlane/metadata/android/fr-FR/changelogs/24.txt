@@ -1,0 +1,5 @@
+Le menu invisible a été réparé.
+
+Une nouvelle méthode de connexion a été ajoutée: le profil HID de Bluetooth. Cette option est expérimentale et n'est disponible que sur les appareils Android P et plus. Elle requiert que les appareils soient dé-jumelés et re-jumelés en utilisant le bouton dans les paramètres de l'appli.
+
+Le mode sombre a été ajouté à la demande générale.
