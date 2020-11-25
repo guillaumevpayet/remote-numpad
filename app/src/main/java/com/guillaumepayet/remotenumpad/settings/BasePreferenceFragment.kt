@@ -19,7 +19,7 @@
 package com.guillaumepayet.remotenumpad.settings
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.annotation.Keep
 import androidx.core.content.edit
 import androidx.fragment.app.commit
 import androidx.preference.EditTextPreference
@@ -34,6 +34,7 @@ import java.util.*
  * The base of a settings page. This page contains the general settings and can be extended to
  * provide more options.
  **/
+@Keep
 open class BasePreferenceFragment : PreferenceFragmentCompat() {
 
     companion object {

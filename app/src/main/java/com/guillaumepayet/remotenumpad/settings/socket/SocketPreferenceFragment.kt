@@ -27,6 +27,7 @@ import androidx.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.socket.SocketConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
@@ -36,6 +37,7 @@ import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
  * This preference screen provides a way to scan and pick the host to connect to via the
  * [SocketConnectionInterface]. There is also an option to key in the host's IP address if known.
  **/
+@Keep
 class SocketPreferenceFragment : BasePreferenceFragment() {
 
     override val host: String

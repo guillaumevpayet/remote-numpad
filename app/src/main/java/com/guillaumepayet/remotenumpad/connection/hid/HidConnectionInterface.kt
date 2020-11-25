@@ -26,6 +26,8 @@ import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -56,6 +58,9 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
         set(value) {
             when (value) {
                 BluetoothProfile.STATE_CONNECTING -> {
+                    timeoutTask?.cancel()
+                    timeoutTask = null
+
                     timeoutTask = Timer().schedule(TIMEOUT_DELAY) {
                         service!!.disconnect(hostDevice)
                     }
@@ -74,10 +79,12 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
 
                     HidServiceFacade.unregisterHidDeviceListener(hidDeviceListener)
 
-                    if (field == BluetoothProfile.STATE_CONNECTING)
-                        onConnectionStatusChange(R.string.status_could_not_connect)
-                    else if (field == BluetoothProfile.STATE_DISCONNECTING)
-                        onConnectionStatusChange(R.string.status_disconnected)
+                    when (field) {
+                        BluetoothProfile.STATE_CONNECTING, BluetoothProfile.STATE_DISCONNECTED ->
+                            onConnectionStatusChange(R.string.status_could_not_connect)
+                        BluetoothProfile.STATE_DISCONNECTING ->
+                            onConnectionStatusChange(R.string.status_disconnected)
+                    }
                 }
                 R.string.status_connection_lost -> {
                     service?.disconnect(hostDevice)
@@ -118,6 +125,10 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
         onConnectionStatusChange(R.string.status_connecting)
         hostDevice = bluetoothAdapter.getRemoteDevice(host)
         HidServiceFacade.registerHidDeviceListener(hidDeviceListener)
+
+        timeoutTask = Timer().schedule(TIMEOUT_DELAY) {
+            GlobalScope.launch { close() }
+        }
     }
 
     override suspend fun close() {
