@@ -8,4 +8,4 @@
 .externalNativeBuild
 
 *.apk
-
+*.json

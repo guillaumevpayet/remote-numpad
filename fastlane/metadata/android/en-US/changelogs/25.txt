@@ -1,0 +1,3 @@
+Added a new connection method: the Bluetooth HID profile. This option is experimental and is only available on Android P and up. It requires un-pairing the devices first and then re-pairing them using the button in the settings of the app.
+
+Added the much demanded dark mode and "keep the screen on".
