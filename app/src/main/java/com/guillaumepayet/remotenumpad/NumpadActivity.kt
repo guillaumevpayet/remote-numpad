@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.guillaumepayet.remotenumpad.connection.*
@@ -106,6 +107,11 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         keyEventSender = KeyEventSender(numpad)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        if (preferences.getBoolean(getString(R.string.pref_key_nosleep), false))
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        else
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onStart() {

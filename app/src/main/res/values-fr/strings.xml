@@ -36,4 +36,5 @@
     <string name="pref_dark_mode_entry">Sombre</string>
     <string name="pref_system_theme_mode_entry">Défaut du système</string>
     <string name="pref_title_theme">Thème</string>
+    <string name="pref_title_nosleep">Garder l\'écran allumé</string>
 </resources>
