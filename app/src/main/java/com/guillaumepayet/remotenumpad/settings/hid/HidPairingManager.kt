@@ -29,6 +29,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.guillaumepayet.remotenumpad.connection.hid.HidServiceFacade
+import java.lang.IllegalStateException
 
 /**
  * Manager class to handle the process of pairing a new device ready for the Bluetooth HID profile.
@@ -70,14 +71,18 @@ class HidPairingManager(private val preferenceFragment: HidPreferenceFragment) :
 
 
     override fun onDeviceFound(chooserLauncher: IntentSender?) {
-        preferenceFragment.startIntentSenderForResult(
-                chooserLauncher,
-                PAIRING_REQUEST_CODE,
-                null,
-                0,
-                0,
-                0,
-                null)
+        try {
+            preferenceFragment.startIntentSenderForResult(
+                    chooserLauncher,
+                    PAIRING_REQUEST_CODE,
+                    null,
+                    0,
+                    0,
+                    0,
+                    null)
+        } catch (e: IllegalStateException) {
+            throw IllegalStateException("Could not start device chooser (${e.javaClass.name}): ${e.message}")
+        }
     }
 
     override fun onFailure(error: CharSequence?) {

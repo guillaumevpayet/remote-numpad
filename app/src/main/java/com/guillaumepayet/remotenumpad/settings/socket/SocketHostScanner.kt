@@ -25,6 +25,8 @@ import kotlinx.coroutines.*
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketException
+import java.net.UnknownHostException
 
 /**
  * This scanner can search IP addresses and test ports to find potential hosts with a Remote Numpad
@@ -66,16 +68,25 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
 
                 try {
                     socket.connect(endpoint, 500)
-                } catch (e: IOException) {}
+                } catch (e: UnknownHostException) {
+                } catch (e: IOException) {
+                }
 
                 if (socket.isConnected) {
                     socket.outputStream.writer().use { writer ->
                         socket.inputStream.reader().buffered().use { reader ->
-                            writer.write("name\n")
-                            writer.flush()
+                            try {
+                                writer.write("name\n")
+                                writer.flush()
 
-                            val name = reader.readLine()
-                            hosts.add(Pair(name, address))
+                                val name = reader.readLine()
+                                hosts.add(Pair(name, address))
+                            } catch (e: SocketException) {
+                                if (socket.isClosed)
+                                    throw SocketClosedException()
+                                else
+                                    throw OtherSocketException()
+                            }
                         }
                     }
                 }

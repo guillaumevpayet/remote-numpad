@@ -22,6 +22,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
+import java.lang.IllegalStateException
 
 /**
  * An [AppCompatActivity] that presents a set of application settings. On
@@ -36,7 +37,11 @@ import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        supportFragmentManager.commit { replace(android.R.id.content, BasePreferenceFragment()) }
+        try {
+            super.onCreate(savedInstanceState)
+            supportFragmentManager.commit { replace(android.R.id.content, BasePreferenceFragment()) }
+        } catch (e: IllegalStateException) {
+            throw IllegalStateException("Could not start settings activity (${e.javaClass.name}): ${e.message}")
+        }
     }
 }
