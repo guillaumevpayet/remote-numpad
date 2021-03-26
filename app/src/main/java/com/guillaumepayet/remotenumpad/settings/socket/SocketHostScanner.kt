@@ -82,8 +82,8 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
                                 val name = reader.readLine()
                                 hosts.add(Pair(name, address))
                             } catch (e: SocketException) {
-                                if (socket.isClosed)
-                                    throw SocketClosedException()
+                                if (!socket.isBound)
+                                    throw SocketNotBoundException()
                                 else
                                     throw OtherSocketException()
                             }

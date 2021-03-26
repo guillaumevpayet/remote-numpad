@@ -19,6 +19,7 @@
 package com.guillaumepayet.remotenumpad
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
@@ -41,7 +42,8 @@ class SettingsActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             supportFragmentManager.commit { replace(android.R.id.content, BasePreferenceFragment()) }
         } catch (e: IllegalStateException) {
-            throw IllegalStateException("Could not start settings activity (${e.javaClass.name}): ${e.message}")
+            Toast.makeText(this, "Could not open settings", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 }
