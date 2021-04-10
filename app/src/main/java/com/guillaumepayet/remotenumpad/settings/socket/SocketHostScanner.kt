@@ -77,15 +77,21 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
                         socket.inputStream.reader().buffered().use { reader ->
                             try {
                                 writer.write("name\n")
-                                writer.flush()
+                            } catch (e: SocketException) {
+                                throw SocketWriteException()
+                            }
 
+                            try {
+                                writer.flush()
+                            } catch (e: SocketException) {
+                                throw SocketFlushException()
+                            }
+
+                            try {
                                 val name = reader.readLine()
                                 hosts.add(Pair(name, address))
                             } catch (e: SocketException) {
-                                if (!socket.isBound)
-                                    throw SocketNotBoundException()
-                                else
-                                    throw OtherSocketException()
+                                throw SocketReadException()
                             }
                         }
                     }
