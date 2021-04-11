@@ -18,6 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.settings.hid
 
+import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDevice
 import android.bluetooth.BluetoothProfile
@@ -26,25 +27,22 @@ import android.companion.BluetoothDeviceFilter
 import android.companion.CompanionDeviceManager
 import android.content.IntentSender
 import android.os.Build
-import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import com.guillaumepayet.remotenumpad.connection.hid.HidServiceFacade
-import java.lang.IllegalStateException
 
 /**
  * Manager class to handle the process of pairing a new device ready for the Bluetooth HID profile.
  */
 @RequiresApi(Build.VERSION_CODES.P)
-class HidPairingManager(private val preferenceFragment: HidPreferenceFragment) : CompanionDeviceManager.Callback() {
+class HidPairingManager(private val fragment: HidSettingsFragment) {
 
-    companion object {
-        private const val TAG = "HidPairingManager"
-
-        const val PAIRING_REQUEST_CODE = 3
-    }
+    private val pairingLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     private val companionDeviceManager: CompanionDeviceManager =
-        preferenceFragment.requireContext().getSystemService(CompanionDeviceManager::class.java)
+        fragment.requireContext().getSystemService(CompanionDeviceManager::class.java)
 
     private val hidDeviceListener = object: BluetoothHidDevice.Callback() {
 
@@ -52,49 +50,53 @@ class HidPairingManager(private val preferenceFragment: HidPreferenceFragment) :
             super.onConnectionStateChanged(device, state)
 
             when (state) {
-                BluetoothProfile.STATE_CONNECTED -> HidServiceFacade.service.disconnect(device)
+                BluetoothProfile.STATE_CONNECTED -> HidServiceFacade.service?.disconnect(device)
                 BluetoothProfile.STATE_DISCONNECTED -> {
-                    HidServiceFacade.unregisterHidDeviceListener(this)
-
-                    if (preferenceFragment.isResumed)
-                        preferenceFragment.updateDeviceList()
+                    if (fragment.isResumed)
+                        fragment.updateDeviceList()
                 }
             }
         }
     }
 
+    private val companionDeviceListener = object : CompanionDeviceManager.Callback() {
 
-    init {
-        HidServiceFacade.openService()
-        HidServiceFacade.registerHidDeviceListener(hidDeviceListener)
-    }
+        override fun onDeviceFound(chooserLauncher: IntentSender?) {
+            val pairingRequest = IntentSenderRequest.Builder(chooserLauncher!!).build()
+            sendPairingRequest(pairingRequest)
+        }
 
-
-    override fun onDeviceFound(chooserLauncher: IntentSender?) {
-        try {
-            preferenceFragment.startIntentSenderForResult(
-                    chooserLauncher,
-                    PAIRING_REQUEST_CODE,
-                    null,
-                    0,
-                    0,
-                    0,
-                    null)
-        } catch (e: IllegalStateException) {
-            throw IllegalStateException("Could not start device chooser (${e.javaClass.name}): ${e.message}")
+        override fun onFailure(error: CharSequence?) {
         }
     }
 
-    override fun onFailure(error: CharSequence?) {
-        Log.e(TAG, "Failed to pair with device: $error")
+
+    init {
+        HidServiceFacade.registerHidDeviceListener(fragment.requireContext(), hidDeviceListener)
+
+        val pairingContract = ActivityResultContracts.StartIntentSenderForResult()
+
+        pairingLauncher = fragment.registerForActivityResult(pairingContract) { result ->
+            if (result.resultCode != Activity.RESULT_OK)
+                return@registerForActivityResult
+
+            val device = result.data!!.getParcelableExtra<BluetoothDevice>(CompanionDeviceManager.EXTRA_DEVICE)
+            device!!.createBond()
+        }
     }
 
 
     fun openDialog() {
-        HidServiceFacade.registerApp()
-
         val deviceFilter = BluetoothDeviceFilter.Builder().build()
         val pairingRequest = AssociationRequest.Builder().addDeviceFilter(deviceFilter).build()
-        companionDeviceManager.associate(pairingRequest, this, null)
+        companionDeviceManager.associate(pairingRequest, companionDeviceListener, null)
     }
+
+    fun release() {
+        HidServiceFacade.unregisterHidDeviceListener()
+    }
+
+
+    private fun sendPairingRequest(pairingRequest: IntentSenderRequest) =
+            pairingLauncher.launch(pairingRequest)
 }

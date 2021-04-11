@@ -19,6 +19,7 @@
 package com.guillaumepayet.remotenumpad.connection.hid
 
 import android.bluetooth.*
+import android.content.Context
 import android.os.Build
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
@@ -39,7 +40,7 @@ import kotlin.concurrent.schedule
  */
 @Keep
 @RequiresApi(Build.VERSION_CODES.P)
-class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
+class HidConnectionInterface(private val context: Context, sender: IDataSender) : AbstractConnectionInterface(sender) {
 
     companion object {
         private const val TIMEOUT_DELAY = 3000L
@@ -76,8 +77,7 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
                 BluetoothProfile.STATE_DISCONNECTED -> {
                     timeoutTask?.cancel()
                     timeoutTask = null
-
-                    HidServiceFacade.unregisterHidDeviceListener(hidDeviceListener)
+                    HidServiceFacade.unregisterHidDeviceListener()
 
                     when (field) {
                         BluetoothProfile.STATE_CONNECTING, BluetoothProfile.STATE_DISCONNECTED ->
@@ -124,7 +124,7 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
     override suspend fun open(host: String) {
         onConnectionStatusChange(R.string.status_connecting)
         hostDevice = bluetoothAdapter.getRemoteDevice(host)
-        HidServiceFacade.registerHidDeviceListener(hidDeviceListener)
+        HidServiceFacade.registerHidDeviceListener(context, hidDeviceListener)
 
         timeoutTask = Timer().schedule(TIMEOUT_DELAY) {
             GlobalScope.launch { close() }
@@ -140,7 +140,7 @@ class HidConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(
     }
 
     override suspend fun sendString(string: String): Boolean {
-        val keyboardReport = KeyboardReport(string)
+        val keyboardReport = KeyboardReport(context, string)
 
         if (service == null || !service!!.sendReport(hostDevice, KeyboardReport.ID, keyboardReport.bytes)) {
             connectionState = R.string.status_connection_lost

@@ -19,11 +19,13 @@
 package com.guillaumepayet.remotenumpad
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
-import java.lang.IllegalStateException
+import androidx.preference.Preference
+import com.guillaumepayet.remotenumpad.databinding.ActivitySettingsBinding
+import com.guillaumepayet.remotenumpad.settings.CommonSettingsFragment
+import java.util.*
 
 /**
  * An [AppCompatActivity] that presents a set of application settings. On
@@ -37,13 +39,32 @@ import java.lang.IllegalStateException
  */
 class SettingsActivity : AppCompatActivity() {
 
+    companion object {
+
+        /**
+         * The package where all the implementations' sub-packages are located.
+         */
+        val SETTINGS_PACKAGE = CommonSettingsFragment::class.java.`package`?.name
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        try {
-            super.onCreate(savedInstanceState)
-            supportFragmentManager.commit { replace(android.R.id.content, BasePreferenceFragment()) }
-        } catch (e: IllegalStateException) {
-            Toast.makeText(this, "Could not open settings", Toast.LENGTH_SHORT).show()
-            finish()
+        super.onCreate(savedInstanceState)
+        val binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val commonSettings = supportFragmentManager.findFragmentById(R.id.common_settings) as CommonSettingsFragment
+
+        commonSettings.onConnectionInterfaceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
+            val stringValue = value.toString()
+            val packageName = "${SETTINGS_PACKAGE}.$stringValue"
+            val className = stringValue.capitalize(Locale.ROOT) + "SettingsFragment"
+            val clazz = Class.forName("$packageName.$className")
+            val newFragment = clazz.newInstance() as Fragment
+
+            if (newFragment::class.java.canonicalName != this::class.java.canonicalName)
+                supportFragmentManager.commit { replace(R.id.connection_interface_settings, newFragment) }
+
+            true
         }
     }
 }

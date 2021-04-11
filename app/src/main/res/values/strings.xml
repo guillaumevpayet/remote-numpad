@@ -58,7 +58,7 @@
     <string name="pref_bluetooth_entry">Bluetooth</string>
 
     <string name="pref_hid_entry_value" translatable="false">hid</string>
-    <string name="pref_hid_entry">HID (experimental)</string>
+    <string name="pref_hid_entry">HID (server-less)</string>
 
     <string name="pref_key_connection_interface" translatable="false">connection_interface</string>
     <string name="pref_title_connection_interface">Connection interface</string>

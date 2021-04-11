@@ -37,6 +37,7 @@ import java.util.*
  *
  * @param sender The [IDataSender] to listen for data to send
  **/
+@Suppress("BlockingMethodInNonBlockingContext") // The warnings are wrong from what I understand
 @Keep
 class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
 

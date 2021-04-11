@@ -18,11 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.settings.hid
 
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.companion.CompanionDeviceManager
-import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -31,9 +27,13 @@ import android.view.MenuItem
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.HidConnectionInterface
-import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
+import com.guillaumepayet.remotenumpad.settings.AbstractSettingsFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * This settings page provides a way to list and select a paired device as the host for a
@@ -41,32 +41,40 @@ import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
  **/
 @Keep
 @RequiresApi(Build.VERSION_CODES.P)
-class HidPreferenceFragment : BasePreferenceFragment() {
+class HidSettingsFragment : AbstractSettingsFragment() {
 
     companion object {
-        private val bluetoothAdapter: BluetoothAdapter by lazy {
+        private val bluetoothAdapter: BluetoothAdapter? by lazy {
             BluetoothAdapter.getDefaultAdapter()
         }
     }
 
-    override val host: String
-        get() = hostPreference.value
-
 
     private val hostPreference: ListPreference by lazy {
-        findPreference(getString(R.string.pref_key_hid_host))!!
+        val preference = findPreference<ListPreference>(getString(R.string.pref_key_hid_host))!!
+
+        preference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
+            host = value.toString()
+            updateSummary(preference, host)
+            true
+        }
+
+        preference
     }
 
+    private lateinit var pairingManager: HidPairingManager
+
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        super.onCreatePreferences(savedInstanceState, rootKey)
-        addPreferencesFromResource(R.xml.pref_hid)
+        setHasOptionsMenu(true)
+        setPreferencesFromResource(R.xml.pref_hid, rootKey)
 
-        if (!bluetoothAdapter.isEnabled)
+        if (bluetoothAdapter == null || !bluetoothAdapter!!.isEnabled)
             disableHid()
-        else
+        else {
             updateDeviceList()
-
-        bindPreferenceSummaryToValue(hostPreference)
+            pairingManager = HidPairingManager(this)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -74,20 +82,17 @@ class HidPreferenceFragment : BasePreferenceFragment() {
         inflater.inflate(R.menu.menu_hid_settings, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.action_hid_pair) {
-            HidPairingManager(this).openDialog()
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_hid_pair -> {
+            pairingManager.openDialog()
             true
-        } else
-            super.onOptionsItemSelected(item)
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != HidPairingManager.PAIRING_REQUEST_CODE || resultCode != Activity.RESULT_OK)
-            return super.onActivityResult(requestCode, resultCode, data)
-
-        val device: BluetoothDevice? = data?.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE)
-        device!!.createBond()
+    override fun onDestroy() {
+        super.onDestroy()
+        pairingManager.release()
     }
 
 
@@ -95,7 +100,7 @@ class HidPreferenceFragment : BasePreferenceFragment() {
      * Updates the [ListPreference] entries for devices.
      */
     fun updateDeviceList() {
-        val devices = bluetoothAdapter.bondedDevices
+        val devices = bluetoothAdapter!!.bondedDevices
 
         val (entries, entryValues) = if (devices.isEmpty()) {
             Pair(listOf(getString(R.string.pref_no_host_entry)), listOf(getString(R.string.pref_no_host_entry_value)))
@@ -106,8 +111,12 @@ class HidPreferenceFragment : BasePreferenceFragment() {
         hostPreference.entries = entries.toTypedArray()
         hostPreference.entryValues = entryValues.toTypedArray()
 
-        if (!entryValues.contains(hostPreference.value))
-            hostPreference.value = entryValues[0]
+        if (hostPreference.value !in entryValues)
+            hostPreference.value = entryValues.last()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            hostPreference.onPreferenceChangeListener.onPreferenceChange(hostPreference, hostPreference.value)
+        }
     }
 
 

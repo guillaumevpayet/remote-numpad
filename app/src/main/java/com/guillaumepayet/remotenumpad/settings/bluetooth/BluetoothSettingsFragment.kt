@@ -22,28 +22,33 @@ import android.bluetooth.BluetoothAdapter
 import android.os.Bundle
 import androidx.annotation.Keep
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionInterface
-import com.guillaumepayet.remotenumpad.settings.BasePreferenceFragment
+import com.guillaumepayet.remotenumpad.settings.AbstractSettingsFragment
 
 /**
  * This settings page provides a way to list and select a paired device as the host for a
  * [BluetoothConnectionInterface].
  **/
 @Keep
-class BluetoothPreferenceFragment : BasePreferenceFragment() {
+class BluetoothSettingsFragment : AbstractSettingsFragment() {
 
-    override val host: String
-        get() = hostPreference.value
+    private val hostPreference: ListPreference by lazy {
+        val preference = findPreference<ListPreference>(getString(R.string.pref_key_bluetooth_host))!!
 
-    private lateinit var hostPreference: ListPreference
+        preference.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
+            host = value.toString()
+            updateSummary(preference, host)
+            true
+        }
+
+        preference
+    }
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        super.onCreatePreferences(savedInstanceState, rootKey)
-        addPreferencesFromResource(R.xml.pref_bluetooth)
-
-        hostPreference = findPreference(getString(R.string.pref_key_bluetooth_host))!!
+        setPreferencesFromResource(R.xml.pref_bluetooth, rootKey)
 
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
@@ -52,20 +57,19 @@ class BluetoothPreferenceFragment : BasePreferenceFragment() {
         } else {
             val devices = bluetoothAdapter.bondedDevices
 
-            val (entries, entryValues) = if (devices.isEmpty()) {
+            val (entries, entryValues) = if (devices.isEmpty())
                 Pair(listOf(getString(R.string.pref_no_host_entry)), listOf(getString(R.string.pref_no_host_entry_value)))
-            } else {
+            else
                 Pair(devices.map { it.name }, devices.map { it.address })
-            }
 
             hostPreference.entries = entries.toTypedArray()
             hostPreference.entryValues = entryValues.toTypedArray()
 
-            if (!entryValues.contains(hostPreference.value))
-                hostPreference.value = entryValues[0]
-        }
+            if (hostPreference.value !in entryValues)
+                hostPreference.value = entryValues.last()
 
-        bindPreferenceSummaryToValue(hostPreference)
+            hostPreference.onPreferenceChangeListener.onPreferenceChange(hostPreference, hostPreference.value)
+        }
     }
 
 

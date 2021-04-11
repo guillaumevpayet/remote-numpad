@@ -16,7 +16,7 @@
     <string name="title_activity_settings">Paramètres</string>
     <string name="pref_socket_entry">Socket (Wifi)</string>
     <string name="pref_bluetooth_entry">Bluetooth</string>
-    <string name="pref_hid_entry">HID (expérimental)</string>
+    <string name="pref_hid_entry">HID (sans serveur)</string>
     <string name="pref_title_connection_interface">Interface de connection</string>
     <string name="pref_title_vibrations">Activer les vibrations</string>
     <string name="pref_title_backspace">\"ret arr\" au lieu de \"verr num\"</string>

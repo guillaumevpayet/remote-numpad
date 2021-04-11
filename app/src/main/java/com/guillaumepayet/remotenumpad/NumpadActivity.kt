@@ -58,24 +58,17 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
          */
         private val CONNECTION_INTERFACES_PACKAGE = this::class.java.`package`?.name + ".connection"
 
-        /**
-         * The Activity's context.
-         */
-        var context: Context? = null
-            private set
-
 
         /**
          * Sets the application's night mode based on the preferences.
          *
+         * @param context The context of the activity or fragment which will handle the switch
          * @param nightModeString The string from the preferences
          */
-        fun setNightMode(nightModeString: String?) {
-            if (context == null) return
-
+        fun setNightMode(context: Context, nightModeString: String?) {
             val nightMode = when (nightModeString) {
-                context!!.getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
-                context!!.getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
+                context.getString(R.string.pref_light_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_NO
+                context.getString(R.string.pref_dark_mode_entry_value) -> AppCompatDelegate.MODE_NIGHT_YES
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
 
@@ -99,7 +92,6 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         activityBinding = ActivityNumpadBinding.inflate(layoutInflater)
         setContentView(activityBinding.root)
         setSupportActionBar(activityBinding.toolbar)
-        context = baseContext
 
         contentBinding = activityBinding.content
         contentBinding.connectButton.setOnClickListener(this)
@@ -127,7 +119,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
             contentBinding.keyBackspace.visibility = View.INVISIBLE
         }
 
-        setNightMode(preferences.getString(getString(R.string.pref_key_theme), getString(R.string.pref_system_theme_mode_entry_value)))
+        setNightMode(baseContext, preferences.getString(getString(R.string.pref_key_theme), getString(R.string.pref_system_theme_mode_entry_value)))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -226,8 +218,13 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
         connectionInterface = try {
             val clazz = Class.forName(prefix + "ConnectionInterface")
-            val constructor = clazz.getConstructor(IDataSender::class.java)
-            constructor.newInstance(keyEventSender) as IConnectionInterface
+            try {
+                val constructor = clazz.getConstructor(Context::class.java, IDataSender::class.java)
+                constructor.newInstance(this, keyEventSender) as IConnectionInterface
+            } catch (e: Exception) {
+                val constructor = clazz.getConstructor(IDataSender::class.java)
+                constructor.newInstance(keyEventSender) as IConnectionInterface
+            }
         } catch (e: Exception) {
             Snackbar.make(contentBinding.statusText, getString(R.string.snackbar_invalid_connection_interface), Snackbar.LENGTH_SHORT).show()
             null
