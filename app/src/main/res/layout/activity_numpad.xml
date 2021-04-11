@@ -38,8 +38,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include
-        layout="@layout/content_numpad"
-        tools:layout_editor_absoluteY="72dp" />
+    <include android:id="@+id/content" layout="@layout/content_numpad" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

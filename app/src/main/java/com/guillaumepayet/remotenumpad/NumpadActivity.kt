@@ -33,8 +33,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.guillaumepayet.remotenumpad.connection.*
 import com.guillaumepayet.remotenumpad.controller.VirtualNumpad
-import kotlinx.android.synthetic.main.activity_numpad.*
-import kotlinx.android.synthetic.main.content_numpad.*
+import com.guillaumepayet.remotenumpad.databinding.ActivityNumpadBinding
+import com.guillaumepayet.remotenumpad.databinding.ContentNumpadBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -85,6 +85,8 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
     }
 
 
+    private lateinit var activityBinding: ActivityNumpadBinding
+    private lateinit var contentBinding: ContentNumpadBinding
     private lateinit var keyEventSender: IDataSender
     private lateinit var preferences: SharedPreferences
 
@@ -94,16 +96,16 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        activityBinding = ActivityNumpadBinding.inflate(layoutInflater)
+        setContentView(activityBinding.root)
+        setSupportActionBar(activityBinding.toolbar)
         context = baseContext
 
-        setContentView(R.layout.activity_numpad)
-        setSupportActionBar(toolbar)
+        contentBinding = activityBinding.content
+        contentBinding.connectButton.setOnClickListener(this)
+        contentBinding.disconnectButton.setOnClickListener(this)
 
-        connect_button.setOnClickListener(this)
-        disconnect_button.setOnClickListener(this)
-
-        val numpad = VirtualNumpad(numpad_keys)
+        val numpad = VirtualNumpad(contentBinding.numpadKeys)
         keyEventSender = KeyEventSender(numpad)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -118,11 +120,11 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         super.onStart()
 
         if (preferences.getBoolean(getString(R.string.pref_key_backspace), false)) {
-            key_numlock.visibility = View.INVISIBLE
-            key_backspace.visibility = View.VISIBLE
+            contentBinding.keyNumlock.visibility = View.INVISIBLE
+            contentBinding.keyBackspace.visibility = View.VISIBLE
         } else {
-            key_numlock.visibility = View.VISIBLE
-            key_backspace.visibility = View.INVISIBLE
+            contentBinding.keyNumlock.visibility = View.VISIBLE
+            contentBinding.keyBackspace.visibility = View.INVISIBLE
         }
 
         setNightMode(preferences.getString(getString(R.string.pref_key_theme), getString(R.string.pref_system_theme_mode_entry_value)))
@@ -140,8 +142,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> {
-                val settingsIntent = Intent(this, SettingsActivity::class.java)
-                startActivity(settingsIntent)
+                startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -156,8 +157,8 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
     override fun onClick(view: View?) {
         when (view) {
-            connect_button -> connect()
-            disconnect_button -> disconnect()
+            contentBinding.connectButton -> connect()
+            contentBinding.disconnectButton -> disconnect()
         }
     }
 
@@ -166,16 +167,16 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         GlobalScope.launch(Dispatchers.Main) {
             val colorId = when (connectionStatus) {
                 R.string.status_disconnected -> {
-                    connect_button.isEnabled = true
+                    contentBinding.connectButton.isEnabled = true
                     R.color.disconnected
                 }
                 R.string.status_disconnecting -> {
-                    disconnect_button.isEnabled = false
+                    contentBinding.disconnectButton.isEnabled = false
                     R.color.working
                 }
                 R.string.status_connecting -> {
-                    connect_button.isEnabled = false
-                    disconnect_button.isEnabled = true
+                    contentBinding.connectButton.isEnabled = false
+                    contentBinding.disconnectButton.isEnabled = true
                     R.color.working
                 }
                 R.string.status_connection_lost,
@@ -185,16 +186,16 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
                     }
 
                     connectionInterface = null
-                    connect_button.isEnabled = true
-                    disconnect_button.isEnabled = false
+                    contentBinding.connectButton.isEnabled = true
+                    contentBinding.disconnectButton.isEnabled = false
                     R.color.failed
                 }
                 else -> R.color.connected
             }
 
             val color = ContextCompat.getColor(baseContext, colorId)
-            status_text.text = getString(connectionStatus)
-            status_text.setTextColor(color)
+            contentBinding.statusText.text = getString(connectionStatus)
+            contentBinding.statusText.setTextColor(color)
         }
     }
 
@@ -207,7 +208,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         val host = preferences.getString(getString(R.string.pref_key_host), getString(R.string.pref_no_host_entry_value))!!
 
         if (host == getString(R.string.pref_no_host_entry_value)) {
-            Snackbar.make(status_text, getString(R.string.snackbar_no_host_selected), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(contentBinding.statusText, getString(R.string.snackbar_no_host_selected), Snackbar.LENGTH_SHORT).show()
             return
         }
 
@@ -219,7 +220,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         val validator = validatorClass.newInstance() as IHostValidator
 
         if (!validator.isHostValid(host)) {
-            Snackbar.make(status_text, getString(R.string.snackbar_invalid_host), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(contentBinding.statusText, getString(R.string.snackbar_invalid_host), Snackbar.LENGTH_SHORT).show()
             return
         }
 
@@ -228,7 +229,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
             val constructor = clazz.getConstructor(IDataSender::class.java)
             constructor.newInstance(keyEventSender) as IConnectionInterface
         } catch (e: Exception) {
-            Snackbar.make(status_text, getString(R.string.snackbar_invalid_connection_interface), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(contentBinding.statusText, getString(R.string.snackbar_invalid_connection_interface), Snackbar.LENGTH_SHORT).show()
             null
         }
 
