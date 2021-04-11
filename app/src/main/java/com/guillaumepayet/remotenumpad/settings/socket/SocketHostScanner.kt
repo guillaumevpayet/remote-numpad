@@ -25,7 +25,6 @@ import kotlinx.coroutines.*
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.net.SocketException
 import java.net.UnknownHostException
 
 /**
@@ -33,19 +32,20 @@ import java.net.UnknownHostException
  * Server running on them.
  *
  * @constructor Prepare the address range to scan
- * @param preferenceFragment The fragment which intends to start the scan and know its result
+ * @param fragment The fragment which intends to start the scan and know its result
  **/
-class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment) {
+class SocketHostScanner(private val fragment: SocketSettingsFragment) {
 
     private val hostAddressStart: String
 
     private val hosts = ArrayList<Pair<String, String>>()
 
+    @Volatile
     private var probeCount = 0
 
 
     init {
-        val context = preferenceFragment.requireActivity().applicationContext
+        val context = fragment.requireActivity().applicationContext
         val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val clientAddress = wifiManager.dhcpInfo.ipAddress
 
@@ -64,57 +64,41 @@ class SocketHostScanner(private val preferenceFragment: SocketPreferenceFragment
             GlobalScope.launch(Dispatchers.IO) {
                 val address = hostAddressStart + i
                 val endpoint = InetSocketAddress(address, SocketConnectionInterface.PORT)
-                val socket = Socket()
 
                 try {
-                    socket.connect(endpoint, 500)
+                    Socket().use { socket ->
+                        socket.connect(endpoint, 500)
+
+                        socket.outputStream.writer().use { writer ->
+                            socket.inputStream.reader().buffered().use { reader ->
+                                writer.write("name\n")
+                                writer.flush()
+                                val name = reader.readLine()
+                                hosts.add(Pair(name, address))
+                            }
+                        }
+                    }
                 } catch (e: UnknownHostException) {
                 } catch (e: IOException) {
                 }
 
-                if (socket.isConnected) {
-                    socket.outputStream.writer().use { writer ->
-                        socket.inputStream.reader().buffered().use { reader ->
-                            try {
-                                writer.write("name\n")
-                            } catch (e: SocketException) {
-                                throw SocketWriteException()
-                            }
-
-                            try {
-                                writer.flush()
-                            } catch (e: SocketException) {
-                                throw SocketFlushException()
-                            }
-
-                            try {
-                                val name = reader.readLine()
-                                hosts.add(Pair(name, address))
-                            } catch (e: SocketException) {
-                                throw SocketReadException()
-                            }
-                        }
-                    }
-                }
-
                 decrementProbeCount()
-                socket.close()
             }
         }
     }
 
 
     /**
-     * Decrement the probe count and send all the found hosts to the [SocketPreferenceFragment] if
-     * there are no more probes.
+     * Decrement the probe count and send all the found hosts to the fragment if there are no more
+     * probes.
      */
     @Synchronized
     private suspend fun decrementProbeCount() = withContext(Dispatchers.Main) {
         probeCount--
 
         if (probeCount == 0) {
-            if (preferenceFragment.isResumed)
-                preferenceFragment.updateHosts(hosts)
+            if (fragment.isResumed)
+                fragment.updateHosts(hosts)
         }
     }
 }

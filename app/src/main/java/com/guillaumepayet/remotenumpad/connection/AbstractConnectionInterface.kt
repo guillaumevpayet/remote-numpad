@@ -18,9 +18,6 @@
 
 package com.guillaumepayet.remotenumpad.connection
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
 /**
  * Common parent for [IConnectionInterface] which implements a basic observable behaviour.
  *
