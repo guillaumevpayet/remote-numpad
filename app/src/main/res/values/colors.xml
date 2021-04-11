@@ -19,11 +19,13 @@
 
 <resources>
     <color name="colorPrimary">#436AAA</color>
-    <color name="colorAccent">#AC92F3</color>
+    <color name="colorPrimaryVariant">#303F9F</color>
+    <color name="colorAccent">#CE93D8</color>
+    <color name="colorAccentVariant">#7B1FA2</color>
 
     <!-- Colors for the status label -->
-    <color name="disconnected">#888</color>
-    <color name="connected">#48F</color>
-    <color name="working">#FA0</color>
-    <color name="failed">#F00</color>
+    <color name="disconnected">@android:color/darker_gray</color>
+    <color name="connected">@android:color/holo_blue_dark</color>
+    <color name="working">@android:color/holo_orange_dark</color>
+    <color name="failed">@android:color/holo_red_light</color>
 </resources>
