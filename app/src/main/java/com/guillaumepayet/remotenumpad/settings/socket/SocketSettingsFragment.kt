@@ -76,11 +76,15 @@ class SocketSettingsFragment : AbstractSettingsFragment() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setHasOptionsMenu(true)
         setPreferencesFromResource(R.xml.pref_socket, rootKey)
-        startHostScan()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
             inflater.inflate(R.menu.menu_socket_settings, menu)
+
+    override fun onResume() {
+        super.onResume()
+        startHostScan()
+    }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_socket_refresh -> {

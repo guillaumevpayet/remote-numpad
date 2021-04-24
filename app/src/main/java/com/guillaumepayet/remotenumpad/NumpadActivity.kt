@@ -38,6 +38,7 @@ import com.guillaumepayet.remotenumpad.databinding.ContentNumpadBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -247,7 +248,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         task?.cancel()
         task = null
 
-        GlobalScope.launch {
+        runBlocking {
             connectionInterface?.close()
             connectionInterface = null
         }

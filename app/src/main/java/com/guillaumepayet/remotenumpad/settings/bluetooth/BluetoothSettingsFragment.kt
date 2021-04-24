@@ -34,6 +34,13 @@ import com.guillaumepayet.remotenumpad.settings.AbstractSettingsFragment
 @Keep
 class BluetoothSettingsFragment : AbstractSettingsFragment() {
 
+    companion object {
+        private val bluetoothAdapter: BluetoothAdapter? by lazy {
+            BluetoothAdapter.getDefaultAdapter()
+        }
+    }
+
+
     private val hostPreference: ListPreference by lazy {
         val preference = findPreference<ListPreference>(getString(R.string.pref_key_bluetooth_host))!!
 
@@ -43,42 +50,41 @@ class BluetoothSettingsFragment : AbstractSettingsFragment() {
             true
         }
 
+        preference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            updateDeviceList()
+            true
+        }
+
         preference
     }
 
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) =
         setPreferencesFromResource(R.xml.pref_bluetooth, rootKey)
 
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
-            disableBluetooth()
-        } else {
-            val devices = bluetoothAdapter.bondedDevices
-
-            val (entries, entryValues) = if (devices.isEmpty())
-                Pair(listOf(getString(R.string.pref_no_host_entry)), listOf(getString(R.string.pref_no_host_entry_value)))
-            else
-                Pair(devices.map { it.name }, devices.map { it.address })
-
-            hostPreference.entries = entries.toTypedArray()
-            hostPreference.entryValues = entryValues.toTypedArray()
-
-            if (hostPreference.value !in entryValues)
-                hostPreference.value = entryValues.last()
-
-            hostPreference.onPreferenceChangeListener.onPreferenceChange(hostPreference, hostPreference.value)
-        }
+    override fun onResume() {
+        super.onResume()
+        updateDeviceList()
     }
 
 
     /**
-     * Disables the bluetooth option in the settings page.
+     * Updates the [ListPreference] entries for devices.
      */
-    private fun disableBluetooth() {
-        hostPreference.entries = arrayOf(getString(R.string.pref_no_host_entry))
-        hostPreference.entryValues = arrayOf(getString(R.string.pref_no_host_entry_value))
-        hostPreference.value = getString(R.string.pref_no_host_entry_value)
+    private fun updateDeviceList() {
+        val devices = bluetoothAdapter!!.bondedDevices
+
+        val (entries, entryValues) = if (devices.isEmpty())
+            Pair(listOf(getString(R.string.pref_no_host_entry)), listOf(getString(R.string.pref_no_host_entry_value)))
+        else
+            Pair(devices.map { it.name }, devices.map { it.address })
+
+        hostPreference.entries = entries.toTypedArray()
+        hostPreference.entryValues = entryValues.toTypedArray()
+
+        if (hostPreference.value !in entryValues)
+            hostPreference.value = entryValues.last()
+
+        hostPreference.callChangeListener(hostPreference.value)
     }
 }

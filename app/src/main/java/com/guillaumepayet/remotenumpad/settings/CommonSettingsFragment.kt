@@ -42,8 +42,9 @@ class CommonSettingsFragment : AbstractSettingsFragment() {
 
     var onConnectionInterfaceChangeListener: Preference.OnPreferenceChangeListener? = null
         set(value) {
-            value?.onPreferenceChange(connectionInterfacePreference, connectionInterfacePreference.value)
             field = value
+            updateConnectionInterfaceList()
+            value?.onPreferenceChange(connectionInterfacePreference, connectionInterfacePreference.value)
         }
 
 
@@ -63,10 +64,12 @@ class CommonSettingsFragment : AbstractSettingsFragment() {
         updateSummary(themePreference, themePreference.value)
     }
 
-    override fun onResume() {
-        super.onResume()
-        val entries = connectionInterfacePreference.entries.toMutableList()
-        val entryValues = connectionInterfacePreference.entryValues.toMutableList()
+    fun onFocus() = updateConnectionInterfaceList()
+
+
+    private fun updateConnectionInterfaceList() {
+        val entries = resources.getStringArray(R.array.pref_connection_interface_titles).toMutableList()
+        val entryValues = resources.getStringArray(R.array.pref_connection_interface_values).toMutableList()
 
         entries.zip(entryValues).forEach { (entry, entryValue) ->
             val packageName = "${SettingsActivity.SETTINGS_PACKAGE}.$entryValue"
@@ -87,7 +90,12 @@ class CommonSettingsFragment : AbstractSettingsFragment() {
         connectionInterfacePreference.entries = entries.toTypedArray()
         connectionInterfacePreference.entryValues = entryValues.toTypedArray()
 
-        if (connectionInterfacePreference.value !in connectionInterfacePreference.entryValues)
+        if (connectionInterfacePreference.value in connectionInterfacePreference.entryValues) {
+            updateSummary(connectionInterfacePreference, connectionInterfacePreference.value)
+        } else {
             connectionInterfacePreference.value = entryValues.first().toString()
+            connectionInterfacePreference.callChangeListener(connectionInterfacePreference.value)
+        }
+
     }
 }

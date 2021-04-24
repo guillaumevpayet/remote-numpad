@@ -31,9 +31,6 @@ import androidx.preference.Preference
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.HidConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.AbstractSettingsFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 /**
  * This settings page provides a way to list and select a paired device as the host for a
@@ -59,6 +56,11 @@ class HidSettingsFragment : AbstractSettingsFragment() {
             true
         }
 
+        preference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            updateDeviceList()
+            true
+        }
+
         preference
     }
 
@@ -68,18 +70,17 @@ class HidSettingsFragment : AbstractSettingsFragment() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setHasOptionsMenu(true)
         setPreferencesFromResource(R.xml.pref_hid, rootKey)
-
-        if (bluetoothAdapter == null || !bluetoothAdapter!!.isEnabled)
-            disableHid()
-        else {
-            updateDeviceList()
-            pairingManager = HidPairingManager(this)
-        }
+        pairingManager = HidPairingManager(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_hid_settings, menu)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateDeviceList()
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -99,14 +100,13 @@ class HidSettingsFragment : AbstractSettingsFragment() {
     /**
      * Updates the [ListPreference] entries for devices.
      */
-    fun updateDeviceList() {
+    private fun updateDeviceList() {
         val devices = bluetoothAdapter!!.bondedDevices
 
-        val (entries, entryValues) = if (devices.isEmpty()) {
+        val (entries, entryValues) = if (devices.isEmpty())
             Pair(listOf(getString(R.string.pref_no_host_entry)), listOf(getString(R.string.pref_no_host_entry_value)))
-        } else {
+        else
             Pair(devices.map { it.name }, devices.map { it.address })
-        }
 
         hostPreference.entries = entries.toTypedArray()
         hostPreference.entryValues = entryValues.toTypedArray()
@@ -114,18 +114,6 @@ class HidSettingsFragment : AbstractSettingsFragment() {
         if (hostPreference.value !in entryValues)
             hostPreference.value = entryValues.last()
 
-        GlobalScope.launch(Dispatchers.Main) {
-            hostPreference.onPreferenceChangeListener.onPreferenceChange(hostPreference, hostPreference.value)
-        }
-    }
-
-
-    /**
-     * Disables the HID option in the settings page.
-     */
-    private fun disableHid() {
-        hostPreference.entries = arrayOf(getString(R.string.pref_no_host_entry))
-        hostPreference.entryValues = arrayOf(getString(R.string.pref_no_host_entry_value))
-        hostPreference.value = getString(R.string.pref_no_host_entry_value)
+        hostPreference.callChangeListener(hostPreference.value)
     }
 }

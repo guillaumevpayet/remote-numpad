@@ -37,7 +37,7 @@ import com.guillaumepayet.remotenumpad.connection.hid.HidServiceFacade
  * Manager class to handle the process of pairing a new device ready for the Bluetooth HID profile.
  */
 @RequiresApi(Build.VERSION_CODES.P)
-class HidPairingManager(private val fragment: HidSettingsFragment) {
+class HidPairingManager(fragment: HidSettingsFragment) {
 
     private val pairingLauncher: ActivityResultLauncher<IntentSenderRequest>
 
@@ -51,10 +51,6 @@ class HidPairingManager(private val fragment: HidSettingsFragment) {
 
             when (state) {
                 BluetoothProfile.STATE_CONNECTED -> HidServiceFacade.service?.disconnect(device)
-                BluetoothProfile.STATE_DISCONNECTED -> {
-                    if (fragment.isResumed)
-                        fragment.updateDeviceList()
-                }
             }
         }
     }

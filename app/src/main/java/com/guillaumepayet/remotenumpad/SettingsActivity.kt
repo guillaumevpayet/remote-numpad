@@ -47,12 +47,13 @@ class SettingsActivity : AppCompatActivity() {
         val SETTINGS_PACKAGE = CommonSettingsFragment::class.java.`package`?.name
     }
 
+    private lateinit var commonSettings: CommonSettingsFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val commonSettings = supportFragmentManager.findFragmentById(R.id.common_settings) as CommonSettingsFragment
+        commonSettings = supportFragmentManager.findFragmentById(R.id.common_settings) as CommonSettingsFragment
 
         commonSettings.onConnectionInterfaceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
             val stringValue = value.toString()
@@ -62,9 +63,16 @@ class SettingsActivity : AppCompatActivity() {
             val newFragment = clazz.newInstance() as Fragment
 
             if (newFragment::class.java.canonicalName != this::class.java.canonicalName)
-                supportFragmentManager.commit { replace(R.id.connection_interface_settings, newFragment) }
+                supportFragmentManager.commit {
+                    replace(R.id.connection_interface_settings, newFragment)
+                }
 
             true
         }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (!hasFocus) return
+        commonSettings.onFocus()
     }
 }
