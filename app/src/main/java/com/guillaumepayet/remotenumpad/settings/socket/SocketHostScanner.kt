@@ -64,23 +64,22 @@ class SocketHostScanner(private val fragment: SocketSettingsFragment) {
             GlobalScope.launch(Dispatchers.IO) {
                 val address = hostAddressStart + i
                 val endpoint = InetSocketAddress(address, SocketConnectionInterface.PORT)
+                val socket = Socket()
 
                 try {
-                    Socket().use { socket ->
-                        socket.connect(endpoint, 500)
+                    socket.connect(endpoint, 500)
 
-                        socket.outputStream.writer().use { writer ->
-                            socket.inputStream.reader().buffered().use { reader ->
-                                writer.write("name\n")
-                                writer.flush()
-                                val name = reader.readLine()
-                                hosts.add(Pair(name, address))
-                            }
+                    socket.outputStream.writer().use { writer ->
+                        socket.inputStream.reader().buffered().use { reader ->
+                            writer.write("name\n")
+                            writer.flush()
+                            val name = reader.readLine()
+                            hosts.add(Pair(name, address))
                         }
                     }
                 } catch (e: UnknownHostException) {
                 } catch (e: IOException) {
-                }
+                } finally { socket.close() }
 
                 decrementProbeCount()
             }
