@@ -1,0 +1,4 @@
+Réparé un plantage dû à la connexion HID.
+
+Amélioration de la stabilité de l'interface HID. Celle-ci n'est plus "expérimentale".
+Autres améliorations de stabilité et performances plus générales.

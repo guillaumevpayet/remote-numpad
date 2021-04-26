@@ -1,0 +1,4 @@
+Fixed a crash related to the HID connection.
+
+Improved stability and usability of HID interface. It is not "experimental" anymore.
+General stability and performance improvements
