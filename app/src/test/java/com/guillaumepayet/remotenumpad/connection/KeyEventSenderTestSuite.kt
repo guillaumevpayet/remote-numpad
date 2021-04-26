@@ -19,17 +19,12 @@
 package com.guillaumepayet.remotenumpad.connection
 
 import com.guillaumepayet.remotenumpad.controller.IKeypad
-import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.then
-import org.mockito.BDDMockito.verify
 import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.Mockito.timeout
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
-import org.powermock.api.mockito.PowerMockito.`when`
 
 /**
  * Test suite for testing the [KeyEventSender] class.
