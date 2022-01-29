@@ -46,7 +46,7 @@ class SocketSettingsFragment : AbstractSettingsFragment() {
             if (!isCustom)
                 host = value.toString()
             else
-                customHostPreference.onPreferenceChangeListener.onPreferenceChange(
+                customHostPreference.onPreferenceChangeListener!!.onPreferenceChange(
                         customHostPreference,
                         customHostPreference.text)
 
@@ -110,7 +110,7 @@ class SocketSettingsFragment : AbstractSettingsFragment() {
         if (hostPreference.value !in entryValues)
             hostPreference.value = entryValues.last()
 
-        hostPreference.onPreferenceChangeListener.onPreferenceChange(hostPreference, hostPreference.value)
+        hostPreference.onPreferenceChangeListener!!.onPreferenceChange(hostPreference, hostPreference.value)
     }
 
 

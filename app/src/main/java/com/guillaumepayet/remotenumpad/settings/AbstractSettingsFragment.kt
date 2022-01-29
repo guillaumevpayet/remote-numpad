@@ -37,12 +37,12 @@ abstract class AbstractSettingsFragment : PreferenceFragmentCompat() {
     protected var host = ""
         get() =
             try {
-                preferenceManager.sharedPreferences.getString(getString(R.string.pref_key_host), getString(R.string.pref_no_host_entry_value))!!
+                preferenceManager.sharedPreferences!!.getString(getString(R.string.pref_key_host), getString(R.string.pref_no_host_entry_value))!!
             } catch (e: IllegalStateException) {
                 ""
             }
         set(value) {
-            preferenceManager.sharedPreferences.edit {
+            preferenceManager.sharedPreferences!!.edit {
                 try {
                     putString(getString(R.string.pref_key_host), value)
                 } catch (e: IllegalStateException) {

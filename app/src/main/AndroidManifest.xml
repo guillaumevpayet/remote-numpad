@@ -18,16 +18,18 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.guillaumepayet.remotenumpad">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <uses-feature android:name="android.software.companion_device_setup"/>
+    <uses-feature android:name="android.software.companion_device_setup" />
 
     <application
         android:allowBackup="true"
@@ -35,13 +37,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.RemoteNumpad"
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:theme="@style/Theme.RemoteNumpad">
         <activity
             android:name=".NumpadActivity"
-            android:label="@string/app_name"
             android:theme="@style/Theme.RemoteNumpad.NoActionBar"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="sensorPortrait"
+            android:exported="true"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

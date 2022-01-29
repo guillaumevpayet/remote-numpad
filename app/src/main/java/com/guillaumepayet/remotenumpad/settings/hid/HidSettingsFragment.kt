@@ -18,7 +18,9 @@
 
 package com.guillaumepayet.remotenumpad.settings.hid
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -26,6 +28,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import com.guillaumepayet.remotenumpad.R
@@ -101,6 +104,20 @@ class HidSettingsFragment : AbstractSettingsFragment() {
      * Updates the [ListPreference] entries for devices.
      */
     private fun updateDeviceList() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+
         val devices = bluetoothAdapter!!.bondedDevices
 
         val (entries, entryValues) = if (devices.isEmpty())
