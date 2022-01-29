@@ -18,7 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.settings.hid
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDevice
@@ -27,18 +27,17 @@ import android.companion.AssociationRequest
 import android.companion.BluetoothDeviceFilter
 import android.companion.CompanionDeviceManager
 import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import com.guillaumepayet.remotenumpad.connection.hid.HidServiceFacade
 
 /**
  * Manager class to handle the process of pairing a new device ready for the Bluetooth HID profile.
  */
+@SuppressLint("MissingPermission")
 @RequiresApi(Build.VERSION_CODES.P)
 class HidPairingManager(fragment: HidSettingsFragment) {
 
@@ -51,20 +50,6 @@ class HidPairingManager(fragment: HidSettingsFragment) {
 
         override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
             super.onConnectionStateChanged(device, state)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                ActivityCompat.checkSelfPermission(fragment.requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return
-            }
 
             when (state) {
                 BluetoothProfile.STATE_CONNECTED -> HidServiceFacade.service?.disconnect(device)
@@ -94,21 +79,6 @@ class HidPairingManager(fragment: HidSettingsFragment) {
                 return@registerForActivityResult
 
             val device = result.data!!.getParcelableExtra<BluetoothDevice>(CompanionDeviceManager.EXTRA_DEVICE)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                ActivityCompat.checkSelfPermission(fragment.requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return@registerForActivityResult
-            }
-
             device!!.createBond()
         }
     }

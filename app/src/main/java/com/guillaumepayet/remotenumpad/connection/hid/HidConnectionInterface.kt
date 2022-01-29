@@ -18,6 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.connection.hid
 
+import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
 import android.os.Build
@@ -39,6 +40,7 @@ import kotlin.concurrent.schedule
  * @param sender The [IDataSender] to listen for data to send
  */
 @Keep
+@SuppressLint("MissingPermission")
 @RequiresApi(Build.VERSION_CODES.P)
 class HidConnectionInterface(private val context: Context, sender: IDataSender) : AbstractConnectionInterface(sender) {
 

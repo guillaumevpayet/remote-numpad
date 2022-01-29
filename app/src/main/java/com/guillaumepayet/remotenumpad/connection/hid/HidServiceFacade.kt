@@ -18,14 +18,19 @@
 
 package com.guillaumepayet.remotenumpad.connection.hid
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 
 /**
  * A service facade (singleton) to interface with the Bluetooth HID profile.
  */
+@SuppressLint("MissingPermission")
 @RequiresApi(Build.VERSION_CODES.P)
 object HidServiceFacade {
 

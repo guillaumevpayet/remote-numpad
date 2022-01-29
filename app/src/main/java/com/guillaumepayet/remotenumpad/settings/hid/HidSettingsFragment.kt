@@ -19,6 +19,7 @@
 package com.guillaumepayet.remotenumpad.settings.hid
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.pm.PackageManager
 import android.os.Build
@@ -34,6 +35,7 @@ import androidx.preference.Preference
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.HidConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.AbstractSettingsFragment
+import com.guillaumepayet.remotenumpad.settings.BluetoothPermissionRationaleDialogFragment
 
 /**
  * This settings page provides a way to list and select a paired device as the host for a
@@ -60,20 +62,28 @@ class HidSettingsFragment : AbstractSettingsFragment() {
         }
 
         preference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            updateDeviceList()
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+                || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
+                == PackageManager.PERMISSION_GRANTED
+            ) updateDeviceList()
+
             true
         }
 
         preference
     }
 
-    private lateinit var pairingManager: HidPairingManager
+    private var pairingManager: HidPairingManager? = null
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setHasOptionsMenu(true)
         setPreferencesFromResource(R.xml.pref_hid, rootKey)
-        pairingManager = HidPairingManager(this)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+            || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
+            == PackageManager.PERMISSION_GRANTED
+        ) pairingManager = HidPairingManager(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -83,12 +93,23 @@ class HidSettingsFragment : AbstractSettingsFragment() {
 
     override fun onResume() {
         super.onResume()
-        updateDeviceList()
+
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+                    || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
+                    == PackageManager.PERMISSION_GRANTED
+            -> updateDeviceList()
+            shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT) ->
+                BluetoothPermissionRationaleDialogFragment().show(parentFragmentManager, "HID_PERMISSION")
+            else -> {
+                // TODO Let the user know that the permission is missing
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_hid_pair -> {
-            pairingManager.openDialog()
+            pairingManager?.openDialog()
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -96,28 +117,15 @@ class HidSettingsFragment : AbstractSettingsFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        pairingManager.release()
+        pairingManager?.release()
     }
 
 
     /**
      * Updates the [ListPreference] entries for devices.
      */
+    @SuppressLint("MissingPermission")
     private fun updateDeviceList() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-
         val devices = bluetoothAdapter!!.bondedDevices
 
         val (entries, entryValues) = if (devices.isEmpty())
