@@ -1,0 +1,1 @@
+Mise à jour pour prendre en charge les nouvelles versions d'Android.
