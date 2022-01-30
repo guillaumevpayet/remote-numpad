@@ -18,8 +18,12 @@
 
 package com.guillaumepayet.remotenumpad.connection.bluetooth
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
+import android.content.Context
+import android.os.Build
 import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
@@ -39,7 +43,7 @@ import java.util.*
  **/
 @Suppress("BlockingMethodInNonBlockingContext") // The warnings are wrong from what I understand
 @Keep
-class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
+class BluetoothConnectionInterface(context: Context, sender: IDataSender) : AbstractConnectionInterface(sender) {
 
     companion object {
 
@@ -50,7 +54,13 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
     }
 
 
-    private val bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    private val bluetoothAdapter = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        @Suppress("DEPRECATION")
+        BluetoothAdapter.getDefaultAdapter()
+    } else {
+        val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        manager.adapter
+    }
 
     @Volatile
     private var socket: BluetoothSocket? = null
@@ -59,6 +69,7 @@ class BluetoothConnectionInterface(sender: IDataSender) : AbstractConnectionInte
     private var writer: Writer? = null
 
 
+    @SuppressLint("MissingPermission")
     override suspend fun open(host: String) = withContext(Dispatchers.IO) {
         onConnectionStatusChange(R.string.status_connecting)
 

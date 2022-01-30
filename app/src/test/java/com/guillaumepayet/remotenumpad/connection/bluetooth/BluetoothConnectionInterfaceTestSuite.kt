@@ -20,7 +20,9 @@ package com.guillaumepayet.remotenumpad.connection.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
+import android.content.Context
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionStatusListener
 import com.guillaumepayet.remotenumpad.connection.IDataSender
@@ -57,21 +59,22 @@ class BluetoothConnectionInterfaceTestSuite {
     }
 
 
-    @Mock
-    private val mockSocket: BluetoothSocket? = null
-
-    @Mock
-    private val mockDataSender: IDataSender? = null
-
-    @Mock
-    private val mockListener: IConnectionStatusListener? = null
+    @Mock private val mockContext: Context? = null
+    @Mock private val mockSocket: BluetoothSocket? = null
+    @Mock private val mockDataSender: IDataSender? = null
+    @Mock private val mockListener: IConnectionStatusListener? = null
 
 
     @Before
     fun setupMocks() {
+        val mockBluetoothManager = mock(BluetoothManager::class.java)
+        given(mockContext?.getSystemService(Context.BLUETOOTH_SERVICE)).willReturn(mockBluetoothManager)
+
         val mockAdapter = mock(BluetoothAdapter::class.java)
         mockStatic(BluetoothAdapter::class.java)
+        @Suppress("DEPRECATION")
         given(BluetoothAdapter.getDefaultAdapter()).willReturn(mockAdapter)
+        given(mockBluetoothManager.adapter).willReturn(mockAdapter)
 
         val mockInvalidDevice = mock(BluetoothDevice::class.java)
         given(mockAdapter?.getRemoteDevice(INVALID_HOST)).willReturn(mockInvalidDevice)
@@ -96,7 +99,7 @@ class BluetoothConnectionInterfaceTestSuite {
         // Given a valid data sender...
 
         // ...when the connection interface is created with the data sender...
-        val connectionInterface = BluetoothConnectionInterface(mockDataSender!!)
+        val connectionInterface = BluetoothConnectionInterface(mockContext!!, mockDataSender!!)
 
         // ...then the connection interface registers itself in the data sender.
         then(mockDataSender).should(times(1))?.registerConnectionInterface(connectionInterface)
@@ -105,23 +108,23 @@ class BluetoothConnectionInterfaceTestSuite {
     @Test
     fun openingConnectionWithInvalidHost_ConnectingThenCouldNotConnect() {
         // Given that a working listener was injected...
-        val connectionInterface = BluetoothConnectionInterface(mockDataSender!!)
+        val connectionInterface = BluetoothConnectionInterface(mockContext!!, mockDataSender!!)
         connectionInterface.registerConnectionStatusListener(mockListener!!)
 
-        // ...when the connection interface opens a connection with a valid host...
+        // ...when the connection interface opens a connection with an invalid host...
         runBlocking { connectionInterface.open(INVALID_HOST) }
 
         // ...then the connection interface attempts to connect but fails.
         val inOrder = inOrder(mockListener)
         then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_connecting)
         then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_could_not_connect)
-        then(mockSocket).shouldHaveZeroInteractions()
+        then(mockSocket).shouldHaveNoInteractions()
     }
 
     @Test
     fun openingConnectionWithValidHost_ConnectingThenConnected() {
         // Given that a working listener was injected...
-        val connectionInterface = BluetoothConnectionInterface(mockDataSender!!)
+        val connectionInterface = BluetoothConnectionInterface(mockContext!!, mockDataSender!!)
         connectionInterface.registerConnectionStatusListener(mockListener!!)
 
         // ...when the connection interface opens a connection with a valid host...
@@ -137,7 +140,7 @@ class BluetoothConnectionInterfaceTestSuite {
     @Test
     fun closingConnectionWithNoneOpen_NothingHappens() {
         // Given that a working listener was injected...
-        val connectionInterface = BluetoothConnectionInterface(mockDataSender!!)
+        val connectionInterface = BluetoothConnectionInterface(mockContext!!, mockDataSender!!)
         connectionInterface.registerConnectionStatusListener(mockListener!!)
 
         // ...and no connection is open,
@@ -149,13 +152,13 @@ class BluetoothConnectionInterfaceTestSuite {
         val inOrder = inOrder(mockListener)
         then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_disconnecting)
         then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_disconnected)
-        then(mockSocket).shouldHaveZeroInteractions()
+        then(mockSocket).shouldHaveNoInteractions()
     }
 
     @Test
     fun closingConnectionWithValidConnection_DisconnectingThenDisconnected() {
         // Given that a working listener was injected...
-        val connectionInterface = BluetoothConnectionInterface(mockDataSender!!)
+        val connectionInterface = BluetoothConnectionInterface(mockContext!!, mockDataSender!!)
         connectionInterface.registerConnectionStatusListener(mockListener!!)
 
         runBlocking {

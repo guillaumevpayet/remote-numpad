@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -55,17 +56,10 @@ class VirtualNumpadTestSuite {
     }
 
 
-    @Mock
-    private val mockViewGroup: ViewGroup? = null
-
-    @Mock
-    private val mockKey: Key? = null
-
-    @Mock
-    private val mockMotionEvent: MotionEvent? = null
-
-    @Mock
-    private val mockListener: IKeypadListener? = null
+    @Mock private val mockViewGroup: ViewGroup? = null
+    @Mock private val mockKey: Key? = null
+    @Mock private val mockMotionEvent: MotionEvent? = null
+    @Mock private val mockListener: IKeypadListener? = null
 
 
     @Before
@@ -73,7 +67,11 @@ class VirtualNumpadTestSuite {
         val mockContext = mock(Context::class.java)
         given(mockViewGroup?.context).willReturn(mockContext)
 
+        val mockVibratorManager = mock(VibratorManager::class.java)
         val mockVibrator = mock(Vibrator::class.java)
+        given(mockContext?.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).willReturn(mockVibratorManager)
+        given(mockVibratorManager?.defaultVibrator).willReturn(mockVibrator)
+        @Suppress("DEPRECATION")
         given(mockContext?.getSystemService(Context.VIBRATOR_SERVICE)).willReturn(mockVibrator)
 
         val mockVibration = mock(VibrationEffect::class.java)
@@ -194,7 +192,7 @@ class VirtualNumpadTestSuite {
         numpad.onTouch(mockKey, mockMotionEvent)
 
         // ...then the message should not have been passed on to the keypad listener.
-        then(mockListener).shouldHaveZeroInteractions()
+        then(mockListener).shouldHaveNoInteractions()
     }
 
     @Test
@@ -215,7 +213,7 @@ class VirtualNumpadTestSuite {
         numpad.onTouch(mockKey, mockMotionEvent)
 
         // ...then nothing should happen (and no exception should be thrown).
-        then(mockListener).shouldHaveZeroInteractions()
+        then(mockListener).shouldHaveNoInteractions()
     }
 
     @Test

@@ -48,6 +48,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
         useIR = true
+        freeCompilerArgs += '-opt-in=kotlinx.coroutines.DelicateCoroutinesApi'
     }
     buildFeatures {
         viewBinding true

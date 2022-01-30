@@ -19,6 +19,8 @@
 package com.guillaumepayet.remotenumpad.settings.hid
 
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Context
 import android.os.Build
 import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.connection.hid.HidConnectionInterface
@@ -29,11 +31,17 @@ import com.guillaumepayet.remotenumpad.settings.IConnectionInterfaceValidator
  * least Android P (API 28) in which case the [HidConnectionInterface] can be used.
  */
 @Keep
-class HidValidator : IConnectionInterfaceValidator {
+class HidValidator(val context: Context) : IConnectionInterfaceValidator {
 
     override val isInterfaceAvailable: Boolean
         get() {
-            val adapter = BluetoothAdapter.getDefaultAdapter()
+            val adapter = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                @Suppress("DEPRECATION")
+                BluetoothAdapter.getDefaultAdapter()
+            } else {
+                val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+                manager.adapter
+            }
 
             return  adapter != null &&
                     adapter.isEnabled &&

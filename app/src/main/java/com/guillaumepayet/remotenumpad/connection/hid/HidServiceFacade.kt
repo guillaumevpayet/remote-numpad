@@ -18,14 +18,11 @@
 
 package com.guillaumepayet.remotenumpad.connection.hid
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 
 /**
  * A service facade (singleton) to interface with the Bluetooth HID profile.
@@ -99,7 +96,7 @@ object HidServiceFacade {
     var service: BluetoothHidDevice? = null
         private set
 
-    private val bluetoothAdapter: BluetoothAdapter by lazy { BluetoothAdapter.getDefaultAdapter() }
+    private lateinit var bluetoothAdapter: BluetoothAdapter
 
     private var hidDeviceListener: BluetoothHidDevice.Callback? = null
 
@@ -111,6 +108,16 @@ object HidServiceFacade {
      */
     fun registerHidDeviceListener(context: Context, listener: BluetoothHidDevice.Callback) {
         hidDeviceListener = listener
+
+        if (!this::bluetoothAdapter.isInitialized)
+            bluetoothAdapter = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                @Suppress("DEPRECATION")
+                BluetoothAdapter.getDefaultAdapter()
+            } else {
+                val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+                manager.adapter
+            }
+
         bluetoothAdapter.getProfileProxy(context, serviceListener, BluetoothProfile.HID_DEVICE)
     }
 

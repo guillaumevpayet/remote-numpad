@@ -19,7 +19,9 @@
 package com.guillaumepayet.remotenumpad.settings.socket
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
+import android.os.Build
 import com.guillaumepayet.remotenumpad.connection.socket.SocketConnectionInterface
 import kotlinx.coroutines.*
 import java.io.IOException
@@ -46,8 +48,15 @@ class SocketHostScanner(private val fragment: SocketSettingsFragment) {
 
     init {
         val context = fragment.requireActivity().applicationContext
-        val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val clientAddress = wifiManager.dhcpInfo.ipAddress
+
+        val clientAddress = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            @Suppress("DEPRECATION")
+            wifiManager.dhcpInfo.ipAddress
+        } else {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!!.dhcpServerAddress.hashCode()
+        }
 
         hostAddressStart = (clientAddress and 0xFF).toString() + '.' +
                 ((clientAddress shr 8) and 0xFF).toString() + '.' +
@@ -91,7 +100,6 @@ class SocketHostScanner(private val fragment: SocketSettingsFragment) {
      * Decrement the probe count and send all the found hosts to the fragment if there are no more
      * probes.
      */
-    @Synchronized
     private suspend fun decrementProbeCount() = withContext(Dispatchers.Main) {
         probeCount--
 

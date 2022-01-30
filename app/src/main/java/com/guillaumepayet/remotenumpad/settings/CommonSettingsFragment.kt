@@ -18,6 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.settings
 
+import android.content.Context
 import android.os.Bundle
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -73,11 +74,13 @@ class CommonSettingsFragment : AbstractSettingsFragment() {
 
         entries.zip(entryValues).forEach { (entry, entryValue) ->
             val packageName = "${SettingsActivity.SETTINGS_PACKAGE}.$entryValue"
-            val className = entryValue.toString().capitalize(Locale.ROOT) + "Validator"
+            val className = entryValue.toString()
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() } + "Validator"
 
             try {
                 val clazz = Class.forName("$packageName.$className")
-                val validator = clazz.newInstance() as IConnectionInterfaceValidator
+                val constructor = clazz.getConstructor(Context::class.java)
+                val validator = constructor.newInstance(context) as IConnectionInterfaceValidator
 
                 if (!validator.isInterfaceAvailable) {
                     entries.remove(entry)

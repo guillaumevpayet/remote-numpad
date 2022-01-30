@@ -40,11 +40,8 @@ class KeyEventSenderTestSuite {
     }
 
 
-    @Mock
-    private val mockKeypad: IKeypad? = null
-
-    @Mock
-    private val mockConnectionInterface: IConnectionInterface? = null
+    @Mock private val mockKeypad: IKeypad? = null
+    @Mock private val mockConnectionInterface: IConnectionInterface? = null
 
 
     @Test

@@ -22,6 +22,7 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.MotionEvent
 import android.view.SoundEffectConstants
 import android.view.View
@@ -51,7 +52,13 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
 
     private val context = viewGroup.context
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-    private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+    private val vibrator = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        @Suppress("DEPRECATION")
+        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    } else {
+        (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
+    }
 
     init {
         // Register this object as the OnTouchListener to all the keys

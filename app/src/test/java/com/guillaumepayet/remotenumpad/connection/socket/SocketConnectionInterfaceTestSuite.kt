@@ -63,14 +63,9 @@ class SocketConnectionInterfaceTestSuite {
     }
 
 
-    @Mock
-    private val mockSocket: Socket? = null
-
-    @Mock
-    private val mockDataSender: IDataSender? = null
-
-    @Mock
-    private val mockListener: IConnectionStatusListener? = null
+    @Mock private val mockSocket: Socket? = null
+    @Mock private val mockDataSender: IDataSender? = null
+    @Mock private val mockListener: IConnectionStatusListener? = null
 
     
     @Before
@@ -108,7 +103,7 @@ class SocketConnectionInterfaceTestSuite {
         val inOrder = inOrder(mockListener)
         then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_connecting)
         then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_could_not_connect)
-        then(mockSocket).shouldHaveZeroInteractions()
+        then(mockSocket).shouldHaveNoInteractions()
     }
 
     @Test
@@ -140,7 +135,7 @@ class SocketConnectionInterfaceTestSuite {
         val inOrder = inOrder(mockListener)
         then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_disconnecting)
         then(mockListener).should(inOrder, times(1))?.onConnectionStatusChange(R.string.status_disconnected)
-        then(mockSocket).shouldHaveZeroInteractions()
+        then(mockSocket).shouldHaveNoInteractions()
     }
 
     @Test

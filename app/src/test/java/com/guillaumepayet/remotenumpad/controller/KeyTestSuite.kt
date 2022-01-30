@@ -51,14 +51,9 @@ class KeyTestSuite {
     }
 
 
-    @Mock
-    private val mockContext: Context? = null
-
-    @Mock
-    private val mockAttributeSet: AttributeSet? = null
-
-    @Mock
-    private val mockTypedArray: TypedArray? = null
+    @Mock private val mockContext: Context? = null
+    @Mock private val mockAttributeSet: AttributeSet? = null
+    @Mock private val mockTypedArray: TypedArray? = null
 
 
     @Before

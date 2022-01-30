@@ -21,6 +21,8 @@ package com.guillaumepayet.remotenumpad.settings.hid
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -45,9 +47,13 @@ import com.guillaumepayet.remotenumpad.settings.BluetoothPermissionRationaleDial
 @RequiresApi(Build.VERSION_CODES.P)
 class HidSettingsFragment : AbstractSettingsFragment() {
 
-    companion object {
-        private val bluetoothAdapter: BluetoothAdapter? by lazy {
+    private val bluetoothAdapter: BluetoothAdapter? by lazy {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            @Suppress("DEPRECATION")
             BluetoothAdapter.getDefaultAdapter()
+        } else {
+            val manager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
+            manager?.adapter
         }
     }
 

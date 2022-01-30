@@ -35,10 +35,7 @@ import com.guillaumepayet.remotenumpad.connection.*
 import com.guillaumepayet.remotenumpad.controller.VirtualNumpad
 import com.guillaumepayet.remotenumpad.databinding.ActivityNumpadBinding
 import com.guillaumepayet.remotenumpad.databinding.ContentNumpadBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -207,7 +204,11 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
         val connectionInterfaceName = preferences.getString(getString(R.string.pref_key_connection_interface), getString(R.string.pref_socket_entry_value))
         val packageName = "$CONNECTION_INTERFACES_PACKAGE.$connectionInterfaceName"
-        val prefix = "$packageName.${connectionInterfaceName?.capitalize(Locale.ROOT)}"
+        val prefix = "$packageName.${
+            connectionInterfaceName?.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+            }
+        }"
 
         val validatorClass = Class.forName(prefix + "HostValidator")
         val validator = validatorClass.newInstance() as IHostValidator
