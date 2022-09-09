@@ -23,13 +23,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion '32.0.0'
+    compileSdk 32
 
     defaultConfig {
         applicationId 'com.guillaumepayet.remotenumpad'
         minSdk 19
-        targetSdkVersion 32
+        targetSdk 32
         versionCode 30
         versionName '1.8.0'
 
@@ -37,8 +36,9 @@ android {
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
+        debug {
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -48,7 +48,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-        useIR = true
         freeCompilerArgs += '-opt-in=kotlinx.coroutines.DelicateCoroutinesApi'
     }
     buildFeatures {

@@ -22,6 +22,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.os.Build
+import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.IConnectionInterfaceValidator
 
@@ -29,6 +30,7 @@ import com.guillaumepayet.remotenumpad.settings.IConnectionInterfaceValidator
  * Validator used to check whether a [BluetoothAdapter] is available and hence whether the
  * [BluetoothConnectionInterface] can be used.
  */
+@Keep
 class BluetoothValidator(val context: Context) : IConnectionInterfaceValidator {
 
     override val isInterfaceAvailable: Boolean
