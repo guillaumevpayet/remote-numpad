@@ -1,0 +1,1 @@
+Réparation d'un plantage sur les appareils où Bluetooth est indisponible.
