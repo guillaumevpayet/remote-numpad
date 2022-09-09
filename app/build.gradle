@@ -19,7 +19,6 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'com.google.gms.google-services'
 }
 
 android {
@@ -63,8 +62,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.fragment:fragment-ktx:1.5.2'
     implementation 'androidx.preference:preference-ktx:1.2.0'
-    implementation platform('com.google.firebase:firebase-bom:30.4.1')
-    implementation 'com.google.firebase:firebase-analytics-ktx:21.1.1'
 
     // PowerMock allows mocking superclasses for custom View classes.
     // This package depends on JUnit 4 (so no need to import it).
