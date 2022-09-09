@@ -49,10 +49,7 @@ class HidConnectionInterface(private val context: Context, sender: IDataSender) 
     }
 
 
-    private val bluetoothAdapter: BluetoothAdapter = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        @Suppress("DEPRECATION")
-        BluetoothAdapter.getDefaultAdapter()
-    } else {
+    private val bluetoothAdapter: BluetoothAdapter by lazy {
         val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         manager.adapter
     }

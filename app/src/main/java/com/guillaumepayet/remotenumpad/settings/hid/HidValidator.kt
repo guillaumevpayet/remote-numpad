@@ -35,13 +35,8 @@ class HidValidator(val context: Context) : IConnectionInterfaceValidator {
 
     override val isInterfaceAvailable: Boolean
         get() {
-            val adapter = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                @Suppress("DEPRECATION")
-                BluetoothAdapter.getDefaultAdapter()
-            } else {
-                val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-                manager.adapter
-            }
+            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            val adapter = manager.adapter
 
             return  adapter != null &&
                     adapter.isEnabled &&

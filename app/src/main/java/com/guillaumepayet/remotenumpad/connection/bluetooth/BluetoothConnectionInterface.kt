@@ -23,7 +23,6 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import android.os.Build
 import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
@@ -54,10 +53,7 @@ class BluetoothConnectionInterface(context: Context, sender: IDataSender) : Abst
     }
 
 
-    private val bluetoothAdapter = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        @Suppress("DEPRECATION")
-        BluetoothAdapter.getDefaultAdapter()
-    } else {
+    private val bluetoothAdapter: BluetoothAdapter by lazy {
         val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         manager.adapter
     }

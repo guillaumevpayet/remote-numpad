@@ -23,6 +23,7 @@ import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDevice
 import android.bluetooth.BluetoothProfile
+import android.companion.AssociationInfo
 import android.companion.AssociationRequest
 import android.companion.BluetoothDeviceFilter
 import android.companion.CompanionDeviceManager
@@ -59,12 +60,17 @@ class HidPairingManager(fragment: HidSettingsFragment) {
 
     private val companionDeviceListener = object : CompanionDeviceManager.Callback() {
 
-        override fun onDeviceFound(chooserLauncher: IntentSender?) {
-            val pairingRequest = IntentSenderRequest.Builder(chooserLauncher!!).build()
+        override fun onAssociationPending(chooserLauncher: IntentSender) {
+            val pairingRequest = IntentSenderRequest.Builder(chooserLauncher).build()
             sendPairingRequest(pairingRequest)
         }
 
+        override fun onAssociationCreated(associationInfo: AssociationInfo) {
+            // TODO Figure out if this could help
+        }
+
         override fun onFailure(error: CharSequence?) {
+            // TODO Figure out if this could help
         }
     }
 
@@ -78,7 +84,12 @@ class HidPairingManager(fragment: HidSettingsFragment) {
             if (result.resultCode != Activity.RESULT_OK)
                 return@registerForActivityResult
 
-            val device = result.data!!.getParcelableExtra<BluetoothDevice>(CompanionDeviceManager.EXTRA_DEVICE)
+            val device = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                @Suppress("DEPRECATION")
+                result.data!!.getParcelableExtra<BluetoothDevice>(CompanionDeviceManager.EXTRA_DEVICE)
+            else
+                result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_ASSOCIATION, BluetoothDevice::class.java)
+
             device!!.createBond()
         }
     }

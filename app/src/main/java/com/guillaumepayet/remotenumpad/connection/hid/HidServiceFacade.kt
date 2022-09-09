@@ -109,14 +109,10 @@ object HidServiceFacade {
     fun registerHidDeviceListener(context: Context, listener: BluetoothHidDevice.Callback) {
         hidDeviceListener = listener
 
-        if (!this::bluetoothAdapter.isInitialized)
-            bluetoothAdapter = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                @Suppress("DEPRECATION")
-                BluetoothAdapter.getDefaultAdapter()
-            } else {
-                val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-                manager.adapter
-            }
+        if (!this::bluetoothAdapter.isInitialized) {
+            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            bluetoothAdapter = manager.adapter
+        }
 
         bluetoothAdapter.getProfileProxy(context, serviceListener, BluetoothProfile.HID_DEVICE)
     }

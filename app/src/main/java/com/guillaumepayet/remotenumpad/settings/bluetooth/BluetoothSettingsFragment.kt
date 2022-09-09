@@ -43,13 +43,8 @@ import com.guillaumepayet.remotenumpad.settings.BluetoothPermissionRationaleDial
 class BluetoothSettingsFragment : AbstractSettingsFragment() {
 
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            @Suppress("DEPRECATION")
-            BluetoothAdapter.getDefaultAdapter()
-        } else {
-            val manager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-            manager?.adapter
-        }
+        val manager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
+        manager?.adapter
     }
 
 

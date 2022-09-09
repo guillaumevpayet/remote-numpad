@@ -36,8 +36,9 @@ import java.net.UnknownHostException
  * @constructor Prepare the address range to scan
  * @param fragment The fragment which intends to start the scan and know its result
  **/
-class SocketHostScanner(private val fragment: SocketSettingsFragment) {
+class SocketHostScanner(fragment: SocketSettingsFragment) {
 
+    private val listener: ISocketHostScanListener
     private val hostAddressStart: String
 
     private val hosts = ArrayList<Pair<String, String>>()
@@ -47,6 +48,7 @@ class SocketHostScanner(private val fragment: SocketSettingsFragment) {
 
 
     init {
+        listener = fragment
         val context = fragment.requireActivity().applicationContext
 
         val clientAddress = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
@@ -67,7 +69,10 @@ class SocketHostScanner(private val fragment: SocketSettingsFragment) {
      * Start to scan the IP addresses for a Remote Numpad Server.
      */
     fun scan() {
+        listener.onScanStarted()
+        hosts.clear()
         probeCount = 256
+
 
         for (i in 0 until probeCount) {
             GlobalScope.launch(Dispatchers.IO) {
@@ -103,9 +108,7 @@ class SocketHostScanner(private val fragment: SocketSettingsFragment) {
     private suspend fun decrementProbeCount() = withContext(Dispatchers.Main) {
         probeCount--
 
-        if (probeCount == 0) {
-            if (fragment.isResumed)
-                fragment.updateHosts(hosts)
-        }
+        if (probeCount == 0)
+            listener.onScanResults(hosts)
     }
 }

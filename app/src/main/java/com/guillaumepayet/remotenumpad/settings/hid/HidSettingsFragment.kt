@@ -26,9 +26,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -48,13 +45,8 @@ import com.guillaumepayet.remotenumpad.settings.BluetoothPermissionRationaleDial
 class HidSettingsFragment : AbstractSettingsFragment() {
 
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            @Suppress("DEPRECATION")
-            BluetoothAdapter.getDefaultAdapter()
-        } else {
-            val manager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-            manager?.adapter
-        }
+        val manager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
+        manager?.adapter
     }
 
 
@@ -80,21 +72,19 @@ class HidSettingsFragment : AbstractSettingsFragment() {
     }
 
     private var pairingManager: HidPairingManager? = null
+    private lateinit var menuProvider: HidSettingsMenuProvider
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setHasOptionsMenu(true)
         setPreferencesFromResource(R.xml.pref_hid, rootKey)
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S
             || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
             == PackageManager.PERMISSION_GRANTED
         ) pairingManager = HidPairingManager(this)
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_hid_settings, menu)
+        menuProvider = HidSettingsMenuProvider(pairingManager)
+        requireActivity().addMenuProvider(menuProvider)
     }
 
     override fun onResume() {
@@ -113,17 +103,10 @@ class HidSettingsFragment : AbstractSettingsFragment() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_hid_pair -> {
-            pairingManager?.openDialog()
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
-    }
-
     override fun onDestroy() {
-        super.onDestroy()
+        requireActivity().removeMenuProvider(menuProvider)
         pairingManager?.release()
+        super.onDestroy()
     }
 
 

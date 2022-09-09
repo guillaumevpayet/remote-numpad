@@ -19,22 +19,18 @@
 package com.guillaumepayet.remotenumpad.settings.socket
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.annotation.Keep
 import androidx.preference.*
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.socket.SocketConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.AbstractSettingsFragment
 
-
 /**
  * This preference screen provides a way to scan and pick the host to connect to via the
  * [SocketConnectionInterface]. There is also an option to key in the host's IP address if known.
  **/
 @Keep
-class SocketSettingsFragment : AbstractSettingsFragment() {
+class SocketSettingsFragment : AbstractSettingsFragment(), ISocketHostScanListener {
 
     private val hostPreference: ListPreference by lazy {
         val preference = findPreference<ListPreference>(getString(R.string.pref_key_socket_host))!!
@@ -73,34 +69,38 @@ class SocketSettingsFragment : AbstractSettingsFragment() {
     }
 
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setHasOptionsMenu(true)
-        setPreferencesFromResource(R.xml.pref_socket, rootKey)
-    }
+    private lateinit var hostScanner: SocketHostScanner
+    private lateinit var menuProvider: SocketSettingsMenuProvider
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
-            inflater.inflate(R.menu.menu_socket_settings, menu)
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.pref_socket, rootKey)
+        hostScanner = SocketHostScanner(this)
+        menuProvider = SocketSettingsMenuProvider(hostScanner)
+        requireActivity().addMenuProvider(menuProvider)
+    }
 
     override fun onResume() {
         super.onResume()
-        startHostScan()
+        hostScanner.scan()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_socket_refresh -> {
-            startHostScan()
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
+    override fun onDestroy() {
+        requireActivity().removeMenuProvider(menuProvider)
+        super.onDestroy()
     }
 
 
-    /**
-     * Updates the list of hosts.
-     *
-     * @param hosts a list of hosts as pairs of (label, address)
-     */
-    fun updateHosts(hosts: Iterable<Pair<String, String>>) {
+    override fun onScanStarted() {
+        customHostPreference.isEnabled = false
+        hostPreference.isEnabled = false
+        hostPreference.summary = getString(R.string.pref_summary_host_scanning)
+    }
+
+    override fun onScanResults(hosts: Iterable<Pair<String, String>>) {
+        if (!isResumed)
+            return
+
         val entries = hosts.map { it.first } + getString(R.string.pref_manual_host_entry)
         val entryValues = hosts.map { it.second } + getString(R.string.pref_manual_host_entry_value)
 
@@ -111,16 +111,5 @@ class SocketSettingsFragment : AbstractSettingsFragment() {
             hostPreference.value = entryValues.last()
 
         hostPreference.onPreferenceChangeListener!!.onPreferenceChange(hostPreference, hostPreference.value)
-    }
-
-
-    /**
-     * Starts scanning for hosts.
-     */
-    private fun startHostScan() {
-        customHostPreference.isEnabled = false
-        hostPreference.isEnabled = false
-        hostPreference.summary = getString(R.string.pref_summary_host_scanning)
-        SocketHostScanner(this).scan()
     }
 }
