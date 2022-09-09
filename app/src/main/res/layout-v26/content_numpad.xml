@@ -44,6 +44,7 @@
             android:layout_height="wrap_content"
             android:text="@string/button_connect"
             android:textSize="@dimen/font_size_button"
+            android:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
