@@ -30,10 +30,10 @@
             app:summary="@string/pref_manual_host_entry"
             app:title="@string/pref_title_host" />
         <EditTextPreference
-            app:defaultValue="192.168.1.1"
+            app:defaultValue="@string/pref_manual_host_entry_default"
             app:key="@string/pref_key_custom_host"
             app:singleLine="true"
-            app:summary="192.168.1.1"
+            app:summary="@string/pref_manual_host_entry_default"
             app:title="@string/pref_manual_host_entry" />
 
     </PreferenceCategory>

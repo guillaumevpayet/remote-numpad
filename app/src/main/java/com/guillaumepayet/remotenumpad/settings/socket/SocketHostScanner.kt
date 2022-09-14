@@ -22,12 +22,13 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Build
+import android.text.format.Formatter
+import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.socket.SocketConnectionInterface
 import kotlinx.coroutines.*
 import java.io.IOException
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.UnknownHostException
+import java.net.*
+import kotlin.collections.ArrayList
 
 /**
  * This scanner can search IP addresses and test ports to find potential hosts with a Remote Numpad
@@ -51,18 +52,38 @@ class SocketHostScanner(fragment: SocketSettingsFragment) {
         listener = fragment
         val context = fragment.requireActivity().applicationContext
 
-        val clientAddress = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+        val clientAddress = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) @Suppress("DEPRECATION") {
             val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
-            @Suppress("DEPRECATION")
-            wifiManager.dhcpInfo.ipAddress
+            val addressHash = wifiManager.connectionInfo.ipAddress
+            "/" + Formatter.formatIpAddress(addressHash)
         } else {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            connectivityManager.getLinkProperties(connectivityManager.activeNetwork)?.dhcpServerAddress.hashCode()
+
+            val activeNetwork = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+                @Suppress("DEPRECATION")
+                connectivityManager.allNetworks[0]
+            else
+                connectivityManager.activeNetwork
+
+            val linkProperties = connectivityManager.getLinkProperties(activeNetwork)
+
+            val linkAddress = try {
+                linkProperties?.linkAddresses
+                    ?.first { it.address is Inet4Address }
+                    ?.address.toString()
+            } catch (e: NoSuchElementException) {
+                "null"
+            }
+
+            if (linkAddress != "null")
+                linkAddress
+            else
+                "/" + context.getString(R.string.pref_manual_host_entry_default)
         }
 
-        hostAddressStart = (clientAddress and 0xFF).toString() + '.' +
-                ((clientAddress shr 8) and 0xFF).toString() + '.' +
-                ((clientAddress shr 16) and 0xFF).toString() + '.'
+        hostAddressStart = clientAddress
+            .substring(1)
+            .substringBeforeLast('.') + '.'
     }
 
     /**

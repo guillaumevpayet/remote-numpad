@@ -119,6 +119,7 @@
     <string name="pref_key_custom_host" translatable="false">custom_host</string>
     <string name="pref_manual_host_entry">Manual entry</string>
     <string name="pref_manual_host_entry_value" translatable="false">manual</string>
+    <string name="pref_manual_host_entry_default" translatable="false">192.168.1.1</string>
 
     <string-array name="pref_socket_host_values">
         <item>@string/pref_manual_host_entry_value</item>
