@@ -1,0 +1,1 @@
+Fixed crashes of the socket connection interface.

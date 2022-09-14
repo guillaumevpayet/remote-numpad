@@ -1,0 +1,1 @@
+Réparé des plantages de l'intérface de connection socket.
