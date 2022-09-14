@@ -57,7 +57,7 @@ class SocketHostScanner(fragment: SocketSettingsFragment) {
             wifiManager.dhcpInfo.ipAddress
         } else {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!!.dhcpServerAddress.hashCode()
+            connectivityManager.getLinkProperties(connectivityManager.activeNetwork)?.dhcpServerAddress.hashCode()
         }
 
         hostAddressStart = (clientAddress and 0xFF).toString() + '.' +
