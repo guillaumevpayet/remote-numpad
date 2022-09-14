@@ -23,7 +23,6 @@ import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDevice
 import android.bluetooth.BluetoothProfile
-import android.companion.AssociationInfo
 import android.companion.AssociationRequest
 import android.companion.BluetoothDeviceFilter
 import android.companion.CompanionDeviceManager
@@ -60,18 +59,18 @@ class HidPairingManager(fragment: HidSettingsFragment) {
 
     private val companionDeviceListener = object : CompanionDeviceManager.Callback() {
 
-        override fun onAssociationPending(chooserLauncher: IntentSender) {
-            val pairingRequest = IntentSenderRequest.Builder(chooserLauncher).build()
+        // NOTE: This method is required for older versions of Android
+        @Deprecated("Deprecated in Java", ReplaceWith("onAssociationPending(intentSender)"))
+        override fun onDeviceFound(intentSender: IntentSender) {
+            onAssociationPending(intentSender)
+        }
+
+        override fun onAssociationPending(intentSender: IntentSender) {
+            val pairingRequest = IntentSenderRequest.Builder(intentSender).build()
             sendPairingRequest(pairingRequest)
         }
 
-        override fun onAssociationCreated(associationInfo: AssociationInfo) {
-            // TODO Figure out if this could help
-        }
-
-        override fun onFailure(error: CharSequence?) {
-            // TODO Figure out if this could help
-        }
+        override fun onFailure(error: CharSequence?) {}
     }
 
 
@@ -86,7 +85,7 @@ class HidPairingManager(fragment: HidSettingsFragment) {
 
             val device = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
                 @Suppress("DEPRECATION")
-                result.data!!.getParcelableExtra<BluetoothDevice>(CompanionDeviceManager.EXTRA_DEVICE)
+                result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE)
             else
                 result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_ASSOCIATION, BluetoothDevice::class.java)
 
