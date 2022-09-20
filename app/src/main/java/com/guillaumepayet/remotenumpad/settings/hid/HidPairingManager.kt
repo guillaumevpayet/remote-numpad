@@ -67,7 +67,12 @@ class HidPairingManager(fragment: HidSettingsFragment) {
 
         override fun onAssociationPending(intentSender: IntentSender) {
             val pairingRequest = IntentSenderRequest.Builder(intentSender).build()
-            sendPairingRequest(pairingRequest)
+
+            try {
+                sendPairingRequest(pairingRequest)
+            } catch (e: java.lang.IllegalStateException) {
+                return
+            }
         }
 
         override fun onFailure(error: CharSequence?) {}
