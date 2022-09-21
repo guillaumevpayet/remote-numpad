@@ -93,7 +93,6 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
         contentBinding = activityBinding.content
         contentBinding.connectButton.setOnClickListener(this)
-        contentBinding.disconnectButton.setOnClickListener(this)
 
         val numpad = VirtualNumpad(contentBinding.numpadKeys)
         keyEventSender = KeyEventSender(numpad)
@@ -146,9 +145,9 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
 
     override fun onClick(view: View?) {
-        when (view) {
-            contentBinding.connectButton -> connect()
-            contentBinding.disconnectButton -> disconnect()
+        when (contentBinding.connectButton.text) {
+            getString(R.string.button_connect) -> connect()
+            getString(R.string.button_disconnect) -> disconnect()
         }
     }
 
@@ -159,16 +158,16 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
             val colorId = when (connectionStatus) {
                 R.string.status_disconnected -> {
+                    contentBinding.connectButton.text = getString(R.string.button_connect)
                     contentBinding.connectButton.isEnabled = true
                     R.color.disconnected
                 }
                 R.string.status_disconnecting -> {
-                    contentBinding.disconnectButton.isEnabled = false
+                    contentBinding.connectButton.isEnabled = false
                     R.color.working
                 }
                 R.string.status_connecting -> {
                     contentBinding.connectButton.isEnabled = false
-                    contentBinding.disconnectButton.isEnabled = true
                     R.color.working
                 }
                 R.string.status_connection_lost,
@@ -178,12 +177,14 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
                     }
 
                     connectionInterface = null
-                    contentBinding.connectButton.isEnabled = true
-                    contentBinding.disconnectButton.isEnabled = false
                     contentBinding.statusText.maxLines = 2
                     R.color.failed
                 }
-                else -> R.color.connected
+                else -> {
+                    contentBinding.connectButton.text = getString(R.string.button_disconnect)
+                    contentBinding.connectButton.isEnabled = true
+                    R.color.connected
+                }
             }
 
             val color = ContextCompat.getColor(baseContext, colorId)

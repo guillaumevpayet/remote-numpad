@@ -34,19 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/connect_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/button_connect"
-            android:maxLines="1"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMinTextSize="@dimen/button_min_font_size"
-            app:layout_constraintWidth_percent="@dimen/button_width_percent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/status_text"
             android:layout_width="0dp"
@@ -59,17 +46,16 @@
             android:maxLines="1"
             app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/disconnect_button"
-            app:layout_constraintStart_toEndOf="@+id/connect_button"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/connect_button"
             tools:ignore="TextContrastCheck" />
 
         <Button
-            android:id="@+id/disconnect_button"
-            android:layout_width="wrap_content"
+            android:id="@+id/connect_button"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/button_disconnect"
+            android:text="@string/button_connect"
             android:maxLines="1"
             app:autoSizeTextType="uniform"
             app:autoSizeMinTextSize="@dimen/button_min_font_size"

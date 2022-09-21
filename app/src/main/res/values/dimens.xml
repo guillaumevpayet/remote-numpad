@@ -2,5 +2,5 @@
 <resources>
     <dimen name="margin_size">4dp</dimen>
     <dimen name="button_min_font_size">10sp</dimen>
-    <dimen name="button_width_percent">0.3</dimen>
+    <dimen name="button_width_percent">0.35</dimen>
 </resources>
