@@ -155,6 +155,8 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
     override fun onConnectionStatusChange(connectionStatus: Int) {
         GlobalScope.launch(Dispatchers.Main) {
+            contentBinding.statusText.maxLines = 1
+
             val colorId = when (connectionStatus) {
                 R.string.status_disconnected -> {
                     contentBinding.connectButton.isEnabled = true
@@ -178,6 +180,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
                     connectionInterface = null
                     contentBinding.connectButton.isEnabled = true
                     contentBinding.disconnectButton.isEnabled = false
+                    contentBinding.statusText.maxLines = 2
                     R.color.failed
                 }
                 else -> R.color.connected
