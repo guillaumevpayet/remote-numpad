@@ -45,7 +45,7 @@ abstract class AbstractSettingsFragment : PreferenceFragmentCompat() {
             preferenceManager.sharedPreferences!!.edit {
                 try {
                     putString(getString(R.string.pref_key_host), value)
-                } catch (e: IllegalStateException) {
+                } catch (_: IllegalStateException) {
                 }
             }
 

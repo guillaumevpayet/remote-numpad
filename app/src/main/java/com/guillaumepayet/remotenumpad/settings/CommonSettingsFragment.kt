@@ -50,7 +50,7 @@ class CommonSettingsFragment : AbstractSettingsFragment() {
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.pref_base, rootKey)
+        setPreferencesFromResource(R.xml.pref_common, rootKey)
 
         val themePreference = findPreference<ListPreference>(getString(R.string.pref_key_theme))!!
 
@@ -86,7 +86,7 @@ class CommonSettingsFragment : AbstractSettingsFragment() {
                     entries.remove(entry)
                     entryValues.remove(entryValue)
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
 
