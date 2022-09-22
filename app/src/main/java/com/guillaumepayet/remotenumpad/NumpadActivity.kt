@@ -23,7 +23,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
-import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -31,6 +30,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.MaterialColors
 import com.guillaumepayet.remotenumpad.connection.*
 import com.guillaumepayet.remotenumpad.controller.VirtualNumpad
 import com.guillaumepayet.remotenumpad.databinding.ActivityNumpadBinding
@@ -160,15 +160,15 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
                 R.string.status_disconnected -> {
                     contentBinding.connectButton.text = getString(R.string.button_connect)
                     contentBinding.connectButton.isEnabled = true
-                    R.color.disconnected
+                    com.google.android.material.R.attr.colorSecondary
                 }
                 R.string.status_disconnecting -> {
                     contentBinding.connectButton.isEnabled = false
-                    R.color.working
+                    com.google.android.material.R.attr.colorTertiary
                 }
                 R.string.status_connecting -> {
                     contentBinding.connectButton.isEnabled = false
-                    R.color.working
+                    com.google.android.material.R.attr.colorTertiary
                 }
                 R.string.status_connection_lost,
                 R.string.status_could_not_connect -> {
@@ -178,16 +178,16 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
 
                     connectionInterface = null
                     contentBinding.statusText.maxLines = 2
-                    R.color.failed
+                    com.google.android.material.R.attr.colorError
                 }
                 else -> {
                     contentBinding.connectButton.text = getString(R.string.button_disconnect)
                     contentBinding.connectButton.isEnabled = true
-                    R.color.connected
+                    com.google.android.material.R.attr.colorPrimary
                 }
             }
 
-            val color = ContextCompat.getColor(baseContext, colorId)
+            val color = MaterialColors.getColor(contentBinding.statusText, colorId)
             contentBinding.statusText.text = getString(connectionStatus)
             contentBinding.statusText.setTextColor(color)
         }

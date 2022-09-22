@@ -18,12 +18,63 @@
 -->
 
 <resources>
-    <color name="colorPrimary">#436AAA</color>
-    <color name="colorAccent">#CE93D8</color>
-
-    <!-- Colors for the status label -->
-    <color name="disconnected">@android:color/darker_gray</color>
-    <color name="connected">@android:color/holo_blue_dark</color>
-    <color name="working">@android:color/holo_orange_dark</color>
-    <color name="failed">@android:color/holo_red_light</color>
+    <color name="seed">#436AAA</color>
+    <color name="md_theme_light_primary">#2B5EA7</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#D7E3FF</color>
+    <color name="md_theme_light_onPrimaryContainer">#001B3E</color>
+    <color name="md_theme_light_secondary">#565E71</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#DAE2F9</color>
+    <color name="md_theme_light_onSecondaryContainer">#131C2B</color>
+    <color name="md_theme_light_tertiary">#705574</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#FAD8FD</color>
+    <color name="md_theme_light_onTertiaryContainer">#28132E</color>
+    <color name="md_theme_light_error">#BA1A1A</color>
+    <color name="md_theme_light_errorContainer">#FFDAD6</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_onErrorContainer">#410002</color>
+    <color name="md_theme_light_background">#FDFBFF</color>
+    <color name="md_theme_light_onBackground">#1A1B1F</color>
+    <color name="md_theme_light_surface">#FDFBFF</color>
+    <color name="md_theme_light_onSurface">#1A1B1F</color>
+    <color name="md_theme_light_surfaceVariant">#E0E2EC</color>
+    <color name="md_theme_light_onSurfaceVariant">#44474E</color>
+    <color name="md_theme_light_outline">#74777F</color>
+    <color name="md_theme_light_inverseOnSurface">#F1F0F4</color>
+    <color name="md_theme_light_inverseSurface">#2F3033</color>
+    <color name="md_theme_light_inversePrimary">#AAC7FF</color>
+    <color name="md_theme_light_shadow">#000000</color>
+    <color name="md_theme_light_surfaceTint">#2B5EA7</color>
+    <color name="md_theme_light_surfaceTintColor">#2B5EA7</color>
+    <color name="md_theme_dark_primary">#AAC7FF</color>
+    <color name="md_theme_dark_onPrimary">#002F65</color>
+    <color name="md_theme_dark_primaryContainer">#01458E</color>
+    <color name="md_theme_dark_onPrimaryContainer">#D7E3FF</color>
+    <color name="md_theme_dark_secondary">#BEC6DC</color>
+    <color name="md_theme_dark_onSecondary">#283141</color>
+    <color name="md_theme_dark_secondaryContainer">#3E4759</color>
+    <color name="md_theme_dark_onSecondaryContainer">#DAE2F9</color>
+    <color name="md_theme_dark_tertiary">#DDBCE0</color>
+    <color name="md_theme_dark_onTertiary">#3F2844</color>
+    <color name="md_theme_dark_tertiaryContainer">#573E5C</color>
+    <color name="md_theme_dark_onTertiaryContainer">#FAD8FD</color>
+    <color name="md_theme_dark_error">#FFB4AB</color>
+    <color name="md_theme_dark_errorContainer">#93000A</color>
+    <color name="md_theme_dark_onError">#690005</color>
+    <color name="md_theme_dark_onErrorContainer">#FFDAD6</color>
+    <color name="md_theme_dark_background">#1A1B1F</color>
+    <color name="md_theme_dark_onBackground">#E3E2E6</color>
+    <color name="md_theme_dark_surface">#1A1B1F</color>
+    <color name="md_theme_dark_onSurface">#E3E2E6</color>
+    <color name="md_theme_dark_surfaceVariant">#44474E</color>
+    <color name="md_theme_dark_onSurfaceVariant">#C4C6D0</color>
+    <color name="md_theme_dark_outline">#8E9099</color>
+    <color name="md_theme_dark_inverseOnSurface">#1A1B1F</color>
+    <color name="md_theme_dark_inverseSurface">#E3E2E6</color>
+    <color name="md_theme_dark_inversePrimary">#2B5EA7</color>
+    <color name="md_theme_dark_shadow">#000000</color>
+    <color name="md_theme_dark_surfaceTint">#AAC7FF</color>
+    <color name="md_theme_dark_surfaceTintColor">#AAC7FF</color>
 </resources>

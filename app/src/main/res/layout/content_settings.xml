@@ -17,26 +17,30 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NumpadActivity">
+    android:layout_marginTop="?attr/actionBarSize"
+    android:orientation="vertical">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/common_settings"
+            android:name="com.guillaumepayet.remotenumpad.settings.CommonSettingsFragment"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name"
-            app:menu="@menu/menu_numpad"/>
+            android:layout_height="wrap_content"
+            tools:layout="@android:layout/preference_list_fragment" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+        <FrameLayout
+            android:id="@+id/connection_interface_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <include android:id="@+id/content" layout="@layout/content_numpad" />
+    </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</ScrollView>

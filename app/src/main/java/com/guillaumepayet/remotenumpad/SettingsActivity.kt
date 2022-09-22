@@ -53,6 +53,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         commonSettings = supportFragmentManager.findFragmentById(R.id.common_settings) as CommonSettingsFragment
 
         commonSettings.onConnectionInterfaceChangeListener = Preference.OnPreferenceChangeListener { _, value ->

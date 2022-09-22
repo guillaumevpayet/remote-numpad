@@ -19,8 +19,8 @@
 package com.guillaumepayet.remotenumpad.controller
 
 import android.content.Context
-import androidx.appcompat.widget.AppCompatButton
 import android.util.AttributeSet
+import com.google.android.material.button.MaterialButton
 import com.guillaumepayet.remotenumpad.R
 
 /**
@@ -32,7 +32,7 @@ import com.guillaumepayet.remotenumpad.R
  * @param context The context of the application
  * @param attrs   The attributes from the XML
  **/
-class Key(context: Context, attrs: AttributeSet) : AppCompatButton(context, attrs) {
+class Key(context: Context, attrs: AttributeSet) : MaterialButton(context, attrs) {
 
     /**
      * The value of the key to be sent to the computer.
