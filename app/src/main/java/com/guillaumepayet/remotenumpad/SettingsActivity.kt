@@ -59,8 +59,11 @@ class SettingsActivity : AppCompatActivity() {
         commonSettings.onConnectionInterfaceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
             val stringValue = value.toString()
             val packageName = "${SETTINGS_PACKAGE}.$stringValue"
-            val className =
-                stringValue.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() } + "SettingsFragment"
+
+            val className = stringValue.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+            } + "SettingsFragment"
+
             val clazz = Class.forName("$packageName.$className")
             val newFragment = clazz.newInstance() as Fragment
 

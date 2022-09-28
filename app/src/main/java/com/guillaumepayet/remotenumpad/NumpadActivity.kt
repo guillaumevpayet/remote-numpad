@@ -202,7 +202,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         val host = preferences.getString(getString(R.string.pref_key_host), getString(R.string.pref_no_host_entry_value))!!
 
         if (host == getString(R.string.pref_no_host_entry_value)) {
-            Snackbar.make(contentBinding.statusText, getString(R.string.snackbar_no_host_selected), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(contentBinding.statusText, R.string.snackbar_no_host_selected, Snackbar.LENGTH_SHORT).show()
             return
         }
 
@@ -218,7 +218,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
         val validator = validatorClass.newInstance() as IHostValidator
 
         if (!validator.isHostValid(host)) {
-            Snackbar.make(contentBinding.statusText, getString(R.string.snackbar_invalid_host), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(contentBinding.statusText, R.string.snackbar_invalid_host, Snackbar.LENGTH_SHORT).show()
             return
         }
 
@@ -232,7 +232,7 @@ class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionSta
                 constructor.newInstance(keyEventSender) as IConnectionInterface
             }
         } catch (e: Exception) {
-            Snackbar.make(contentBinding.statusText, getString(R.string.snackbar_invalid_connection_interface), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(contentBinding.statusText, R.string.snackbar_invalid_connection_interface, Snackbar.LENGTH_SHORT).show()
             null
         }
 

@@ -52,27 +52,27 @@
     <!-- General settings -->
 
     <string name="pref_socket_entry_value" translatable="false">socket</string>
-    <string name="pref_socket_entry">Socket (Wifi)</string>
+    <string name="pref_socket_entry">Socket/WiFi (requires server)</string>
 
     <string name="pref_bluetooth_entry_value" translatable="false">bluetooth</string>
-    <string name="pref_bluetooth_entry">Bluetooth</string>
+    <string name="pref_bluetooth_entry">Bluetooth (with server)</string>
 
     <string name="pref_hid_entry_value" translatable="false">hid</string>
-    <string name="pref_hid_entry">HID (server-less)</string>
+    <string name="pref_hid_entry">Bluetooth</string>
 
     <string name="pref_key_connection_interface" translatable="false">connection_interface</string>
     <string name="pref_title_connection_interface">Connection interface</string>
 
     <string-array name="pref_connection_interface_values">
-        <item>@string/pref_socket_entry_value</item>
-        <item>@string/pref_bluetooth_entry_value</item>
         <item>@string/pref_hid_entry_value</item>
+        <item>@string/pref_bluetooth_entry_value</item>
+        <item>@string/pref_socket_entry_value</item>
     </string-array>
 
     <string-array name="pref_connection_interface_titles">
-        <item>@string/pref_socket_entry</item>
-        <item>@string/pref_bluetooth_entry</item>
         <item>@string/pref_hid_entry</item>
+        <item>@string/pref_bluetooth_entry</item>
+        <item>@string/pref_socket_entry</item>
     </string-array>
 
     <string name="pref_key_vibrations" translatable="false">vibrations</string>
@@ -80,6 +80,9 @@
 
     <string name="pref_key_backspace" translatable="false">backspace</string>
     <string name="pref_title_backspace">\"backspace\" instead of \"numlock\"</string>
+
+    <string name="pref_key_nosleep" translatable="false">nosleep</string>
+    <string name="pref_title_nosleep">Keep the screen on</string>
 
     <string name="pref_light_mode_entry_value" translatable="false">light</string>
     <string name="pref_light_mode_entry">Light</string>
@@ -112,7 +115,7 @@
 
     <!-- Socket settings -->
 
-    <string name="pref_title_category_socket">Socket settings</string>
+    <string name="pref_title_category_socket">Socket/WiFi settings</string>
     <string name="pref_key_socket_host" translatable="false">socket_host</string>
     <string name="action_socket_refresh">Refresh</string>
     <string name="pref_summary_host_scanning">Scanning…</string>
@@ -131,7 +134,7 @@
 
     <!-- Bluetooth settings -->
 
-    <string name="pref_title_category_bluetooth">Bluetooth settings</string>
+    <string name="pref_title_category_bluetooth">Bluetooth (server) settings</string>
     <string name="pref_key_bluetooth_host" translatable="false">bluetooth_host</string>
     <string name="pref_no_host_entry">None paired</string>
     <string name="pref_no_host_entry_value" translatable="false" />
@@ -146,10 +149,8 @@
 
     <!-- HID settings -->
 
-    <string name="pref_title_category_hid">HID settings</string>
+    <string name="pref_title_category_hid">Bluetooth settings</string>
     <string name="pref_key_hid_host" translatable="false">hid_host</string>
     <string name="action_hid_pair">Pair</string>
-    <string name="pref_key_nosleep" translatable="false">nosleep</string>
-    <string name="pref_title_nosleep">Keep the screen on</string>
 
 </resources>
