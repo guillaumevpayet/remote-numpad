@@ -18,6 +18,7 @@
 
 package com.guillaumepayet.remotenumpad.settings.hid
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
@@ -26,28 +27,54 @@ import android.bluetooth.BluetoothProfile
 import android.companion.AssociationRequest
 import android.companion.BluetoothDeviceFilter
 import android.companion.CompanionDeviceManager
+import android.content.Context
 import android.content.IntentSender
 import android.os.Build
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
+import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.connection.hid.HidServiceFacade
 
 /**
  * Manager class to handle the process of pairing a new device ready for the Bluetooth HID profile.
  */
-@SuppressLint("MissingPermission")
 @RequiresApi(Build.VERSION_CODES.P)
 class HidPairingManager(fragment: HidSettingsFragment) {
+
+    private val activity = fragment.requireActivity() as AbstractActivity
 
     private val pairingLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     private val companionDeviceManager: CompanionDeviceManager =
-        fragment.requireContext().getSystemService(CompanionDeviceManager::class.java)
+        activity.getSystemService(Context.COMPANION_DEVICE_SERVICE) as CompanionDeviceManager
+
+    private val activityResultCallback = object : ActivityResultCallback<ActivityResult> {
+
+        @SuppressLint("InlinedApi")
+        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+        override fun onActivityResult(result: ActivityResult?) {
+            if (result?.resultCode != Activity.RESULT_OK)
+                return
+
+            val device = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                @Suppress("DEPRECATION")
+                result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE)
+            else
+                result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_ASSOCIATION, BluetoothDevice::class.java)
+
+            device!!.createBond()
+        }
+    }
 
     private val hidDeviceListener = object: BluetoothHidDevice.Callback() {
 
+        @SuppressLint("InlinedApi")
+        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
             super.onConnectionStateChanged(device, state)
 
@@ -80,22 +107,9 @@ class HidPairingManager(fragment: HidSettingsFragment) {
 
 
     init {
-        HidServiceFacade.registerHidDeviceListener(fragment.requireContext(), hidDeviceListener)
-
-        val pairingContract = ActivityResultContracts.StartIntentSenderForResult()
-
-        pairingLauncher = fragment.registerForActivityResult(pairingContract) { result ->
-            if (result.resultCode != Activity.RESULT_OK)
-                return@registerForActivityResult
-
-            val device = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-                @Suppress("DEPRECATION")
-                result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE)
-            else
-                result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_ASSOCIATION, BluetoothDevice::class.java)
-
-            device!!.createBond()
-        }
+        pairingLauncher = fragment.registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult(),
+            activityResultCallback)
     }
 
 
@@ -105,6 +119,14 @@ class HidPairingManager(fragment: HidSettingsFragment) {
         companionDeviceManager.associate(pairingRequest, companionDeviceListener, null)
     }
 
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    fun registerWithHidService() {
+        HidServiceFacade.registerHidDeviceListener(activity, hidDeviceListener)
+    }
+
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun release() {
         HidServiceFacade.unregisterHidDeviceListener()
     }

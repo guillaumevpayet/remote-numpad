@@ -23,6 +23,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
+import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionStatusListener
 import com.guillaumepayet.remotenumpad.connection.IDataSender
@@ -59,7 +60,7 @@ class BluetoothConnectionInterfaceTestSuite {
     }
 
 
-    @Mock private val mockContext: Context? = null
+    @Mock private val mockContext: AbstractActivity? = null
     @Mock private val mockSocket: BluetoothSocket? = null
     @Mock private val mockDataSender: IDataSender? = null
     @Mock private val mockListener: IConnectionStatusListener? = null
@@ -72,9 +73,8 @@ class BluetoothConnectionInterfaceTestSuite {
 
         val mockAdapter = mock(BluetoothAdapter::class.java)
         mockStatic(BluetoothAdapter::class.java)
-        @Suppress("DEPRECATION")
-        given(BluetoothAdapter.getDefaultAdapter()).willReturn(mockAdapter)
         given(mockBluetoothManager.adapter).willReturn(mockAdapter)
+        given(mockAdapter.isEnabled).willReturn(true)
 
         val mockInvalidDevice = mock(BluetoothDevice::class.java)
         given(mockAdapter?.getRemoteDevice(INVALID_HOST)).willReturn(mockInvalidDevice)

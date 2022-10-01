@@ -20,8 +20,8 @@ package com.guillaumepayet.remotenumpad.controller
 
 import android.content.Context
 import android.content.res.TypedArray
-import androidx.appcompat.widget.AppCompatButton
 import android.util.AttributeSet
+import com.google.android.material.button.MaterialButton
 import com.guillaumepayet.remotenumpad.R
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -59,7 +59,7 @@ class KeyTestSuite {
     @Before
     fun setupMocks() {
         // This prevents the key's parent class to throw 'not mocked' exceptions.
-        suppress(constructor(AppCompatButton::class.java, Context::class.java, AttributeSet::class.java))
+        suppress(constructor(MaterialButton::class.java, Context::class.java, AttributeSet::class.java))
 
         // Given that a TypedArray object can be obtained from the Context and...
         given(mockContext?.obtainStyledAttributes(mockAttributeSet, R.styleable.Key))

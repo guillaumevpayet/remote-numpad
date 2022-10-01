@@ -37,7 +37,7 @@ import java.util.*
  * for design guidelines and the [Settings API Guide](http://developer.android.com/guide/topics/ui/settings.html)
  * for more information on developing a Settings UI.
  */
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AbstractActivity() {
 
     companion object {
 

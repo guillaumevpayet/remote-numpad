@@ -164,6 +164,7 @@
         <com.guillaumepayet.remotenumpad.controller.Key
             android:id="@+id/key_add"
             android:text="@string/key_add"
+            app:autoSizeMaxTextSize="80sp"
             app:layout_constraintBottom_toTopOf="@+id/key_enter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/key_9"
@@ -236,6 +237,7 @@
             android:id="@+id/key_enter"
             android:text="@string/key_label_enter"
             android:maxLines="1"
+            app:autoSizeMinTextSize="11sp"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RemoteNumpad.Key.BottomRight"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

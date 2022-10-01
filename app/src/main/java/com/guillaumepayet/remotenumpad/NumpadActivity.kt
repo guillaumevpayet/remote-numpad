@@ -23,7 +23,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -45,7 +44,7 @@ import kotlin.concurrent.schedule
  * by reading the shared preferences. The status text is also updated by this activity through the
  * [IConnectionStatusListener] interface.
  */
-class NumpadActivity : AppCompatActivity(), View.OnClickListener, IConnectionStatusListener {
+class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStatusListener {
 
     companion object {
 

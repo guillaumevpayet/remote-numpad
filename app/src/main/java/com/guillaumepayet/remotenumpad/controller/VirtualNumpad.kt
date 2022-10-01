@@ -85,12 +85,12 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
                 view.playSoundEffect(SoundEffectConstants.CLICK)
 
                 if (preferences.getBoolean(context.getString(R.string.pref_key_vibrations), true)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val vibrationEffect = VibrationEffect.createOneShot(VIBRATION_LENGTH, VibrationEffect.DEFAULT_AMPLITUDE)
-                        vibrator.vibrate(vibrationEffect)
-                    } else {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                         @Suppress("DEPRECATION")
                         vibrator.vibrate(VIBRATION_LENGTH)
+                    } else {
+                        val vibrationEffect = VibrationEffect.createOneShot(VIBRATION_LENGTH, VibrationEffect.DEFAULT_AMPLITUDE)
+                        vibrator.vibrate(vibrationEffect)
                     }
                 }
             }

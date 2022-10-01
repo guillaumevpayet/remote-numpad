@@ -23,24 +23,30 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import androidx.annotation.Keep
-import androidx.core.app.ActivityCompat
+import androidx.annotation.RequiresPermission
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionInterface
+import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
 import com.guillaumepayet.remotenumpad.settings.AbstractSettingsFragment
-import com.guillaumepayet.remotenumpad.settings.BluetoothPermissionRationaleDialogFragment
 
 /**
  * This settings page provides a way to list and select a paired device as the host for a
  * [BluetoothConnectionInterface].
  **/
 @Keep
-class BluetoothSettingsFragment : AbstractSettingsFragment() {
+class BluetoothSettingsFragment : AbstractSettingsFragment(), IBluetoothConnector {
+
+    override val activity
+        get() = requireActivity() as AbstractActivity
+
+    override var userHasDeclinedBluetooth: Boolean = false
+        private set
+
 
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
         val manager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
@@ -58,12 +64,10 @@ class BluetoothSettingsFragment : AbstractSettingsFragment() {
         }
 
         preference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S
-                || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
-                == PackageManager.PERMISSION_GRANTED
-            ) updateDeviceList()
-
-            true
+            runOrRequestPermission @SuppressLint("MissingPermission") {
+                updateDeviceList()
+                true
+            } as Boolean? == true
         }
 
         preference
@@ -76,29 +80,28 @@ class BluetoothSettingsFragment : AbstractSettingsFragment() {
     override fun onResume() {
         super.onResume()
 
-        when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.S
-                    || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
-                    == PackageManager.PERMISSION_GRANTED
-            -> updateDeviceList()
-            shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT) ->
-                BluetoothPermissionRationaleDialogFragment().show(parentFragmentManager, "BLUETOOTH_PERMISSION")
-            else -> {
-                // TODO Let the user know that the permission is missing
-            }
+        runOrRequestPermission @SuppressLint("MissingPermission") {
+            updateDeviceList()
         }
     }
+
+
+    override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }
 
 
     /**
      * Updates the [ListPreference] entries for devices.
      */
-    @SuppressLint("MissingPermission")
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private fun updateDeviceList() {
         val devices = bluetoothAdapter!!.bondedDevices
 
         val (entries, entryValues) = if (devices.isEmpty())
-            Pair(listOf(getString(R.string.pref_no_host_entry)), listOf(getString(R.string.pref_no_host_entry_value)))
+            Pair(
+                listOf(getString(R.string.pref_no_host_entry)),
+                listOf(getString(R.string.pref_no_host_entry_value))
+            )
         else
             Pair(devices.map { it.name }, devices.map { it.address })
 

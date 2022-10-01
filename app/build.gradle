@@ -53,6 +53,9 @@ android {
         viewBinding true
     }
     namespace 'com.guillaumepayet.remotenumpad'
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -61,8 +64,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.fragment:fragment-ktx:1.5.2'
+    implementation 'androidx.fragment:fragment-ktx:1.5.3'
     implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.activity:activity-ktx:1.6.0'
 
     // PowerMock allows mocking superclasses for custom View classes.
     // This package depends on JUnit 4 (so no need to import it).

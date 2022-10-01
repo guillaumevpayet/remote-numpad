@@ -35,7 +35,6 @@ import java.net.SocketException
  *
  * @see IDataSender
  */
-@Suppress("BlockingMethodInNonBlockingContext") // The warnings are wrong from what I understand
 @Keep
 open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionInterface(sender) {
 

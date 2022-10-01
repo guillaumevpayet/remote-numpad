@@ -21,6 +21,7 @@ package com.guillaumepayet.remotenumpad.settings.bluetooth
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.content.pm.PackageManager
 import androidx.annotation.Keep
 import com.guillaumepayet.remotenumpad.connection.bluetooth.BluetoothConnectionInterface
 import com.guillaumepayet.remotenumpad.settings.IConnectionInterfaceValidator
@@ -34,9 +35,10 @@ class BluetoothValidator(val context: Context) : IConnectionInterfaceValidator {
 
     override val isInterfaceAvailable: Boolean
         get() {
-            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            val adapter = manager.adapter
+            val deviceHasFeature =
+                context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)
 
-            return adapter != null && adapter.isEnabled
+            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
+            return deviceHasFeature && manager?.adapter != null
         }
 }

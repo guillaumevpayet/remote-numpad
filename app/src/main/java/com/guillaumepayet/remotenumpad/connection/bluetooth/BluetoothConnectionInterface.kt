@@ -24,10 +24,12 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import androidx.annotation.Keep
+import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
+import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -40,9 +42,8 @@ import java.util.*
  *
  * @param sender The [IDataSender] to listen for data to send
  **/
-@Suppress("BlockingMethodInNonBlockingContext") // The warnings are wrong from what I understand
 @Keep
-class BluetoothConnectionInterface(context: Context, sender: IDataSender) : AbstractConnectionInterface(sender) {
+class BluetoothConnectionInterface(context: Context, sender: IDataSender) : AbstractConnectionInterface(sender), IBluetoothConnector {
 
     companion object {
 
@@ -51,6 +52,12 @@ class BluetoothConnectionInterface(context: Context, sender: IDataSender) : Abst
          */
         val NUMPAD_UUID: UUID = UUID.fromString("6be5ccef-5d32-48e3-a3a0-d89e558a40f1")
     }
+
+
+    override val activity = context as AbstractActivity
+
+    override var userHasDeclinedBluetooth: Boolean = false
+        private set
 
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {
@@ -65,15 +72,21 @@ class BluetoothConnectionInterface(context: Context, sender: IDataSender) : Abst
     private var writer: Writer? = null
 
 
-    @SuppressLint("MissingPermission")
     override suspend fun open(host: String) = withContext(Dispatchers.IO) {
         onConnectionStatusChange(R.string.status_connecting)
 
         try {
             val device = bluetoothAdapter.getRemoteDevice(host)
-            socket = device.createRfcommSocketToServiceRecord(NUMPAD_UUID)
-            socket?.connect()
-            writer = socket?.outputStream?.writer()
+
+            writer = runOrRequestPermission @SuppressLint("MissingPermission") {
+                socket = device.createRfcommSocketToServiceRecord(NUMPAD_UUID)
+                socket?.connect()
+                socket?.outputStream?.writer()
+            } as Writer?
+
+            if (writer == null)
+                throw IOException()
+
             onConnectionStatusChange(R.string.status_connected)
         } catch (e: IOException) {
             closeConnection()
@@ -99,6 +112,9 @@ class BluetoothConnectionInterface(context: Context, sender: IDataSender) : Abst
             false
         }
     }
+
+
+    override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }
 
 
     private fun closeConnection() {

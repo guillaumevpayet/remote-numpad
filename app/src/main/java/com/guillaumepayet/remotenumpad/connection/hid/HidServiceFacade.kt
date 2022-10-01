@@ -18,16 +18,18 @@
 
 package com.guillaumepayet.remotenumpad.connection.hid
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
+import com.guillaumepayet.remotenumpad.AbstractActivity
 
 /**
  * A service facade (singleton) to interface with the Bluetooth HID profile.
  */
-@SuppressLint("MissingPermission")
 @RequiresApi(Build.VERSION_CODES.P)
 object HidServiceFacade {
 
@@ -48,7 +50,6 @@ object HidServiceFacade {
             0x95.toByte(), 0x01.toByte(),       //     Report Count (1)
             0x75.toByte(), 0x08.toByte(),       //     Report Size (8)
             0x81.toByte(), 0x01.toByte(),       //     Input (Constant) reserved byte(1)
-
             0x95.toByte(), 0x01.toByte(),       //     Report Count (1)
             0x75.toByte(), 0x08.toByte(),       //     Report Size (8)
             0x15.toByte(), 0x00.toByte(),       //     Logical Minimum (0)
@@ -71,9 +72,13 @@ object HidServiceFacade {
 
     private val serviceListener = object: BluetoothProfile.ServiceListener {
 
+        @SuppressLint("InlinedApi")
+        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
             service = proxy as BluetoothHidDevice
-            service?.registerApp(SDP, null, null, { it.run() }, internalHidDeviceListener)
+
+            service?.registerApp(SDP, null, null, { it.run() },
+                internalHidDeviceListener)
         }
 
         override fun onServiceDisconnected(profile: Int) {}
@@ -96,6 +101,7 @@ object HidServiceFacade {
     var service: BluetoothHidDevice? = null
         private set
 
+    private lateinit var activity: AbstractActivity
     private lateinit var bluetoothAdapter: BluetoothAdapter
 
     private var hidDeviceListener: BluetoothHidDevice.Callback? = null
@@ -106,20 +112,25 @@ object HidServiceFacade {
      *
      * @param listener The listener to register
      */
-    fun registerHidDeviceListener(context: Context, listener: BluetoothHidDevice.Callback) {
+    fun registerHidDeviceListener(activity: AbstractActivity, listener: BluetoothHidDevice.Callback) {
+        if (!this::activity.isInitialized)
+            this.activity = activity
+
         hidDeviceListener = listener
 
         if (!this::bluetoothAdapter.isInitialized) {
-            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            val manager = activity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             bluetoothAdapter = manager.adapter
         }
 
-        bluetoothAdapter.getProfileProxy(context, serviceListener, BluetoothProfile.HID_DEVICE)
+        bluetoothAdapter.getProfileProxy(activity, serviceListener, BluetoothProfile.HID_DEVICE)
     }
 
     /**
      * Unregister the previously registered HID device listener.
      */
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun unregisterHidDeviceListener() {
         hidDeviceListener = null
         service?.unregisterApp()

@@ -112,8 +112,8 @@ class SocketHostScanner(fragment: SocketSettingsFragment) {
                             hosts.add(Pair(name, address))
                         }
                     }
-                } catch (e: UnknownHostException) {
-                } catch (e: IOException) {
+                } catch (_: UnknownHostException) {
+                } catch (_: IOException) {
                 } finally { socket.close() }
 
                 decrementProbeCount()
