@@ -21,7 +21,7 @@ package com.guillaumepayet.remotenumpad
 import android.app.Application
 import com.google.android.material.color.DynamicColors
 
-class RemoteNumpad: Application() {
+class RemoteNumpadApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()

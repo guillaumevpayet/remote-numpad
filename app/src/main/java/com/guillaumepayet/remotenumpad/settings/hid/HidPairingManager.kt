@@ -18,120 +18,50 @@
 
 package com.guillaumepayet.remotenumpad.settings.hid
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothHidDevice
-import android.bluetooth.BluetoothProfile
+import android.bluetooth.*
 import android.companion.AssociationRequest
 import android.companion.BluetoothDeviceFilter
 import android.companion.CompanionDeviceManager
-import android.content.Context
-import android.content.IntentSender
+import android.content.*
 import android.os.Build
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
-import androidx.annotation.RequiresPermission
-import com.guillaumepayet.remotenumpad.AbstractActivity
-import com.guillaumepayet.remotenumpad.connection.hid.HidServiceFacade
+import androidx.core.view.MenuProvider
+import com.guillaumepayet.remotenumpad.R
 
 /**
  * Manager class to handle the process of pairing a new device ready for the Bluetooth HID profile.
  */
 @RequiresApi(Build.VERSION_CODES.P)
-class HidPairingManager(fragment: HidSettingsFragment) {
+class HidPairingManager(fragment: HidSettingsFragment): MenuProvider {
 
-    private val activity = fragment.requireActivity() as AbstractActivity
+    private val activity = fragment.activity
 
-    private val pairingLauncher: ActivityResultLauncher<IntentSenderRequest>
-
-    private val companionDeviceManager: CompanionDeviceManager =
+    private val companionDeviceManager =
         activity.getSystemService(Context.COMPANION_DEVICE_SERVICE) as CompanionDeviceManager
 
-    private val activityResultCallback = object : ActivityResultCallback<ActivityResult> {
+    private val companionCallback = HidPairingCompanionCallback(fragment)
 
-        @SuppressLint("InlinedApi")
-        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-        override fun onActivityResult(result: ActivityResult?) {
-            if (result?.resultCode != Activity.RESULT_OK)
-                return
 
-            val device = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-                @Suppress("DEPRECATION")
-                result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE)
-            else
-                result.data!!.getParcelableExtra(CompanionDeviceManager.EXTRA_ASSOCIATION, BluetoothDevice::class.java)
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) =
+        menuInflater.inflate(R.menu.menu_hid_settings, menu)
 
-            device!!.createBond()
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
+        R.id.action_hid_pair -> {
+            val deviceFilter = BluetoothDeviceFilter.Builder().build()
+            val pairingRequest = AssociationRequest.Builder().addDeviceFilter(deviceFilter).build()
+
+            companionDeviceManager.associate(pairingRequest, companionCallback, null)
+            true
         }
-    }
-
-    private val hidDeviceListener = object: BluetoothHidDevice.Callback() {
-
-        @SuppressLint("InlinedApi")
-        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-        override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
-            super.onConnectionStateChanged(device, state)
-
-            when (state) {
-                BluetoothProfile.STATE_CONNECTED -> HidServiceFacade.service?.disconnect(device)
-            }
-        }
-    }
-
-    private val companionDeviceListener = object : CompanionDeviceManager.Callback() {
-
-        // NOTE: This method is required for older versions of Android
-        @Deprecated("Deprecated in Java", ReplaceWith("onAssociationPending(intentSender)"))
-        override fun onDeviceFound(intentSender: IntentSender) {
-            onAssociationPending(intentSender)
-        }
-
-        override fun onAssociationPending(intentSender: IntentSender) {
-            val pairingRequest = IntentSenderRequest.Builder(intentSender).build()
-
-            try {
-                sendPairingRequest(pairingRequest)
-            } catch (e: java.lang.IllegalStateException) {
-                return
-            }
-        }
-
-        override fun onFailure(error: CharSequence?) {}
+        else -> false
     }
 
 
-    init {
-        pairingLauncher = fragment.registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult(),
-            activityResultCallback)
-    }
+    init { activity.addMenuProvider(this) }
 
 
-    fun openDialog() {
-        val deviceFilter = BluetoothDeviceFilter.Builder().build()
-        val pairingRequest = AssociationRequest.Builder().addDeviceFilter(deviceFilter).build()
-        companionDeviceManager.associate(pairingRequest, companionDeviceListener, null)
-    }
-
-    @SuppressLint("InlinedApi")
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    fun registerWithHidService() {
-        HidServiceFacade.registerHidDeviceListener(activity, hidDeviceListener)
-    }
-
-    @SuppressLint("InlinedApi")
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    fun release() {
-        HidServiceFacade.unregisterHidDeviceListener()
-    }
-
-
-    private fun sendPairingRequest(pairingRequest: IntentSenderRequest) =
-            pairingLauncher.launch(pairingRequest)
+    fun release() = activity.removeMenuProvider(this)
 }

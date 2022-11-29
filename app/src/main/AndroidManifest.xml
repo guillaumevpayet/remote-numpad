@@ -48,7 +48,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RemoteNumpad"
-        android:name=".RemoteNumpad">
+        android:name=".RemoteNumpadApplication">
         <activity
             android:name=".NumpadActivity"
             android:screenOrientation="sensorPortrait"

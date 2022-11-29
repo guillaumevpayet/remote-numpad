@@ -224,7 +224,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         connectionInterface = try {
             val clazz = Class.forName(prefix + "ConnectionInterface")
             try {
-                val constructor = clazz.getConstructor(Context::class.java, IDataSender::class.java)
+                val constructor = clazz.getConstructor(AbstractActivity::class.java, IDataSender::class.java)
                 constructor.newInstance(this, keyEventSender) as IConnectionInterface
             } catch (e: Exception) {
                 val constructor = clazz.getConstructor(IDataSender::class.java)

@@ -23,6 +23,8 @@ import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
@@ -32,10 +34,6 @@ import com.guillaumepayet.remotenumpad.connection.AbstractConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IConnectionInterface
 import com.guillaumepayet.remotenumpad.connection.IDataSender
 import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.concurrent.schedule
 
 /**
  * This [IConnectionInterface] handles a Bluetooth connection with the HID profile added to Android
@@ -45,149 +43,125 @@ import kotlin.concurrent.schedule
  */
 @Keep
 @RequiresApi(Build.VERSION_CODES.P)
-class HidConnectionInterface(private val context: Context, sender: IDataSender) : AbstractConnectionInterface(sender), IBluetoothConnector {
-
-    companion object {
-        private const val TIMEOUT_DELAY = 3000L
-    }
-
-
-    override val activity = context as AbstractActivity
+class HidConnectionInterface(override val activity: AbstractActivity, sender: IDataSender) : AbstractConnectionInterface(sender), IBluetoothConnector, IHidDeviceListener {
 
     override var userHasDeclinedBluetooth: Boolean = false
         private set
 
 
-    private val bluetoothAdapter: BluetoothAdapter by lazy {
-        val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        manager.adapter
-    }
+    private val context = activity.applicationContext
+    private val handler = Handler(Looper.getMainLooper())
+    private val serviceListener = HidServiceListener(context, this)
+
+    private val bluetoothAdapter =
+        (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
+            .adapter
+
+    private lateinit var hostAddress: String
 
     private var service: BluetoothHidDevice? = null
-    private var timeoutTask: TimerTask? = null
-
-    private lateinit var hostDevice: BluetoothDevice
-
-
-    private var connectionState: Int = BluetoothProfile.STATE_DISCONNECTED
-        @SuppressLint("InlinedApi")
-        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-        set(value) {
-            when (value) {
-                BluetoothProfile.STATE_CONNECTING -> {
-                    timeoutTask?.cancel()
-                    timeoutTask = null
-
-                    timeoutTask = Timer().schedule(TIMEOUT_DELAY) {
-                        service!!.connect(hostDevice)
-                    }
-                }
-                BluetoothProfile.STATE_CONNECTED -> {
-                    timeoutTask?.cancel()
-                    timeoutTask = null
-                    onConnectionStatusChange(R.string.status_connected)
-                }
-                BluetoothProfile.STATE_DISCONNECTING ->
-                    if (field == BluetoothProfile.STATE_CONNECTING || field == R.string.status_connection_lost)
-                        return
-                BluetoothProfile.STATE_DISCONNECTED -> {
-                    timeoutTask?.cancel()
-                    timeoutTask = null
-                    HidServiceFacade.unregisterHidDeviceListener()
-
-                    when (field) {
-                        BluetoothProfile.STATE_CONNECTING, BluetoothProfile.STATE_DISCONNECTED ->
-                            onConnectionStatusChange(R.string.status_could_not_connect)
-                        BluetoothProfile.STATE_DISCONNECTING ->
-                            onConnectionStatusChange(R.string.status_disconnected)
-                    }
-                }
-                R.string.status_connection_lost -> {
-                    service?.disconnect(hostDevice)
-                    onConnectionStatusChange(value)
-                }
-            }
-
-            field = value
-        }
-
-
-    private val hidDeviceListener = object: BluetoothHidDevice.Callback() {
-
-        @SuppressLint("InlinedApi")
-        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-        override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
-            super.onAppStatusChanged(pluggedDevice, registered)
-
-            if (service != null) return
-
-            service = HidServiceFacade.service
-
-            when (val state = service!!.getConnectionState(hostDevice)) {
-                BluetoothProfile.STATE_CONNECTED,
-                BluetoothProfile.STATE_CONNECTING -> connectionState = state
-                else -> service!!.connect(hostDevice)
-            }
-        }
-
-        @SuppressLint("InlinedApi")
-        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-        override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
-            super.onConnectionStateChanged(device, state)
-            connectionState = state
-        }
-    }
+    private var hostDevice: BluetoothDevice? = null
 
 
     override suspend fun open(host: String) {
-        onConnectionStatusChange(R.string.status_connecting)
-        hostDevice = bluetoothAdapter.getRemoteDevice(host)
+        hostAddress = host
 
-        timeoutTask = runOrRequestPermission @SuppressLint("MissingPermission") {
-            HidServiceFacade.registerHidDeviceListener(activity, hidDeviceListener)
+        val result = runOrRequestPermission @SuppressLint("MissingPermission") {
+            getProfileProxy()
+        } as Boolean?
 
-            Timer().schedule(TIMEOUT_DELAY) {
-                GlobalScope.launch { close() }
-            }
-        } as TimerTask?
-
-        if (timeoutTask == null)
+        if (result != true) {
             onConnectionStatusChange(R.string.status_could_not_connect)
+        }
     }
 
     override suspend fun close() {
         super.close()
-        onConnectionStatusChange(R.string.status_disconnecting)
 
         val result = runOrRequestPermission @SuppressLint("MissingPermission") {
-            if (service == null || !service!!.disconnect(hostDevice))
-                connectionState = BluetoothProfile.STATE_DISCONNECTED
+            service?.disconnect(hostDevice)
+        } as Boolean?
 
-            true
+        if (result != true) {
+            onConnectionStatusChange(R.string.status_connection_lost)
         }
-
-        if (result == null)
-            onConnectionStatusChange(R.string.status_disconnected)
     }
 
     override suspend fun sendString(string: String): Boolean {
         val keyboardReport = KeyboardReport(context, string)
 
         val result = runOrRequestPermission @SuppressLint("MissingPermission") {
-            val reportWasSent = service?.sendReport(hostDevice, KeyboardReport.ID, keyboardReport.bytes)
-
-            if (reportWasSent != true)
-                connectionState = R.string.status_connection_lost
-
-            reportWasSent
+            service?.sendReport(hostDevice, KeyboardReport.ID, keyboardReport.bytes)
         } as Boolean?
 
-        if (result == null)
-            onConnectionStatusChange(R.string.status_connection_lost)
+        if (result != true) {
+            close()
+        }
 
         return result == true
     }
 
 
     override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }
+
+
+    override fun onAppRegistered(proxy: BluetoothHidDevice?) {
+        service = proxy
+
+        val result = runOrRequestPermission @SuppressLint("MissingPermission") {
+            val device = bluetoothAdapter.getRemoteDevice(hostAddress)
+
+            handler.post {
+                // Fails if another Bluetooth device is connected (even if not via HID)
+                if (proxy?.connect(device) != true) {
+                    getProfileProxy()
+                }
+            }
+
+            true
+        }
+
+        if (result != true)
+            onConnectionStatusChange(R.string.status_could_not_connect)
+    }
+
+    override fun onConnectionStateChanged(device: BluetoothDevice, state: Int) {
+
+        if (device.address != hostAddress)
+            return
+
+        when (state) {
+            BluetoothProfile.STATE_CONNECTED -> {
+                hostDevice = device
+                onConnectionStatusChange(R.string.status_connected)
+            }
+            BluetoothProfile.STATE_CONNECTING -> {
+                onConnectionStatusChange(R.string.status_connecting)
+            }
+            BluetoothProfile.STATE_DISCONNECTED -> {
+                hostDevice = null
+
+                val result = runOrRequestPermission @SuppressLint("MissingPermission") {
+                    service?.unregisterApp()
+                }
+
+                if (result == true)
+                    onConnectionStatusChange(R.string.status_disconnected)
+                else {
+                    onConnectionStatusChange(R.string.status_connection_lost)
+                }
+
+                service = null
+            }
+            BluetoothProfile.STATE_DISCONNECTING -> {
+                onConnectionStatusChange(R.string.status_disconnecting)
+            }
+        }
+    }
+
+
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private fun getProfileProxy(): Boolean =
+        bluetoothAdapter.getProfileProxy(context, serviceListener, BluetoothProfile.HID_DEVICE)
 }

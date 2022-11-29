@@ -30,39 +30,39 @@ import com.guillaumepayet.remotenumpad.R
 class KeyboardReport(private val context: Context, string: String) {
 
     companion object {
-        const val ID = 8
+        const val ID = 0x01
     }
 
-    val bytes = ByteArray(3) { 0 }
+    val bytes = ByteArray(1) { 0x00 }
 
     init {
         if (string[0] == '+') {
             val keyString = string.substring(1, string.length - 1)
-            bytes[2] = getKeyCode(keyString)
+            bytes[0] = getKeyCode(keyString)
         }
     }
 
     private fun getKeyCode(keyString: String): Byte {
         return when (keyString) {
-            context.getString(R.string.key_value_backspace) -> 42
-            context.getString(R.string.key_value_numlock) -> 83
-            context.getString(R.string.key_divide) -> 84
-            context.getString(R.string.key_multiply) -> 85
-            context.getString(R.string.key_subtract) -> 86
-            context.getString(R.string.key_add) -> 87
-            context.getString(R.string.key_value_enter) -> 88
-            context.getString(R.string.key_1) -> 89
-            context.getString(R.string.key_2) -> 90
-            context.getString(R.string.key_3) -> 91
-            context.getString(R.string.key_4) -> 92
-            context.getString(R.string.key_5) -> 93
-            context.getString(R.string.key_6) -> 94
-            context.getString(R.string.key_7) -> 95
-            context.getString(R.string.key_8) -> 96
-            context.getString(R.string.key_9) -> 97
-            context.getString(R.string.key_0) -> 98
-            context.getString(R.string.key_value_decimal) -> 99
-            else -> 156.toByte()    // Clear
+            context.getString(R.string.key_value_backspace) -> 0x2A
+            context.getString(R.string.key_value_numlock) -> 0x53
+            context.getString(R.string.key_divide) -> 0x54
+            context.getString(R.string.key_multiply) -> 0x55
+            context.getString(R.string.key_subtract) -> 0x56
+            context.getString(R.string.key_add) -> 0x57
+            context.getString(R.string.key_value_enter) -> 0x58
+            context.getString(R.string.key_1) -> 0x59
+            context.getString(R.string.key_2) -> 0x5A
+            context.getString(R.string.key_3) -> 0x5B
+            context.getString(R.string.key_4) -> 0x5C
+            context.getString(R.string.key_5) -> 0x5D
+            context.getString(R.string.key_6) -> 0x5E
+            context.getString(R.string.key_7) -> 0x5F
+            context.getString(R.string.key_8) -> 0x60
+            context.getString(R.string.key_9) -> 0x61
+            context.getString(R.string.key_0) -> 0x62
+            context.getString(R.string.key_value_decimal) -> 0x63
+            else -> 0x00
         }.toByte()
     }
 }

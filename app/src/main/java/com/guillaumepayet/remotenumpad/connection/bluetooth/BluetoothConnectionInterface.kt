@@ -19,7 +19,6 @@
 package com.guillaumepayet.remotenumpad.connection.bluetooth
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
@@ -43,7 +42,7 @@ import java.util.*
  * @param sender The [IDataSender] to listen for data to send
  **/
 @Keep
-class BluetoothConnectionInterface(context: Context, sender: IDataSender) : AbstractConnectionInterface(sender), IBluetoothConnector {
+class BluetoothConnectionInterface(override val activity: AbstractActivity, sender: IDataSender) : AbstractConnectionInterface(sender), IBluetoothConnector {
 
     companion object {
 
@@ -53,17 +52,15 @@ class BluetoothConnectionInterface(context: Context, sender: IDataSender) : Abst
         val NUMPAD_UUID: UUID = UUID.fromString("6be5ccef-5d32-48e3-a3a0-d89e558a40f1")
     }
 
-
-    override val activity = context as AbstractActivity
-
     override var userHasDeclinedBluetooth: Boolean = false
         private set
 
 
-    private val bluetoothAdapter: BluetoothAdapter by lazy {
-        val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        manager.adapter
-    }
+    private val context = activity.applicationContext
+
+    private val bluetoothAdapter =
+        (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
+            .adapter
 
     @Volatile
     private var socket: BluetoothSocket? = null

@@ -51,8 +51,6 @@ class HidSettingsFragment : AbstractSettingsFragment(), IBluetoothConnector {
         private set
 
 
-    private var hidPairingManagerIsRegistered = false
-
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
         val manager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
         manager?.adapter
@@ -79,32 +77,22 @@ class HidSettingsFragment : AbstractSettingsFragment(), IBluetoothConnector {
     }
 
     private var pairingManager: HidPairingManager? = null
-    private lateinit var menuProvider: HidSettingsMenuProvider
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_hid, rootKey)
         pairingManager = HidPairingManager(this)
-        menuProvider = HidSettingsMenuProvider(pairingManager)
-        requireActivity().addMenuProvider(menuProvider)
     }
 
     override fun onResume() {
         super.onResume()
 
         runOrRequestPermission @SuppressLint("MissingPermission") {
-            if (!hidPairingManagerIsRegistered) {
-                pairingManager?.registerWithHidService()
-                hidPairingManagerIsRegistered = true
-            }
-
             updateDeviceList()
         }
     }
 
     override fun onDestroy() {
-        requireActivity().removeMenuProvider(menuProvider)
-
         runOrRequestPermission @SuppressLint("MissingPermission") {
             pairingManager?.release()
         }
