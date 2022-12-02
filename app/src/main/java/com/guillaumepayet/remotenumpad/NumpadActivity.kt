@@ -48,6 +48,11 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
     companion object {
 
+        /**
+         * The alpha value of unchecked icons in the menu.
+         */
+        private const val UNCHECKED_ICON_ALPHA = 80
+
         private const val COULD_NOT_CONNECT_DISPLAY_TIME = 2000L
 
         /**
@@ -106,21 +111,33 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
     override fun onStart() {
         super.onStart()
-
-        if (preferences.getBoolean(getString(R.string.pref_key_backspace), false)) {
-            contentBinding.keyNumlock.visibility = View.INVISIBLE
-            contentBinding.keyBackspace.visibility = View.VISIBLE
-        } else {
-            contentBinding.keyNumlock.visibility = View.VISIBLE
-            contentBinding.keyBackspace.visibility = View.INVISIBLE
-        }
-
+        onBackspaceChanged()
         setNightMode(baseContext, preferences.getString(getString(R.string.pref_key_theme), getString(R.string.pref_system_theme_mode_entry_value)))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_numpad, menu)
+
+        val backspaceAction = menu.findItem(R.id.action_backspace)
+        val vibrationsAction = menu.findItem(R.id.action_vibrations)
+        val noSleepAction = menu.findItem(R.id.action_nosleep)
+
+        if (preferences.getBoolean(getString(R.string.pref_key_backspace), false))
+            backspaceAction.isChecked = true
+        else
+            backspaceAction.icon?.alpha = UNCHECKED_ICON_ALPHA
+
+        if (preferences.getBoolean(getString(R.string.pref_key_vibrations), false))
+            vibrationsAction.isChecked = true
+        else
+            vibrationsAction.icon?.alpha = UNCHECKED_ICON_ALPHA
+
+        if (preferences.getBoolean(getString(R.string.pref_key_nosleep), false))
+            noSleepAction.isChecked = true
+        else
+            noSleepAction.icon?.alpha = UNCHECKED_ICON_ALPHA
+
         return true
     }
 
@@ -128,13 +145,42 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
+        val wasConsumed = when (item.itemId) {
+            R.id.action_backspace -> {
+                preferences.edit()
+                    .putBoolean(getString(R.string.pref_key_backspace), !item.isChecked)
+                    .apply()
+
+                onBackspaceChanged()
+                true
+            }
+            R.id.action_vibrations -> {
+                preferences.edit()
+                    .putBoolean(getString(R.string.pref_key_vibrations), !item.isChecked)
+                    .apply()
+
+                true
+            }
+            R.id.action_nosleep -> {
+                preferences.edit()
+                    .putBoolean(getString(R.string.pref_key_nosleep), !item.isChecked)
+                    .apply()
+
+                true
+            }
             R.id.action_settings -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            else -> false
         }
+
+        if (wasConsumed && item.isCheckable) {
+            item.isChecked = !item.isChecked
+            item.icon?.alpha = if (item.icon?.alpha == 255) UNCHECKED_ICON_ALPHA else 255
+        }
+
+        return wasConsumed || super.onOptionsItemSelected(item)
     }
 
     override fun onPause() {
@@ -255,6 +301,16 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         runBlocking {
             connectionInterface?.close()
             connectionInterface = null
+        }
+    }
+
+    private fun onBackspaceChanged() {
+        if (preferences.getBoolean(getString(R.string.pref_key_backspace), false)) {
+            contentBinding.keyNumlock.visibility = View.INVISIBLE
+            contentBinding.keyBackspace.visibility = View.VISIBLE
+        } else {
+            contentBinding.keyNumlock.visibility = View.VISIBLE
+            contentBinding.keyBackspace.visibility = View.INVISIBLE
         }
     }
 }

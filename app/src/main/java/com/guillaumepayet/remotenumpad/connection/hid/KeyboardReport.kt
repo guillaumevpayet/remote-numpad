@@ -45,6 +45,7 @@ class KeyboardReport(private val context: Context, string: String) {
     private fun getKeyCode(keyString: String): Byte {
         return when (keyString) {
             context.getString(R.string.key_value_backspace) -> 0x2A
+            context.getString(R.string.key_equal) -> 0x2E
             context.getString(R.string.key_value_numlock) -> 0x53
             context.getString(R.string.key_divide) -> 0x54
             context.getString(R.string.key_multiply) -> 0x55

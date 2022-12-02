@@ -24,18 +24,6 @@
         android:entryValues="@array/pref_connection_interface_values"
         android:key="@string/pref_key_connection_interface"
         android:title="@string/pref_title_connection_interface" />
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/pref_key_vibrations"
-        android:title="@string/pref_title_vibrations" />
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="@string/pref_key_backspace"
-        android:title="@string/pref_title_backspace" />
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="@string/pref_key_nosleep"
-        android:title="@string/pref_title_nosleep" />
     <ListPreference
         android:defaultValue="@string/pref_system_theme_mode_entry_value"
         android:entries="@array/pref_theme_titles"

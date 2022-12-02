@@ -22,8 +22,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.guillaumepayet.remotenumpad.NumpadActivity">
     <item
+        android:id="@+id/action_backspace"
+        android:title="Backspace"
+        android:icon="@drawable/backspace_48px"
+        android:checkable="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_vibrations"
+        android:title="@string/pref_title_vibrations"
+        android:icon="@drawable/vibration_48px"
+        android:checkable="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_nosleep"
+        android:title="@string/pref_title_nosleep"
+        android:icon="@drawable/aod_48px"
+        android:checkable="true"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
         android:title="@string/title_activity_settings"
-        app:showAsAction="never" />
+        android:icon="@drawable/settings_48px"
+        app:showAsAction="ifRoom" />
 </menu>

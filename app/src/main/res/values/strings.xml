@@ -34,6 +34,7 @@
     <string name="key_divide" translatable="false">/</string>
     <string name="key_multiply" translatable="false">*</string>
     <string name="key_subtract" translatable="false">-</string>
+    <string name="key_equal" translatable="false">=</string>
 
     <!-- The values for the "translateable" keys on the numpad -->
     <string name="key_value_enter" translatable="false">enter</string>

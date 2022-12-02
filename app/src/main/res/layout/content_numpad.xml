@@ -89,7 +89,8 @@
 
         <com.guillaumepayet.remotenumpad.controller.Key
             android:id="@+id/key_backspace"
-            android:text="@string/key_label_backspace"
+            android:drawableEnd="@drawable/backspace_48px"
+            app:drawableTint="?colorPrimary"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RemoteNumpad.Key.TopLeft"
             app:layout_constraintBottom_toTopOf="@+id/key_7"
             app:layout_constraintEnd_toStartOf="@+id/key_divide"
@@ -165,11 +166,11 @@
             android:id="@+id/key_add"
             android:text="@string/key_add"
             app:autoSizeMaxTextSize="80sp"
-            app:layout_constraintBottom_toTopOf="@+id/key_enter"
+            app:layout_constraintBottom_toTopOf="@+id/key_equal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/key_9"
             app:layout_constraintTop_toBottomOf="@+id/key_subtract"
-            app:layout_constraintVertical_weight="2"
+            app:layout_constraintVertical_weight="1"
             app:value="@string/key_add"
             style="@style/Widget.RemoteNumpad.Key" />
 
@@ -204,6 +205,17 @@
             style="@style/Widget.RemoteNumpad.Key" />
 
         <com.guillaumepayet.remotenumpad.controller.Key
+            android:id="@+id/key_equal"
+            android:text="@string/key_equal"
+            app:layout_constraintBottom_toTopOf="@+id/key_enter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/key_6"
+            app:layout_constraintTop_toBottomOf="@+id/key_add"
+            app:layout_constraintVertical_weight="1"
+            app:value="@string/key_equal"
+            style="@style/Widget.RemoteNumpad.Key.Text" />
+
+        <com.guillaumepayet.remotenumpad.controller.Key
             android:id="@+id/key_1"
             android:text="@string/key_1"
             app:layout_constraintBottom_toTopOf="@+id/key_0"
@@ -235,14 +247,13 @@
 
         <com.guillaumepayet.remotenumpad.controller.Key
             android:id="@+id/key_enter"
-            android:text="@string/key_label_enter"
-            android:maxLines="1"
-            app:autoSizeMinTextSize="11sp"
+            android:drawableEnd="@drawable/keyboard_return_48px"
+            app:drawableTint="?colorPrimary"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RemoteNumpad.Key.BottomRight"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/key_3"
-            app:layout_constraintTop_toBottomOf="@+id/key_add"
+            app:layout_constraintTop_toBottomOf="@+id/key_equal"
             app:layout_constraintVertical_weight="2"
             app:value="@string/key_value_enter"
             style="@style/Widget.RemoteNumpad.Key.Text" />
