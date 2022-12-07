@@ -54,6 +54,7 @@ class SettingsActivity : AbstractActivity() {
         val binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         commonSettings = supportFragmentManager.findFragmentById(R.id.common_settings) as CommonSettingsFragment
 
         commonSettings.onConnectionInterfaceChangeListener = Preference.OnPreferenceChangeListener { _, value ->
