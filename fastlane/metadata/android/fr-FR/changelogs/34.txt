@@ -1,0 +1,2 @@
+Redesign complet de l'interface et réparation de tous les problèmes de connexion Bluetooth
+(anciennement HID).
