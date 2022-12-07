@@ -83,7 +83,8 @@ interface IBluetoothConnector {
     }
 
     private fun runOrRequestEnable(callback: () -> Any?): Any? {
-        val manager = activity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val context = activity.applicationContext
+        val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
         when {
             manager.adapter.isEnabled ->
