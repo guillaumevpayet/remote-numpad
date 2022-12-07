@@ -23,7 +23,7 @@
     tools:context="com.guillaumepayet.remotenumpad.NumpadActivity">
     <item
         android:id="@+id/action_backspace"
-        android:title="Backspace"
+        android:title="@string/pref_title_backspace"
         android:icon="@drawable/backspace_48px"
         android:checkable="true"
         app:showAsAction="ifRoom" />
@@ -37,6 +37,12 @@
         android:id="@+id/action_nosleep"
         android:title="@string/pref_title_nosleep"
         android:icon="@drawable/aod_48px"
+        android:checkable="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_lefty"
+        android:title="@string/pref_title_lefty"
+        android:icon="@drawable/flip_48px"
         android:checkable="true"
         app:showAsAction="ifRoom" />
     <item

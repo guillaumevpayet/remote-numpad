@@ -85,6 +85,9 @@
     <string name="pref_key_nosleep" translatable="false">nosleep</string>
     <string name="pref_title_nosleep">Keep the screen on</string>
 
+    <string name="pref_key_lefty" translatable="false">lefty</string>
+    <string name="pref_title_lefty">Lefty mode</string>
+
     <string name="pref_light_mode_entry_value" translatable="false">light</string>
     <string name="pref_light_mode_entry">Light</string>
 

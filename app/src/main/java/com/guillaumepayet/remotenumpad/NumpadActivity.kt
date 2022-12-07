@@ -28,9 +28,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.commit
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.MaterialColors
 import com.guillaumepayet.remotenumpad.connection.*
+import com.guillaumepayet.remotenumpad.controller.LeftyNumpadFragment
+import com.guillaumepayet.remotenumpad.controller.NumpadFragment
 import com.guillaumepayet.remotenumpad.controller.VirtualNumpad
 import com.guillaumepayet.remotenumpad.databinding.ActivityNumpadBinding
 import com.guillaumepayet.remotenumpad.databinding.ContentNumpadBinding
@@ -82,7 +85,8 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
     private lateinit var activityBinding: ActivityNumpadBinding
     private lateinit var contentBinding: ContentNumpadBinding
-    private lateinit var keyEventSender: IDataSender
+    private lateinit var numpadFragment: NumpadFragment
+    private lateinit var keyEventSender: KeyEventSender
     private lateinit var preferences: SharedPreferences
 
     private var connectionInterface: IConnectionInterface? = null
@@ -98,7 +102,8 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         contentBinding = activityBinding.content
         contentBinding.connectButton.setOnClickListener(this)
 
-        val numpad = VirtualNumpad(contentBinding.numpadKeys)
+        numpadFragment = contentBinding.numpadFragment.getFragment()
+        val numpad = VirtualNumpad(contentBinding.numpadFragment)
         keyEventSender = KeyEventSender(numpad)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -111,7 +116,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
     override fun onStart() {
         super.onStart()
-        onBackspaceChanged()
+        numpadFragment.onBackspaceChanged()
         setNightMode(baseContext, preferences.getString(getString(R.string.pref_key_theme), getString(R.string.pref_system_theme_mode_entry_value)))
     }
 
@@ -122,6 +127,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         val backspaceAction = menu.findItem(R.id.action_backspace)
         val vibrationsAction = menu.findItem(R.id.action_vibrations)
         val noSleepAction = menu.findItem(R.id.action_nosleep)
+        val leftyAction = menu.findItem(R.id.action_lefty)
 
         if (preferences.getBoolean(getString(R.string.pref_key_backspace), false))
             backspaceAction.isChecked = true
@@ -138,6 +144,12 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         else
             noSleepAction.icon?.alpha = UNCHECKED_ICON_ALPHA
 
+        if (preferences.getBoolean(getString(R.string.pref_key_lefty), false)) {
+            leftyAction.isChecked = true
+            replaceNumpadFragment(true)
+        } else
+            leftyAction.icon?.alpha = UNCHECKED_ICON_ALPHA
+
         return true
     }
 
@@ -151,7 +163,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
                     .putBoolean(getString(R.string.pref_key_backspace), !item.isChecked)
                     .apply()
 
-                onBackspaceChanged()
+                numpadFragment.onBackspaceChanged()
                 true
             }
             R.id.action_vibrations -> {
@@ -168,6 +180,14 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
                 true
             }
+            R.id.action_lefty -> {
+                preferences.edit()
+                    .putBoolean(getString(R.string.pref_key_lefty), !item.isChecked)
+                    .apply()
+
+                replaceNumpadFragment(!item.isChecked)
+                true
+            }
             R.id.action_settings -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
                 true
@@ -177,7 +197,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
         if (wasConsumed && item.isCheckable) {
             item.isChecked = !item.isChecked
-            item.icon?.alpha = if (item.icon?.alpha == 255) UNCHECKED_ICON_ALPHA else 255
+            item.icon?.alpha = if (item.isChecked) 255 else UNCHECKED_ICON_ALPHA
         }
 
         return wasConsumed || super.onOptionsItemSelected(item)
@@ -304,13 +324,11 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         }
     }
 
-    private fun onBackspaceChanged() {
-        if (preferences.getBoolean(getString(R.string.pref_key_backspace), false)) {
-            contentBinding.keyNumlock.visibility = View.INVISIBLE
-            contentBinding.keyBackspace.visibility = View.VISIBLE
-        } else {
-            contentBinding.keyNumlock.visibility = View.VISIBLE
-            contentBinding.keyBackspace.visibility = View.INVISIBLE
+    private fun replaceNumpadFragment(lefty: Boolean) {
+        numpadFragment = if (lefty) LeftyNumpadFragment() else NumpadFragment()
+
+        supportFragmentManager.commit {
+            replace(R.id.numpad_fragment, numpadFragment)
         }
     }
 }
