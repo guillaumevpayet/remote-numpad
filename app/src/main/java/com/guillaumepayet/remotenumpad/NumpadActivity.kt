@@ -86,6 +86,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
     private lateinit var activityBinding: ActivityNumpadBinding
     private lateinit var contentBinding: ContentNumpadBinding
     private lateinit var numpadFragment: NumpadFragment
+    private lateinit var numpad: VirtualNumpad
     private lateinit var keyEventSender: KeyEventSender
     private lateinit var preferences: SharedPreferences
 
@@ -103,7 +104,8 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         contentBinding.connectButton.setOnClickListener(this)
 
         numpadFragment = contentBinding.numpadFragment.getFragment()
-        val numpad = VirtualNumpad(contentBinding.numpadFragment)
+        numpad = VirtualNumpad(baseContext)
+        numpadFragment.registerVirtualNumpad(numpad)
         keyEventSender = KeyEventSender(numpad)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -326,6 +328,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
     private fun replaceNumpadFragment(lefty: Boolean) {
         numpadFragment = if (lefty) LeftyNumpadFragment() else NumpadFragment()
+        numpadFragment.registerVirtualNumpad(numpad)
 
         supportFragmentManager.commit {
             replace(R.id.numpad_fragment, numpadFragment)

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.allViews
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.guillaumepayet.remotenumpad.R
@@ -19,6 +20,8 @@ open class NumpadFragment : Fragment() {
         get() = fragmentBinding.keyBackspace
 
 
+    private var virtualNumpad: VirtualNumpad? = null
+
     private lateinit var preferences: SharedPreferences
     private lateinit var fragmentBinding: FragmentNumpadBinding
 
@@ -32,7 +35,19 @@ open class NumpadFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = inflateView(inflater)
+    ): View {
+        val root = inflateView(inflater)
+
+        if (virtualNumpad != null) {
+            for (view in root.allViews) {
+                if (view is Key) {
+                    view.setOnTouchListener(virtualNumpad)
+                }
+            }
+        }
+
+        return root
+    }
 
     override fun onResume() {
         super.onResume()
@@ -40,11 +55,9 @@ open class NumpadFragment : Fragment() {
     }
 
 
-    protected open fun inflateView(inflater: LayoutInflater): View {
-        fragmentBinding = FragmentNumpadBinding.inflate(inflater)
-        return fragmentBinding.root
+    fun registerVirtualNumpad(virtualNumpad: VirtualNumpad) {
+        this.virtualNumpad = virtualNumpad
     }
-
 
     fun onBackspaceChanged() {
         if (preferences.getBoolean(getString(R.string.pref_key_backspace), false)) {
@@ -54,5 +67,11 @@ open class NumpadFragment : Fragment() {
             keyNumlock.visibility = View.VISIBLE
             keyBackspace.visibility = View.INVISIBLE
         }
+    }
+
+
+    protected open fun inflateView(inflater: LayoutInflater): View {
+        fragmentBinding = FragmentNumpadBinding.inflate(inflater)
+        return fragmentBinding.root
     }
 }

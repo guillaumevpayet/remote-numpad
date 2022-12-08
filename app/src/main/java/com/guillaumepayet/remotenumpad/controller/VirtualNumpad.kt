@@ -26,7 +26,6 @@ import android.os.VibratorManager
 import android.view.MotionEvent
 import android.view.SoundEffectConstants
 import android.view.View
-import android.view.ViewGroup
 import androidx.preference.PreferenceManager
 import com.guillaumepayet.remotenumpad.R
 
@@ -34,12 +33,12 @@ import com.guillaumepayet.remotenumpad.R
  * The VirtualNumpad receives touch events directly from the Android [View] objects and notifies
  * the [IKeypadListener] objects of the events.
  *
- * @constructor Construct the virtual numpad with the keys contained in the given ViewGroup.
- * @param viewGroup a container containing all the keys
+ * @constructor Construct the virtual numpad with the Activity's context.
+ * @param context The Activity's context
  *
  * @see IKeypadListener
  **/
-class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
+class VirtualNumpad(private val context: Context) : IKeypad, View.OnTouchListener {
 
     companion object {
         /**
@@ -50,7 +49,6 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
 
     private val listeners: MutableCollection<IKeypadListener> = HashSet()
 
-    private val context = viewGroup.context
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     private val vibrator = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -58,14 +56,6 @@ class VirtualNumpad(viewGroup: ViewGroup) : IKeypad, View.OnTouchListener {
         context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     } else {
         (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
-    }
-
-    init {
-        // Register this object as the OnTouchListener to all the keys
-        val nKeys = viewGroup.childCount
-
-        for (i in 0 until nKeys)
-            viewGroup.getChildAt(i).setOnTouchListener(this)
     }
 
     override fun registerKeypadListener(listener: IKeypadListener) {
