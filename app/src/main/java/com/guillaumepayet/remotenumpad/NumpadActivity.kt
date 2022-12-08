@@ -136,7 +136,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         else
             backspaceAction.icon?.alpha = UNCHECKED_ICON_ALPHA
 
-        if (preferences.getBoolean(getString(R.string.pref_key_vibrations), false))
+        if (preferences.getBoolean(getString(R.string.pref_key_vibrations), true))
             vibrationsAction.isChecked = true
         else
             vibrationsAction.icon?.alpha = UNCHECKED_ICON_ALPHA
