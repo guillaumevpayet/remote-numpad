@@ -1,0 +1,1 @@
+Complete revamp of the interface and fixed all the Bluetooth (previously HID) connection issues.
