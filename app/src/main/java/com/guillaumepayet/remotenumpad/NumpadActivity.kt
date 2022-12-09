@@ -148,7 +148,9 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
         if (preferences.getBoolean(getString(R.string.pref_key_lefty), false)) {
             leftyAction.isChecked = true
-            replaceNumpadFragment(true)
+
+            if (numpadFragment !is LeftyNumpadFragment)
+                replaceNumpadFragment(true)
         } else
             leftyAction.icon?.alpha = UNCHECKED_ICON_ALPHA
 
