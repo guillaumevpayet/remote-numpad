@@ -24,8 +24,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import androidx.preference.PreferenceManager
 import org.junit.Before
 import org.junit.Test
@@ -39,7 +37,6 @@ import org.mockito.Mockito.times
 import org.powermock.api.mockito.PowerMockito.mockStatic
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
-import java.util.HashSet
 
 /**
  * Test suite for testing the [VirtualNumpad] controller class.
@@ -56,7 +53,7 @@ class VirtualNumpadTestSuite {
     }
 
 
-    @Mock private val mockViewGroup: ViewGroup? = null
+    @Mock private val mockContext: Context? = null
     @Mock private val mockKey: Key? = null
     @Mock private val mockMotionEvent: MotionEvent? = null
     @Mock private val mockListener: IKeypadListener? = null
@@ -64,9 +61,6 @@ class VirtualNumpadTestSuite {
 
     @Before
     fun mockAndroidApis() {
-        val mockContext = mock(Context::class.java)
-        given(mockViewGroup?.context).willReturn(mockContext)
-
         val mockVibratorManager = mock(VibratorManager::class.java)
         val mockVibrator = mock(Vibrator::class.java)
         given(mockContext?.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).willReturn(mockVibratorManager)
@@ -85,49 +79,9 @@ class VirtualNumpadTestSuite {
 
 
     @Test
-    fun constructNumpadWithNonEmptyViewGroup_numpadRegisteredItselfInEachKey() {
-        val nKeys = 17
-
-        // Given that the ViewGroup object has 17 child views and...
-        given(mockViewGroup?.childCount).willReturn(nKeys)
-
-        val mockChildViews = HashSet<View>()
-
-        for (i in 0 until nKeys) {
-            val view = mock(View::class.java)
-            mockChildViews.add(view)
-
-            // ...given that the child views are indexed in the ViewGroup,...
-            given(mockViewGroup?.getChildAt(i)).willReturn(view)
-        }
-
-        // ...when the numpad is constructed with the ViewGroup...
-        val numpad = VirtualNumpad(mockViewGroup!!)
-
-        // ...then the numpad should be registered as a listener for each key.
-        for (mockChildView in mockChildViews)
-            then(mockChildView).should(times(1)).setOnTouchListener(numpad)
-    }
-
-    @Test
-    fun constructNumpadWithEmptyViewGroup_numpadInitialisesButIsUnuseable() {
-        // Given that the ViewGroup object has no child views,...
-        given(mockViewGroup?.childCount).willReturn(0)
-
-        // ...when the numpad is constructed with the ViewGroup...
-        VirtualNumpad(mockViewGroup!!)
-
-        // ...then the numpad should not have attempted to access the ViewGroup's child views.
-        then(mockViewGroup).should(times(0)).getChildAt(anyInt())
-    }
-
-    @Test
     fun triggerValidKeyDownEventAndListener_numpadNotifiesKeypadListeners() {
-        // Given that there is a ViewGroup object,...
-        given(mockViewGroup?.childCount).willReturn(0)
-
-        // ...given that the numpad is constructed with the ViewGroup,...
-        val numpad = VirtualNumpad(mockViewGroup!!)
+        // Given that the numpad is constructed with the ViewGroup,...
+        val numpad = VirtualNumpad(mockContext!!)
 
         // ...given that a keypad listener is registered with the numpad,...
         numpad.registerKeypadListener(mockListener!!)
@@ -148,11 +102,8 @@ class VirtualNumpadTestSuite {
 
     @Test
     fun triggerValidKeyUpEventAndListener_numpadNotifiesKeypadListeners() {
-        // Given that there is a ViewGroup object,...
-        given(mockViewGroup?.childCount).willReturn(0)
-
-        // ...given that the numpad is constructed with the ViewGroup and...
-        val numpad = VirtualNumpad(mockViewGroup!!)
+        // Given that the numpad is constructed with the ViewGroup and...
+        val numpad = VirtualNumpad(mockContext!!)
 
         // ...given that a keypad listener is registered with the numpad,...
         numpad.registerKeypadListener(mockListener!!)
@@ -173,11 +124,8 @@ class VirtualNumpadTestSuite {
 
     @Test
     fun triggerInvalidKeyTouchEventAndListener_numpadDoesNotReact() {
-        // Given that there is a ViewGroup object,...
-        given(mockViewGroup?.childCount).willReturn(0)
-
-        // ...given that the numpad is constructed with the ViewGroup and...
-        val numpad = VirtualNumpad(mockViewGroup!!)
+        // Given that the numpad is constructed with the ViewGroup and...
+        val numpad = VirtualNumpad(mockContext!!)
 
         // ...given that a keypad listener is registered with the numpad,...
         numpad.registerKeypadListener(mockListener!!)
@@ -197,11 +145,8 @@ class VirtualNumpadTestSuite {
 
     @Test
     fun triggerValidKeyTouchEventAndNoListener_numpadDoesNotReact() {
-        // Given that there is a ViewGroup object,...
-        given(mockViewGroup?.childCount).willReturn(0)
-
-        // ...given that the numpad is constructed with the ViewGroup and...
-        val numpad = VirtualNumpad(mockViewGroup!!)
+        // Given that the numpad is constructed with the ViewGroup and...
+        val numpad = VirtualNumpad(mockContext!!)
 
         // ...given that a Key has a value,...
         given(mockKey?.value).willReturn(KEY_VALUE)
@@ -218,11 +163,8 @@ class VirtualNumpadTestSuite {
 
     @Test
     fun triggerValidKeyTouchEventAndTwoListeners_numpadNotifiesBothListeners() {
-        // Given that there is a ViewGroup object,...
-        given(mockViewGroup?.childCount).willReturn(0)
-
-        // ...given that the numpad is constructed with the ViewGroup and...
-        val numpad = VirtualNumpad(mockViewGroup!!)
+        // Given that the numpad is constructed with the ViewGroup and...
+        val numpad = VirtualNumpad(mockContext!!)
 
         // ...given that two keypad listeners are registered with the numpad,...
         numpad.registerKeypadListener(mockListener!!)
