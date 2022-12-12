@@ -9,10 +9,13 @@ import android.companion.AssociationInfo
 import android.companion.CompanionDeviceManager
 import android.content.Context
 import android.os.Build
+import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import com.google.android.material.snackbar.Snackbar
+import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.HidServiceListener
 
 /**
@@ -36,20 +39,25 @@ class HidPairingCallback(private val activity: Activity) : ActivityResultCallbac
         if (result?.resultCode != Activity.RESULT_OK)
             return
 
-        val device = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-            @Suppress("DEPRECATION")
-            result.data?.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE)
-        else {
-            val association = result.data?.getParcelableExtra(
-                CompanionDeviceManager.EXTRA_ASSOCIATION,
-                AssociationInfo::class.java
-            )
+        try {
+            val device = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                @Suppress("DEPRECATION")
+                result.data?.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE)
+            else {
+                val association = result.data?.getParcelableExtra(
+                    CompanionDeviceManager.EXTRA_ASSOCIATION,
+                    AssociationInfo::class.java
+                )
 
-            bluetoothAdapter.getRemoteDevice(association?.deviceMacAddress.toString())
+                bluetoothAdapter.getRemoteDevice(association?.deviceMacAddress.toString())
+            }
+
+            val hidPairingDeviceListener = HidPairingDeviceListener(device!!, activity)
+            val hidServiceListener = HidServiceListener(context, hidPairingDeviceListener)
+            bluetoothAdapter.getProfileProxy(context, hidServiceListener, BluetoothProfile.HID_DEVICE)
+        } catch (e: IllegalArgumentException) {
+            val view = activity.findViewById<View>(R.id.connection_interface_settings)
+            Snackbar.make(view, R.string.snackbar_incompatible_device, Snackbar.LENGTH_SHORT).show()
         }
-
-        val hidPairingDeviceListener = HidPairingDeviceListener(device!!, activity)
-        val hidServiceListener = HidServiceListener(context, hidPairingDeviceListener)
-        bluetoothAdapter.getProfileProxy(context, hidServiceListener, BluetoothProfile.HID_DEVICE)
     }
 }
