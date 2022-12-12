@@ -24,7 +24,7 @@
     <item
         android:id="@+id/action_backspace"
         android:title="@string/pref_title_backspace"
-        android:icon="@drawable/backspace_48px"
+        android:icon="@drawable/backspace"
         android:checkable="true"
         app:showAsAction="ifRoom" />
     <item

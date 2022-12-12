@@ -19,15 +19,14 @@
 
     <com.guillaumepayet.remotenumpad.controller.Key
         android:id="@+id/key_backspace"
-        android:drawableEnd="@drawable/backspace_48px"
-        app:drawableTint="?colorPrimary"
+        app:icon="@drawable/backspace"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RemoteNumpad.Key.TopLeft"
         app:layout_constraintBottom_toTopOf="@+id/key_7"
         app:layout_constraintEnd_toStartOf="@+id/key_divide"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:value="@string/key_value_backspace"
-        style="@style/Widget.RemoteNumpad.Key.Text" />
+        style="@style/Widget.RemoteNumpad.Key.Icon" />
 
     <com.guillaumepayet.remotenumpad.controller.Key
         android:id="@+id/key_divide"
@@ -177,8 +176,7 @@
 
     <com.guillaumepayet.remotenumpad.controller.Key
         android:id="@+id/key_enter"
-        android:drawableEnd="@drawable/keyboard_return_48px"
-        app:drawableTint="?colorPrimary"
+        app:icon="@drawable/keyboard_return"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RemoteNumpad.Key.BottomRight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -186,7 +184,7 @@
         app:layout_constraintTop_toBottomOf="@+id/key_equal"
         app:layout_constraintVertical_weight="2"
         app:value="@string/key_value_enter"
-        style="@style/Widget.RemoteNumpad.Key.Text" />
+        style="@style/Widget.RemoteNumpad.Key.Icon" />
 
     <com.guillaumepayet.remotenumpad.controller.Key
         android:id="@+id/key_0"
