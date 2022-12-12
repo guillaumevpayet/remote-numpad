@@ -25,7 +25,7 @@ package com.guillaumepayet.remotenumpad.connection
  *
  * @see IConnectionStatusListener
  */
-interface IConnectionInterface : IConnectionStatusListener {
+interface IConnectionInterface : IConnectionStatusListener, Comparable<IConnectionInterface> {
 
     /**
      * Register an [IConnectionStatusListener] object to be notified when the connection status
@@ -62,4 +62,7 @@ interface IConnectionInterface : IConnectionStatusListener {
      * @return A boolean that is true if the string was sent successfully, false otherwise.
      */
     suspend fun sendString(string: String): Boolean
+
+    override fun compareTo(other: IConnectionInterface): Int =
+        this.javaClass.name.compareTo(other.javaClass.name)
 }
