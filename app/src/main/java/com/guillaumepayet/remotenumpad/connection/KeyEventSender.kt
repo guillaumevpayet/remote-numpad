@@ -22,6 +22,7 @@ import com.guillaumepayet.remotenumpad.controller.IKeypad
 import com.guillaumepayet.remotenumpad.controller.IKeypadListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentSkipListSet
 
 /**
  * This class handles processing the key events for sending.
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
  **/
 class KeyEventSender(keypad: IKeypad) : IKeypadListener, IDataSender {
 
-    private val connectionInterfaces: MutableCollection<IConnectionInterface> = HashSet()
+    private val connectionInterfaces: MutableCollection<IConnectionInterface> = ConcurrentSkipListSet()
 
 
     init {
