@@ -36,11 +36,15 @@ interface IBluetoothConnector {
         get() = object : ActivityResultCallback<ActivityResult> {
 
             override fun onActivityResult(result: ActivityResult?) {
-                activity.isShowingDialog = false
-                activity.unregisterActivityResultCallback(this)
-
-                if (result?.resultCode != RESULT_OK)
-                    onUserDeclinedBluetooth()
+                try {
+                    activity.isShowingDialog = false
+                    activity.unregisterActivityResultCallback(this)
+                } catch (e: IllegalStateException) {
+                    // There is no Activity with which to unregister this so do nothing
+                } finally {
+                    if (result?.resultCode != RESULT_OK)
+                        onUserDeclinedBluetooth()
+                }
             }
         }
 
