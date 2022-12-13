@@ -1,0 +1,1 @@
+Several crashes fixed.
