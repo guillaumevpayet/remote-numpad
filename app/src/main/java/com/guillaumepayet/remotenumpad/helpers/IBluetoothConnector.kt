@@ -92,7 +92,11 @@ interface IBluetoothConnector {
 
         when {
             manager.adapter.isEnabled ->
-                return callback()
+                return try {
+                    callback()
+                } catch (e: Exception) {
+                    null
+                }
             !userHasDeclinedBluetooth -> {
                 if (!activity.isShowingDialog) {
                     activity.registerActivityResultCallback(activityResultCallback)
