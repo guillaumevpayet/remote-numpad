@@ -33,6 +33,7 @@ import androidx.preference.Preference
 import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.HidConnectionInterface
+import com.guillaumepayet.remotenumpad.connection.hid.HidHostValidator
 import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
 import com.guillaumepayet.remotenumpad.settings.AbstractSettingsFragment
 
@@ -50,6 +51,8 @@ class HidSettingsFragment : AbstractSettingsFragment(), IBluetoothConnector {
     override var userHasDeclinedBluetooth: Boolean = false
         private set
 
+
+    private val hidHostValidator = HidHostValidator()
 
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
         val manager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
@@ -114,8 +117,13 @@ class HidSettingsFragment : AbstractSettingsFragment(), IBluetoothConnector {
                 listOf(getString(R.string.pref_no_host_entry)),
                 listOf(getString(R.string.pref_no_host_entry_value))
             )
-        else
-            Pair(devices.map { it.name }, devices.map { it.address })
+        else {
+            val sanitisedDevices = devices.filter {
+                it.name != null && it.address != null && hidHostValidator.isHostValid(it.address)
+            }
+
+            Pair(sanitisedDevices.map { it.name }, sanitisedDevices.map { it.address })
+        }
 
         hostPreference.entries = entries.toTypedArray()
         hostPreference.entryValues = entryValues.toTypedArray()
