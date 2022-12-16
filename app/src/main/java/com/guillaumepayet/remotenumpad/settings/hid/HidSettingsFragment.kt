@@ -93,10 +93,7 @@ class HidSettingsFragment : AbstractSettingsFragment(), IBluetoothConnector {
     }
 
     override fun onDestroy() {
-        runOrRequestPermission @SuppressLint("MissingPermission") {
-            pairingManager?.release()
-        }
-
+        pairingManager?.release()
         super.onDestroy()
     }
 
