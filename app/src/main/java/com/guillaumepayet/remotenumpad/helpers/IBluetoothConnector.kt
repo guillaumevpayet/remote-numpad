@@ -24,8 +24,12 @@ interface IBluetoothConnector {
         get() = object : ActivityResultCallback<Boolean> {
 
             override fun onActivityResult(isGranted: Boolean?) {
-                activity.isShowingDialog = false
-                activity.unregisterPermissionResultCallback(this)
+                try {
+                    activity.isShowingDialog = false
+                    activity.unregisterPermissionResultCallback(this)
+                } catch (e: Exception) {
+                    // There is no activity with which to unregister this so do nothing
+                }
 
                 if (isGranted != true)
                     onUserDeclinedBluetooth()
@@ -41,10 +45,10 @@ interface IBluetoothConnector {
                     activity.unregisterActivityResultCallback(this)
                 } catch (e: IllegalStateException) {
                     // There is no Activity with which to unregister this so do nothing
-                } finally {
-                    if (result?.resultCode != RESULT_OK)
-                        onUserDeclinedBluetooth()
                 }
+
+                if (result?.resultCode != RESULT_OK)
+                    onUserDeclinedBluetooth()
             }
         }
 
