@@ -8,13 +8,26 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.guillaumepayet.remotenumpad.helpers.IActivityResultManager
+import java.util.concurrent.ConcurrentSkipListSet
 
 abstract class AbstractActivity : AppCompatActivity(), IActivityResultManager {
 
+    /**
+     * Class used to encapsulate the callbacks into subclasses of [Comparable] to work with the
+     * [ConcurrentSkipListSet] collections.
+     */
+    private class ComparableCallback<O, C: ActivityResultCallback<O>>(private val callback: C) : ActivityResultCallback<O>, Comparable<C> {
+
+        override fun onActivityResult(result: O) = callback.onActivityResult(result)
+
+        override fun compareTo(other: C): Int =
+            callback.hashCode().compareTo(other.hashCode())
+    }
+
     var isShowingDialog = false
 
-    private val permissionResultCallbacks = mutableSetOf<ActivityResultCallback<Boolean>>()
-    private val activityResultCallbacks = mutableSetOf<ActivityResultCallback<ActivityResult>>()
+    private val permissionResultCallbacks: MutableCollection<ActivityResultCallback<Boolean>> = ConcurrentSkipListSet()
+    private val activityResultCallbacks: MutableCollection<ActivityResultCallback<ActivityResult>> = ConcurrentSkipListSet()
 
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private lateinit var activityLauncher: ActivityResultLauncher<Intent>
@@ -36,16 +49,16 @@ abstract class AbstractActivity : AppCompatActivity(), IActivityResultManager {
 
 
     override fun registerPermissionResultCallback(callback: ActivityResultCallback<Boolean>) =
-        permissionResultCallbacks.add(callback)
+        permissionResultCallbacks.add(ComparableCallback(callback))
 
     override fun unregisterPermissionResultCallback(callback: ActivityResultCallback<Boolean>) =
-        permissionResultCallbacks.remove(callback)
+        permissionResultCallbacks.remove(ComparableCallback(callback))
 
     override fun registerActivityResultCallback(callback: ActivityResultCallback<ActivityResult>) =
-        activityResultCallbacks.add(callback)
+        activityResultCallbacks.add(ComparableCallback(callback))
 
     override fun unregisterActivityResultCallback(callback: ActivityResultCallback<ActivityResult>) =
-        activityResultCallbacks.remove(callback)
+        activityResultCallbacks.remove(ComparableCallback(callback))
 
     override fun requestPermission(permission: String) = permissionLauncher.launch(permission)
 
