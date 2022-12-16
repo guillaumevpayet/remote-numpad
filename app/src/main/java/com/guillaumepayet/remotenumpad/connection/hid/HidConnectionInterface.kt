@@ -72,6 +72,8 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
 
         if (result != true) {
             onConnectionStatusChange(R.string.status_could_not_connect)
+        } else {
+            onConnectionStatusChange(R.string.status_connecting)
         }
     }
 
