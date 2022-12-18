@@ -33,8 +33,12 @@ class HidPairingCompanionCallback(fragment: Fragment) : CompanionDeviceManager.C
     }
 
     override fun onAssociationPending(intentSender: IntentSender) {
-        val pairingRequest = IntentSenderRequest.Builder(intentSender).build()
-        pairingLauncher.launch(pairingRequest)
+        try {
+            val pairingRequest = IntentSenderRequest.Builder(intentSender).build()
+            pairingLauncher.launch(pairingRequest)
+        } catch (e: IllegalStateException) {
+            // If user closes the activity before the Companion Device Manager returns, ignore
+        }
     }
 
     override fun onFailure(error: CharSequence?) {
