@@ -16,12 +16,12 @@ abstract class AbstractActivity : AppCompatActivity(), IActivityResultManager {
      * Class used to encapsulate the callbacks into subclasses of [Comparable] to work with the
      * [ConcurrentSkipListSet] collections.
      */
-    private class ComparableCallback<O, C: ActivityResultCallback<O>>(private val callback: C) : ActivityResultCallback<O>, Comparable<C> {
+    private class ComparableCallback<O, C: ActivityResultCallback<O>>(private val callback: C) : ActivityResultCallback<O>, Comparable<ComparableCallback<O, C>> {
 
         override fun onActivityResult(result: O) = callback.onActivityResult(result)
 
-        override fun compareTo(other: C): Int =
-            callback.hashCode().compareTo(other.hashCode())
+        override fun compareTo(other: ComparableCallback<O, C>): Int =
+            callback.hashCode().compareTo(other.callback.hashCode())
     }
 
     var isShowingDialog = false
