@@ -207,8 +207,8 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         return wasConsumed || super.onOptionsItemSelected(item)
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         disconnect()
     }
 

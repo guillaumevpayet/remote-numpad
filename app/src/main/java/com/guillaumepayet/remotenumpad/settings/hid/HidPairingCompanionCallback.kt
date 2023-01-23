@@ -1,14 +1,11 @@
 package com.guillaumepayet.remotenumpad.settings.hid
 
-import android.app.Activity
 import android.companion.CompanionDeviceManager
 import android.content.IntentSender
 import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
 
 /**
  * This class handles the result of the Companion Device Manager. When a user selects a device in
@@ -16,15 +13,7 @@ import androidx.fragment.app.Fragment
  * [android.content.Intent].
  */
 @RequiresApi(Build.VERSION_CODES.P)
-class HidPairingCompanionCallback(fragment: Fragment) : CompanionDeviceManager.Callback() {
-
-    private val hidPairingCallback = HidPairingCallback(fragment.activity as Activity)
-
-    private val pairingLauncher: ActivityResultLauncher<IntentSenderRequest> =
-        fragment.registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult(),
-            hidPairingCallback)
-
+class HidPairingCompanionCallback(private val pairingLauncher: ActivityResultLauncher<IntentSenderRequest>) : CompanionDeviceManager.Callback() {
 
     // NOTE: This method is required for older versions of Android
     @Deprecated("Deprecated in Java", ReplaceWith("onAssociationPending(intentSender)"))

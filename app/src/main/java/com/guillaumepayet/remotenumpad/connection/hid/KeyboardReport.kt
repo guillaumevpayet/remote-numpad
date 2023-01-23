@@ -30,15 +30,15 @@ import com.guillaumepayet.remotenumpad.R
 class KeyboardReport(private val context: Context, string: String) {
 
     companion object {
-        const val ID = 0x01
+        const val ID = 0x02
     }
 
-    val bytes = ByteArray(1) { 0x00 }
+    val bytes = ByteArray(2) { 0x00 }
 
     init {
         if (string[0] == '+') {
             val keyString = string.substring(1, string.length - 1)
-            bytes[0] = getKeyCode(keyString)
+            bytes[1] = getKeyCode(keyString)
         }
     }
 

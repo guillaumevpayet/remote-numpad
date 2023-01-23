@@ -85,6 +85,10 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
         } as Boolean?
 
         if (result != true) {
+            runOrRequestPermission @SuppressLint("MissingPermission") {
+                service?.unregisterApp()
+            }
+
             onConnectionStatusChange(R.string.status_connection_lost)
         }
     }
@@ -104,7 +108,9 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
     }
 
 
-    override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }
+    override fun onUserDeclinedBluetooth() {
+        userHasDeclinedBluetooth = true
+    }
 
 
     override fun onAppRegistered(proxy: BluetoothHidDevice?) {
@@ -114,7 +120,7 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
             val device = bluetoothAdapter.getRemoteDevice(hostAddress)
 
             handler.post {
-                // Fails if another Bluetooth device is connected (even if not via HID)
+                // Fails with Windows if another Bluetooth device is connected (even if not via HID)
                 if (proxy?.connect(device) != true) {
                     getProfileProxy()
                 }
@@ -128,7 +134,6 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
     }
 
     override fun onConnectionStateChanged(device: BluetoothDevice, state: Int) {
-
         if (device.address != hostAddress)
             return
 
@@ -165,5 +170,9 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
     @SuppressLint("InlinedApi")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private fun getProfileProxy(): Boolean =
-        bluetoothAdapter.getProfileProxy(context, serviceListener, BluetoothProfile.HID_DEVICE)
+        bluetoothAdapter.getProfileProxy(
+            context,
+            serviceListener,
+            BluetoothProfile.HID_DEVICE
+        )
 }

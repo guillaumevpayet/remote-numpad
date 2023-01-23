@@ -27,9 +27,13 @@ import android.os.Build
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.view.MenuProvider
 import com.guillaumepayet.remotenumpad.R
+import java.util.regex.Pattern
 
 /**
  * Manager class to handle the process of pairing a new device ready for the Bluetooth HID profile.
@@ -39,10 +43,15 @@ class HidPairingManager(fragment: HidSettingsFragment): MenuProvider {
 
     private val activity = fragment.activity
 
-    private val companionDeviceManager =
-        activity.getSystemService(Context.COMPANION_DEVICE_SERVICE) as CompanionDeviceManager
+    private val hidPairingCallback = HidPairingCallback(fragment.activity)
 
-    private val companionCallback = HidPairingCompanionCallback(fragment)
+    private val pairingLauncher: ActivityResultLauncher<IntentSenderRequest> =
+        fragment.registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult(),
+            hidPairingCallback)
+
+    private val companionDeviceManager =
+        fragment.requireActivity().getSystemService(Context.COMPANION_DEVICE_SERVICE) as CompanionDeviceManager
 
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) =
@@ -50,9 +59,13 @@ class HidPairingManager(fragment: HidSettingsFragment): MenuProvider {
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
         R.id.action_hid_pair -> {
-            val deviceFilter = BluetoothDeviceFilter.Builder().build()
+            val deviceFilter = BluetoothDeviceFilter.Builder()
+                .setNamePattern(Pattern.compile("([a-fA-F\\d]:){0}"))
+                .build()
+
             val pairingRequest = AssociationRequest.Builder().addDeviceFilter(deviceFilter).build()
 
+            val companionCallback = HidPairingCompanionCallback(pairingLauncher)
             companionDeviceManager.associate(pairingRequest, companionCallback, null)
             true
         }

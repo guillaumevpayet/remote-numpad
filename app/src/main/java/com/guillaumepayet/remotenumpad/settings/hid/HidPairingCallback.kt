@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.google.android.material.snackbar.Snackbar
+import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.HidServiceListener
 
@@ -25,7 +26,7 @@ import com.guillaumepayet.remotenumpad.connection.hid.HidServiceListener
  * able to pair the device.
  */
 @RequiresApi(Build.VERSION_CODES.P)
-class HidPairingCallback(private val activity: Activity) : ActivityResultCallback<ActivityResult> {
+class HidPairingCallback(private val activity: AbstractActivity) : ActivityResultCallback<ActivityResult> {
 
     private val context = activity.applicationContext
 
@@ -52,7 +53,7 @@ class HidPairingCallback(private val activity: Activity) : ActivityResultCallbac
                 bluetoothAdapter.getRemoteDevice(association?.deviceMacAddress.toString())
             }
 
-            val hidPairingDeviceListener = HidPairingDeviceListener(device!!, activity)
+            val hidPairingDeviceListener = HidPairingDeviceListener(activity, device!!)
             val hidServiceListener = HidServiceListener(context, hidPairingDeviceListener)
             bluetoothAdapter.getProfileProxy(context, hidServiceListener, BluetoothProfile.HID_DEVICE)
         } catch (e: IllegalArgumentException) {

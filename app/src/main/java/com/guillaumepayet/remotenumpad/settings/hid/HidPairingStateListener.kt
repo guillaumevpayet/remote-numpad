@@ -4,11 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDevice
+import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresPermission
+import com.guillaumepayet.remotenumpad.AbstractActivity
+import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
 
 /**
  * This class listens to the pairing process of the device previously selected via the Companion
@@ -17,7 +20,10 @@ import androidx.annotation.RequiresPermission
  * a notification of a successful pairing, the profile proxy is released and the HID app is
  * unregistered.
  */
-class HidPairingStateListener(private val proxy: BluetoothHidDevice, private val device: BluetoothDevice) : BroadcastReceiver() {
+class HidPairingStateListener(override val activity: AbstractActivity, private val proxy: BluetoothHidDevice, private val device: BluetoothDevice) : BroadcastReceiver(), IBluetoothConnector {
+
+    override var userHasDeclinedBluetooth = false
+        private set
 
     @SuppressLint("InlinedApi")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -35,7 +41,20 @@ class HidPairingStateListener(private val proxy: BluetoothHidDevice, private val
             BluetoothDevice.EXTRA_BOND_STATE,
             BluetoothDevice.BOND_NONE)
 
-        if (device == this.device && state == BluetoothDevice.BOND_BONDED)
-            proxy.unregisterApp()
+        if (device == this.device && state == BluetoothDevice.BOND_BONDED && proxy.getConnectionState(device) == BluetoothProfile.STATE_CONNECTING) {
+            val result = runOrRequestPermission @SuppressLint("MissingPermission") {
+                proxy.disconnect(device)
+            } as Boolean?
+
+            if (result != true) {
+                runOrRequestPermission @SuppressLint("MissingPermission") {
+                    proxy.unregisterApp()
+                }
+            }
+
+            activity.unregisterReceiver(this)
+        }
     }
+
+    override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }
 }

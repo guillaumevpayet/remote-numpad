@@ -23,6 +23,8 @@ import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 
@@ -35,16 +37,20 @@ class HidDeviceCallback(context: Context, private val proxy: BluetoothHidDevice,
     private val bluetoothAdapter =
         (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
 
+    private val handler = Handler(Looper.getMainLooper())
+
 
     @SuppressLint("InlinedApi")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
         super.onAppStatusChanged(pluggedDevice, registered)
 
-        if (!registered) {
-            bluetoothAdapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, proxy)
-        } else {
-            listener.onAppRegistered(proxy)
+        handler.post {
+            if (!registered) {
+                bluetoothAdapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, proxy)
+            } else {
+                listener.onAppRegistered(proxy)
+            }
         }
     }
 

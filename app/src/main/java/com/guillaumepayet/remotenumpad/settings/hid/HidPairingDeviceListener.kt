@@ -2,13 +2,19 @@ package com.guillaumepayet.remotenumpad.settings.hid
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDevice
+import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.connection.hid.IHidDeviceListener
+import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
 
 /**
  * This class handles the pairing of the device previously selected by the user via the Companion
@@ -17,19 +23,51 @@ import com.guillaumepayet.remotenumpad.connection.hid.IHidDeviceListener
  * [HidPairingStateListener] is then registered as a [BroadcastReceiver] to listen for the
  * completion of the pairing.
  */
-class HidPairingDeviceListener(private val device: BluetoothDevice, private val activity: Activity) : IHidDeviceListener {
+@RequiresApi(Build.VERSION_CODES.P)
+class HidPairingDeviceListener(override val activity: AbstractActivity, private val device: BluetoothDevice) : IHidDeviceListener, IBluetoothConnector {
 
-    private lateinit var broadcastReceiver: BroadcastReceiver
+    override var userHasDeclinedBluetooth: Boolean = false
+        private set
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private lateinit var proxy: BluetoothHidDevice
+    private lateinit var broadcastReceiver: HidPairingStateListener
 
     @SuppressLint("InlinedApi")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     override fun onAppRegistered(proxy: BluetoothHidDevice?) {
-        broadcastReceiver = HidPairingStateListener(proxy!!, device)
-        if (device.createBond()) {
-            val intentFilter = IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
-            activity.registerReceiver(broadcastReceiver, intentFilter)
+        runOrRequestPermission @SuppressLint("MissingPermission") {
+            handler.post {
+                this.proxy = proxy!!
+                broadcastReceiver = HidPairingStateListener(activity, proxy, device)
+
+                if (proxy.connect(device)) {
+                    val intentFilter = IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+                    activity.registerReceiver(broadcastReceiver, intentFilter)
+                }
+            }
         }
     }
 
-    override fun onConnectionStateChanged(device: BluetoothDevice, state: Int) { }
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    override fun onConnectionStateChanged(device: BluetoothDevice, state: Int) {
+        runOrRequestPermission @SuppressLint("MissingPermission") {
+            handler.post {
+                if (device == this.device) {
+                    when (state) {
+                        BluetoothProfile.STATE_CONNECTED -> proxy.disconnect(device)
+                        BluetoothProfile.STATE_DISCONNECTED -> {
+                            if (device.bondState == BluetoothDevice.BOND_BONDED) {
+                                proxy.unregisterApp()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }
 }
