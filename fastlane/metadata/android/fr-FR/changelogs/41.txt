@@ -1,0 +1,1 @@
+Des erreurs dans le processus de jumelage HID ont été réparées.
