@@ -19,6 +19,8 @@
     <string name="snackbar_invalid_connection_interface">Invalid connection interface</string>
     <string name="snackbar_invalid_host">Invalid host</string>
     <string name="snackbar_incompatible_device">Incompatible device</string>
+    <string name="snackbar_pairing_in_progress">Pairing in progress, please wait</string>
+    <string name="snackbar_scan_failed">The scan failed, please try again</string>
 
     <!-- The "non-translateable" keys on the numpad -->
     <string name="key_0" translatable="false">0</string>

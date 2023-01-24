@@ -39,4 +39,6 @@
     <string name="pref_title_theme">Thème</string>
     <string name="pref_title_nosleep">Garder l\'écran allumé</string>
     <string name="snackbar_incompatible_device">Appareil incompatible</string>
+    <string name="snackbar_pairing_in_progress">Jumelage en cours, merci de patienter</string>
+    <string name="snackbar_scan_failed">Le scan a échoué, veuillez réessayer</string>
 </resources>

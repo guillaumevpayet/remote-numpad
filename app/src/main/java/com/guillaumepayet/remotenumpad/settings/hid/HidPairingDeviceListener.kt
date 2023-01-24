@@ -10,9 +10,11 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.guillaumepayet.remotenumpad.AbstractActivity
+import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.IHidDeviceListener
 import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
 
@@ -24,10 +26,12 @@ import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
  * completion of the pairing.
  */
 @RequiresApi(Build.VERSION_CODES.P)
-class HidPairingDeviceListener(override val activity: AbstractActivity, private val device: BluetoothDevice) : IHidDeviceListener, IBluetoothConnector {
+class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDeviceListener, IBluetoothConnector {
 
     override var userHasDeclinedBluetooth: Boolean = false
         private set
+
+    lateinit var device: BluetoothDevice
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -45,6 +49,12 @@ class HidPairingDeviceListener(override val activity: AbstractActivity, private 
                 if (proxy.connect(device)) {
                     val intentFilter = IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
                     activity.registerReceiver(broadcastReceiver, intentFilter)
+
+                    Toast.makeText(
+                        activity,
+                        R.string.snackbar_pairing_in_progress,
+                        Toast.LENGTH_LONG)
+                        .show()
                 }
             }
         }
@@ -70,4 +80,11 @@ class HidPairingDeviceListener(override val activity: AbstractActivity, private 
     }
 
     override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }
+
+    fun release() {
+        runOrRequestPermission @SuppressLint("MissingPermission") {
+            if (this::proxy.isInitialized)
+                proxy.unregisterApp()
+        }
+    }
 }

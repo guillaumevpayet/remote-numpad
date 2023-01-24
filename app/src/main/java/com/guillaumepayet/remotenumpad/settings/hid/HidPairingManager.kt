@@ -32,6 +32,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.view.MenuProvider
+import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.R
 import java.util.regex.Pattern
 
@@ -41,9 +42,8 @@ import java.util.regex.Pattern
 @RequiresApi(Build.VERSION_CODES.P)
 class HidPairingManager(fragment: HidSettingsFragment): MenuProvider {
 
-    private val activity = fragment.activity
-
-    private val hidPairingCallback = HidPairingCallback(fragment.activity)
+    private val activity = fragment.requireActivity() as AbstractActivity
+    private val hidPairingCallback = HidPairingCallback(activity)
 
     private val pairingLauncher: ActivityResultLauncher<IntentSenderRequest> =
         fragment.registerForActivityResult(
@@ -65,7 +65,7 @@ class HidPairingManager(fragment: HidSettingsFragment): MenuProvider {
 
             val pairingRequest = AssociationRequest.Builder().addDeviceFilter(deviceFilter).build()
 
-            val companionCallback = HidPairingCompanionCallback(pairingLauncher)
+            val companionCallback = HidPairingCompanionCallback(activity, pairingLauncher)
             companionDeviceManager.associate(pairingRequest, companionCallback, null)
             true
         }
@@ -76,5 +76,8 @@ class HidPairingManager(fragment: HidSettingsFragment): MenuProvider {
     init { activity.addMenuProvider(this) }
 
 
-    fun release() = activity.removeMenuProvider(this)
+    fun release() {
+        activity.removeMenuProvider(this)
+        hidPairingCallback.release()
+    }
 }

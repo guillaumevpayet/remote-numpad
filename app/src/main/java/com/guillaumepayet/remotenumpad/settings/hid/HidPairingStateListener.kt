@@ -37,22 +37,23 @@ class HidPairingStateListener(override val activity: AbstractActivity, private v
             intent?.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     as BluetoothDevice?
 
+        if (device != this.device)
+            return
+
         val state = intent?.getIntExtra(
             BluetoothDevice.EXTRA_BOND_STATE,
             BluetoothDevice.BOND_NONE)
 
-        if (device == this.device && state == BluetoothDevice.BOND_BONDED && proxy.getConnectionState(device) == BluetoothProfile.STATE_CONNECTING) {
-            val result = runOrRequestPermission @SuppressLint("MissingPermission") {
-                proxy.disconnect(device)
-            } as Boolean?
+        if (state != BluetoothDevice.BOND_BONDED)
+            return
 
-            if (result != true) {
-                runOrRequestPermission @SuppressLint("MissingPermission") {
+        activity.unregisterReceiver(this)
+
+        if (proxy.getConnectionState(device) == BluetoothProfile.STATE_CONNECTING) {
+            runOrRequestPermission @SuppressLint("MissingPermission") {
+                if (!proxy.disconnect(device))
                     proxy.unregisterApp()
-                }
             }
-
-            activity.unregisterReceiver(this)
         }
     }
 

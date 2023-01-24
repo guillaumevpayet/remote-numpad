@@ -33,6 +33,8 @@ class HidPairingCallback(private val activity: AbstractActivity) : ActivityResul
     private val bluetoothAdapter =
         (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
 
+    private val hidPairingDeviceListener = HidPairingDeviceListener(activity)
+
 
     @SuppressLint("InlinedApi")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -53,7 +55,7 @@ class HidPairingCallback(private val activity: AbstractActivity) : ActivityResul
                 bluetoothAdapter.getRemoteDevice(association?.deviceMacAddress.toString())
             }
 
-            val hidPairingDeviceListener = HidPairingDeviceListener(activity, device!!)
+            hidPairingDeviceListener.device = device!!
             val hidServiceListener = HidServiceListener(context, hidPairingDeviceListener)
             bluetoothAdapter.getProfileProxy(context, hidServiceListener, BluetoothProfile.HID_DEVICE)
         } catch (e: IllegalArgumentException) {
@@ -61,4 +63,6 @@ class HidPairingCallback(private val activity: AbstractActivity) : ActivityResul
             Snackbar.make(view, R.string.snackbar_incompatible_device, Snackbar.LENGTH_SHORT).show()
         }
     }
+
+    fun release() = hidPairingDeviceListener.release()
 }
