@@ -73,8 +73,7 @@ interface IBluetoothConnector {
                             onUserDeclinedBluetooth()
                         },
                         onGranted = {
-                            activity.registerPermissionResultCallback(permissionResultCallback)
-                            activity.requestPermission(permission)
+                            requestPermission(permission)
                         }
                     ).show(activity.supportFragmentManager, null)
 
@@ -82,8 +81,7 @@ interface IBluetoothConnector {
                 }
             }
             !userHasDeclinedBluetooth -> {
-                activity.registerPermissionResultCallback(permissionResultCallback)
-                activity.requestPermission(permission)
+                requestPermission(permission)
             }
         }
 
@@ -104,12 +102,28 @@ interface IBluetoothConnector {
             !userHasDeclinedBluetooth -> {
                 if (!activity.isShowingDialog) {
                     activity.registerActivityResultCallback(activityResultCallback)
-                    activity.startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+
+                    try {
+                        activity.startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+                    } catch (e: IllegalStateException) {
+                        activity.unregisterActivityResultCallback(activityResultCallback)
+                    }
+
                     activity.isShowingDialog = true
                 }
             }
         }
 
         return null
+    }
+
+    private fun requestPermission(permission: String) {
+        activity.registerPermissionResultCallback(permissionResultCallback)
+
+        try {
+            activity.requestPermission(permission)
+        } catch (e: IllegalStateException) {
+            activity.unregisterPermissionResultCallback(permissionResultCallback)
+        }
     }
 }
