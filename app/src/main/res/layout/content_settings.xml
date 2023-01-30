@@ -29,6 +29,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            tools:visibility="visible" />
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/common_settings"
             android:name="com.guillaumepayet.remotenumpad.settings.CommonSettingsFragment"

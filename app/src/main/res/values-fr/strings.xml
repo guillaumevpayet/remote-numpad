@@ -41,4 +41,8 @@
     <string name="snackbar_incompatible_device">Appareil incompatible</string>
     <string name="snackbar_pairing_in_progress">Jumelage en cours, merci de patienter</string>
     <string name="snackbar_scan_failed">Le scan a échoué, veuillez réessayer</string>
+    <string name="snackbar_pairing_in_postprogress">Finalisation du jumelage, merci de patienter</string>
+    <string name="snackbar_pairing_interrupted">Le jumelage a été interrompu. Cette application peut ne pas fonctionner comme prévu.</string>
+    <string name="snackbar_pairing_failed">La configuration du jumelage a échoué. Cette application peut ne pas fonctionner comme prévu.</string>
+    <string name="snackbar_pairing_successful">Jumelage terminé</string>
 </resources>

@@ -10,9 +10,11 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
+import android.widget.ProgressBar
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import androidx.core.view.isVisible
+import com.google.android.material.snackbar.Snackbar
 import com.guillaumepayet.remotenumpad.AbstractActivity
 import com.guillaumepayet.remotenumpad.R
 import com.guillaumepayet.remotenumpad.connection.hid.IHidDeviceListener
@@ -34,6 +36,7 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
     lateinit var device: BluetoothDevice
 
     private val handler = Handler(Looper.getMainLooper())
+    private val progressBar = activity.findViewById<ProgressBar>(R.id.progress_bar)
 
     private lateinit var proxy: BluetoothHidDevice
     private lateinit var broadcastReceiver: HidPairingStateListener
@@ -49,11 +52,12 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
                 if (proxy.connect(device)) {
                     val intentFilter = IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
                     activity.registerReceiver(broadcastReceiver, intentFilter)
+                    progressBar.isVisible = true
 
-                    Toast.makeText(
-                        activity,
+                    Snackbar.make(
+                        progressBar,
                         R.string.snackbar_pairing_in_progress,
-                        Toast.LENGTH_LONG)
+                        Snackbar.LENGTH_LONG)
                         .show()
                 }
             }
@@ -67,10 +71,25 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
             handler.post {
                 if (device == this.device) {
                     when (state) {
-                        BluetoothProfile.STATE_CONNECTED -> proxy.disconnect(device)
+                        BluetoothProfile.STATE_CONNECTED -> {
+                            proxy.disconnect(device)
+
+                            Snackbar.make(
+                                progressBar,
+                                R.string.snackbar_pairing_in_postprogress,
+                                Snackbar.LENGTH_LONG)
+                                .show()
+                        }
                         BluetoothProfile.STATE_DISCONNECTED -> {
                             if (device.bondState == BluetoothDevice.BOND_BONDED) {
                                 proxy.unregisterApp()
+                                progressBar.isVisible = false
+
+                                Snackbar.make(
+                                    progressBar,
+                                    R.string.snackbar_pairing_successful,
+                                    Snackbar.LENGTH_LONG)
+                                    .show()
                             }
                         }
                     }
@@ -86,5 +105,13 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
             if (this::proxy.isInitialized)
                 proxy.unregisterApp()
         }
+
+        progressBar.isVisible = false
+
+        Snackbar.make(
+            progressBar,
+            R.string.snackbar_pairing_interrupted,
+            Snackbar.LENGTH_LONG)
+            .show()
     }
 }

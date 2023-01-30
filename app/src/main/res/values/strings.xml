@@ -21,6 +21,10 @@
     <string name="snackbar_incompatible_device">Incompatible device</string>
     <string name="snackbar_pairing_in_progress">Pairing in progress, please wait</string>
     <string name="snackbar_scan_failed">The scan failed, please try again</string>
+    <string name="snackbar_pairing_in_postprogress">Finalizing pairing, please wait</string>
+    <string name="snackbar_pairing_interrupted">Pairing was interrupted. This app may not work as intended.</string>
+    <string name="snackbar_pairing_failed">Pairing configuration failed. This app may not work as intended.</string>
+    <string name="snackbar_pairing_successful">Pairing complete</string>
 
     <!-- The "non-translateable" keys on the numpad -->
     <string name="key_0" translatable="false">0</string>
