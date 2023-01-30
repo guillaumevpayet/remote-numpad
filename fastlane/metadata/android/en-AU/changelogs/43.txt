@@ -1,0 +1,1 @@
+Messages were added to the HID pairing process.
