@@ -76,6 +76,10 @@ class HidPairingManager(fragment: HidSettingsFragment): MenuProvider {
     init { activity.addMenuProvider(this) }
 
 
+    /**
+     * Unload the menu provider and other listeners. Method called when the settings activity i
+     * exited.
+     */
     fun release() {
         activity.removeMenuProvider(this)
         hidPairingCallback.release()

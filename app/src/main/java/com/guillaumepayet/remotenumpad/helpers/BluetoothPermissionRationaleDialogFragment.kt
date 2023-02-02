@@ -23,6 +23,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 
+/**
+ * Dialog to explain to the user the rationale behind the Bluetooth permission requirement.
+ */
 class BluetoothPermissionRationaleDialogFragment(private val onDeclined: () -> Unit, private val onGranted: () -> Unit) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =

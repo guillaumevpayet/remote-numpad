@@ -22,17 +22,42 @@ import android.content.Intent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 
+/**
+ * Activity that can request for permissions and/or start activities for results with an intent.
+ */
 interface IActivityResultManager {
 
+    /**
+     * Register a callback for permission requests.
+     */
     fun registerPermissionResultCallback(callback: ActivityResultCallback<Boolean>): Boolean
 
+    /**
+     * Unregister a permission request callback.
+     */
     fun unregisterPermissionResultCallback(callback: ActivityResultCallback<Boolean>): Boolean
 
+    /**
+     * Register a callback for activity results.
+     */
     fun registerActivityResultCallback(callback: ActivityResultCallback<ActivityResult>): Boolean
 
+    /**
+     * Unregister an activity results callback.
+     */
     fun unregisterActivityResultCallback(callback: ActivityResultCallback<ActivityResult>): Boolean
 
+    /**
+     * Start a permission request.
+     *
+     * @param permission The permission to request.
+     */
     fun requestPermission(permission: String)
 
+    /**
+     * Start an activity for result.
+     *
+     * @param intent The intent on which to base the activity.
+     */
     fun startActivityForResult(intent: Intent)
 }

@@ -82,5 +82,9 @@ class HidPairingCallback(private val activity: AbstractActivity) : ActivityResul
         }
     }
 
+    /**
+     * Unload resources and interrupt any running pairing. Method called when the settings activity
+     * is exited.
+     */
     fun release() = hidPairingDeviceListener.release()
 }

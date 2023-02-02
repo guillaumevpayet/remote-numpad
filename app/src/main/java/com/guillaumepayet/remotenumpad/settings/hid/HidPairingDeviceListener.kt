@@ -118,6 +118,9 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
 
     override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }
 
+    /**
+     * Unregister the HID app. Method called when the settings activity is exited.
+     */
     fun release() {
         runOrRequestPermission @SuppressLint("MissingPermission") {
             if (this::proxy.isInitialized)

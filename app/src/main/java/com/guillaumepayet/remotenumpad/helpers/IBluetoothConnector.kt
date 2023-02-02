@@ -32,10 +32,22 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.guillaumepayet.remotenumpad.AbstractActivity
 
+/**
+ * Interface for classes which use Bluetooth features.
+ *
+ * A class which requires access to a Bluetooth feature can implement this class to help in the
+ * management of the permissions.
+ */
 interface IBluetoothConnector {
 
+    /**
+     * The activity to which the object is attached.
+     */
     val activity: AbstractActivity
 
+    /**
+     * Whether or not the user has already declined the feature at least once.
+     */
     val userHasDeclinedBluetooth: Boolean
 
     private val permissionResultCallback
@@ -71,8 +83,15 @@ interface IBluetoothConnector {
         }
 
 
+    /**
+     * Called when the user declines the feature in any way.
+     */
     fun onUserDeclinedBluetooth()
 
+    /**
+     * Helper wrapper function to ensure the callback is only called when the feature is available,
+     * enabled and the user has approved it.
+     */
     fun IBluetoothConnector.runOrRequestPermission(callback: () -> Any?): Any? {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
             Manifest.permission.BLUETOOTH_CONNECT
