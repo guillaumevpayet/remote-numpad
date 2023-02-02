@@ -104,15 +104,19 @@ interface IBluetoothConnector {
                 return runOrRequestEnable(callback)
             ActivityCompat.shouldShowRequestPermissionRationale(activity, permission) -> {
                 if (!activity.isShowingDialog) {
-                    BluetoothPermissionRationaleDialogFragment(
-                        onDeclined = {
-                            activity.isShowingDialog = false
-                            onUserDeclinedBluetooth()
-                        },
-                        onGranted = {
-                            requestPermission(permission)
-                        }
-                    ).show(activity.supportFragmentManager, null)
+                    try {
+                        BluetoothPermissionRationaleDialogFragment(
+                            onDeclined = {
+                                activity.isShowingDialog = false
+                                onUserDeclinedBluetooth()
+                            },
+                            onGranted = {
+                                requestPermission(permission)
+                            }
+                        ).show(activity.supportFragmentManager, null)
+                    } catch (e: IllegalStateException) {
+                        // Graceful exit
+                    }
 
                     activity.isShowingDialog = true
                 }
