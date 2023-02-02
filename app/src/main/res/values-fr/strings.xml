@@ -41,8 +41,25 @@
     <string name="snackbar_incompatible_device">Appareil incompatible</string>
     <string name="snackbar_pairing_in_progress">Jumelage en cours, merci de patienter</string>
     <string name="snackbar_scan_failed">Le scan a échoué, veuillez réessayer</string>
-    <string name="snackbar_pairing_in_postprogress">Finalisation du jumelage, merci de patienter</string>
-    <string name="snackbar_pairing_interrupted">Le jumelage a été interrompu. Cette application peut ne pas fonctionner comme prévu.</string>
-    <string name="snackbar_pairing_failed">La configuration du jumelage a échoué. Cette application peut ne pas fonctionner comme prévu.</string>
+    <string name="snackbar_pairing_in_postprogress">
+        Finalisation du jumelage, merci de patienter
+    </string>
+    <string name="snackbar_pairing_interrupted">
+        Le jumelage a été interrompu. Cette application peut ne pas fonctionner comme prévu.
+    </string>
+    <string name="snackbar_pairing_failed">
+        La configuration du jumelage a échoué. Cette application peut ne pas fonctionner comme
+        prévu.
+    </string>
     <string name="snackbar_pairing_successful">Jumelage terminé</string>
+    <string name="bprd_rationale">
+        Pour pouvoir utiliser les connexions Bluetooth et Bluetooth (avec serveur), la permission
+        de détecter, de se connecter et de déduire la localisation à partir des appareils alentours
+        est requise.<br />
+        Soyez assuré qu\'aucune information de localisation n\'est en fait dérivée et que la
+        permission n\'est uniquement necessaire pour pouvoir connecter l\'appareil à un autre
+        appareil Bluetooth.
+    </string>
+    <string name="bprd_yes">Aller à la permission</string>
+    <string name="bprd_no">Refuser</string>
 </resources>

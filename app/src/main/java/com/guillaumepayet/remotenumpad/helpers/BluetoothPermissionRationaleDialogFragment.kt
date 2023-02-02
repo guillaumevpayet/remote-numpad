@@ -22,6 +22,7 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import com.guillaumepayet.remotenumpad.R
 
 /**
  * Dialog to explain to the user the rationale behind the Bluetooth permission requirement.
@@ -30,15 +31,8 @@ class BluetoothPermissionRationaleDialogFragment(private val onDeclined: () -> U
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
-            .setMessage(
-                "" +
-                        "In order to use the Bluetooth and Bluetooth (with server) connections, the " +
-                        "permission to detect, connect to and derive location from nearby devices is " +
-                        "required.\n" +
-                        "Rest assured that no location information is derived and the permission is " +
-                        "only necessary to connect to a Bluetooth device."
-            )
-            .setPositiveButton("Go to permission") { _, _ -> onGranted() }
-            .setNegativeButton("Deny") { _, _ -> onDeclined() }
+            .setMessage(R.string.bprd_rationale)
+            .setPositiveButton(R.string.bprd_yes) { _, _ -> onGranted() }
+            .setNegativeButton(R.string.bprd_no) { _, _ -> onDeclined() }
             .create()
 }

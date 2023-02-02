@@ -22,8 +22,12 @@
     <string name="snackbar_pairing_in_progress">Pairing in progress, please wait</string>
     <string name="snackbar_scan_failed">The scan failed, please try again</string>
     <string name="snackbar_pairing_in_postprogress">Finalizing pairing, please wait</string>
-    <string name="snackbar_pairing_interrupted">Pairing was interrupted. This app may not work as intended.</string>
-    <string name="snackbar_pairing_failed">Pairing configuration failed. This app may not work as intended.</string>
+    <string name="snackbar_pairing_interrupted">
+        Pairing was interrupted. This app may not work as intended.
+    </string>
+    <string name="snackbar_pairing_failed">
+        Pairing configuration failed. This app may not work as intended.
+    </string>
     <string name="snackbar_pairing_successful">Pairing complete</string>
 
     <!-- The "non-translateable" keys on the numpad -->
@@ -163,5 +167,16 @@
     <string name="pref_title_category_hid">Bluetooth settings</string>
     <string name="pref_key_hid_host" translatable="false">hid_host</string>
     <string name="action_hid_pair">Pair</string>
+
+    <!-- Bluetooth Permission Rationale Dialog -->
+
+    <string name="bprd_rationale">
+        In order to use the Bluetooth and Bluetooth (with server) connections, the permission to
+        detect, connect to and derive location from nearby devices is required.<br />
+        Rest assured that no location information is derived and the permission is only necessary
+        to connect to a Bluetooth device.
+    </string>
+    <string name="bprd_yes">Go to permission</string>
+    <string name="bprd_no">Deny</string>
 
 </resources>
