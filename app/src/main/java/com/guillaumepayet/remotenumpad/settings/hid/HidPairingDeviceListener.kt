@@ -54,8 +54,8 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
     lateinit var device: BluetoothDevice
 
     private val handler = Handler(Looper.getMainLooper())
-    private val progressBar = activity.findViewById<ProgressBar>(R.id.progress_bar)
 
+    private lateinit var progressBar: ProgressBar
     private lateinit var proxy: BluetoothHidDevice
     private lateinit var broadcastReceiver: HidPairingStateListener
 
@@ -64,6 +64,7 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
     override fun onAppRegistered(proxy: BluetoothHidDevice?) {
         runOrRequestPermission @SuppressLint("MissingPermission") {
             handler.post {
+                progressBar = activity.findViewById(R.id.progress_bar)
                 this.proxy = proxy!!
                 broadcastReceiver = HidPairingStateListener(activity, proxy, device)
 
@@ -92,22 +93,27 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
                         BluetoothProfile.STATE_CONNECTED -> {
                             proxy.disconnect(device)
 
-                            Snackbar.make(
-                                progressBar,
-                                R.string.snackbar_pairing_in_postprogress,
-                                Snackbar.LENGTH_LONG)
-                                .show()
+                            if (this::progressBar.isInitialized) {
+                                Snackbar.make(
+                                    progressBar,
+                                    R.string.snackbar_pairing_in_postprogress,
+                                    Snackbar.LENGTH_LONG)
+                                    .show()
+                            }
                         }
                         BluetoothProfile.STATE_DISCONNECTED -> {
                             if (device.bondState == BluetoothDevice.BOND_BONDED) {
                                 proxy.unregisterApp()
-                                progressBar.isVisible = false
 
-                                Snackbar.make(
-                                    progressBar,
-                                    R.string.snackbar_pairing_successful,
-                                    Snackbar.LENGTH_LONG)
-                                    .show()
+                                if (this::progressBar.isInitialized) {
+                                    progressBar.isVisible = false
+
+                                    Snackbar.make(
+                                        progressBar,
+                                        R.string.snackbar_pairing_successful,
+                                        Snackbar.LENGTH_LONG)
+                                        .show()
+                                }
                             }
                         }
                     }
@@ -127,12 +133,14 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
                 proxy.unregisterApp()
         }
 
-        progressBar.isVisible = false
+        if (this::progressBar.isInitialized) {
+            progressBar.isVisible = false
 
-        Snackbar.make(
-            progressBar,
-            R.string.snackbar_pairing_interrupted,
-            Snackbar.LENGTH_LONG)
-            .show()
+            Snackbar.make(
+                progressBar,
+                R.string.snackbar_pairing_interrupted,
+                Snackbar.LENGTH_LONG)
+                .show()
+        }
     }
 }
