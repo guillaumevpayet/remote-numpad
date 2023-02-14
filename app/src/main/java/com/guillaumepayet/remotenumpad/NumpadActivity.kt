@@ -332,8 +332,12 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         numpadFragment = if (lefty) LeftyNumpadFragment() else NumpadFragment()
         numpadFragment.registerVirtualNumpad(numpad)
 
-        supportFragmentManager.commit {
-            replace(R.id.numpad_fragment, numpadFragment)
+        try {
+            supportFragmentManager.commit {
+                replace(R.id.numpad_fragment, numpadFragment)
+            }
+        } catch (e: IllegalStateException) {
+            // Ignore, there is nothing to replace
         }
     }
 }
