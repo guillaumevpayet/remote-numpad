@@ -19,6 +19,7 @@
 
     <com.guillaumepayet.remotenumpad.controller.Key
         android:id="@+id/key_backspace"
+        android:contentDescription="@string/key_label_backspace"
         app:icon="@drawable/backspace"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RemoteNumpad.Key.TopLeft"
         app:layout_constraintBottom_toTopOf="@+id/key_7"
@@ -176,6 +177,7 @@
 
     <com.guillaumepayet.remotenumpad.controller.Key
         android:id="@+id/key_enter"
+        android:contentDescription="@string/key_label_enter"
         app:icon="@drawable/keyboard_return"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RemoteNumpad.Key.BottomRight"
         app:layout_constraintBottom_toBottomOf="parent"
