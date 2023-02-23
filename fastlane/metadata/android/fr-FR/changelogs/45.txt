@@ -1,0 +1,2 @@
+Le mode paysage a été ajouté.
+Des bugs mineurs ont été réparés.

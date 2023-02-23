@@ -28,8 +28,8 @@ android {
         applicationId 'com.guillaumepayet.remotenumpad'
         minSdk 19
         targetSdk 33
-        versionCode 44
-        versionName '2.0.10'
+        versionCode 45
+        versionName '2.1.0'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
