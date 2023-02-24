@@ -1,47 +1,72 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
-    <!--
-        Remote Numpad - a numpad application on Android for PCs lacking one.
-        Copyright (C) 2016-2022 Guillaume Payet
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+    Remote Numpad - a numpad application on Android for PCs lacking one.
+    Copyright (C) 2016-2023 Guillaume Payet
 
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-        You should have received a copy of the GNU General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    -->
-    <title>Remote Numpad Logo</title>
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
 
-    <rect fill="none" width="512" height="512" />
-
-    <rect fill="white" x="51" y="3" width="410" height="506" rx="32" />
-
-    <rect fill="#436AAA" x="77" y="29" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="173" y="29" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="269" y="29" width="70" height="70" rx="16" />
-
-    <rect fill="#436AAA" x="77" y="125" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="173" y="125" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="269" y="125" width="70" height="70" rx="16" />
-
-    <rect fill="#436AAA" x="77" y="221" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="173" y="221" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="269" y="221" width="70" height="70" rx="16" />
-
-    <rect fill="#436AAA" x="77" y="317" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="173" y="317" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="269" y="317" width="70" height="70" rx="16" />
-    
-    <rect fill="#436AAA" x="365" y="29" width="70" height="70" rx="16" />
-    <rect fill="#436AAA" x="365" y="125" width="70" height="166" rx="16" />
-    <rect fill="#436AAA" x="365" y="317" width="70" height="166" rx="16" />
-
-    <rect fill="#436AAA" x="77" y="413" width="166" height="70" rx="16" />
-    <rect fill="#436AAA" x="269" y="413" width="70" height="70" rx="16" />
+<svg
+   width="512"
+   height="512"
+   version="1.1"
+   id="svg42"
+   sodipodi:docname="vector_icon.svg"
+   inkscape:version="1.2.2 (b0a84865, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs46" />
+  <sodipodi:namedview
+     id="namedview44"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="1.194902"
+     inkscape:cx="223.03083"
+     inkscape:cy="197.50573"
+     inkscape:window-width="1440"
+     inkscape:window-height="766"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg42" />
+  <rect
+     fill="#ffffff"
+     x="52"
+     y="4"
+     width="408"
+     height="504"
+     rx="31.843903"
+     id="rect6-3"
+     style="fill:#436aaa;fill-opacity:1;stroke-width:0.995585" />
+  <title
+     id="title2">Remote Numpad Logo</title>
+  <rect
+     fill="none"
+     width="512"
+     height="512"
+     id="rect4" />
+  <path
+     id="rect6"
+     d="M 83 3 C 65.272306 3 51 17.272306 51 35 L 51 477 C 51 494.72766 65.272306 509 83 509 L 429 509 C 446.72766 509 461 494.72766 461 477 L 461 35 C 461 17.272306 446.72766 3 429 3 L 83 3 z M 93 29 L 131 29 C 139.86399 29 147 36.136009 147 45 L 147 83 C 147 91.863991 139.86399 99 131 99 L 93 99 C 84.136009 99 77 91.863991 77 83 L 77 45 C 77 36.136009 84.136009 29 93 29 z M 189 29 L 227 29 C 235.86398 29 243 36.136018 243 45 L 243 83 C 243 91.863982 235.86398 99 227 99 L 189 99 C 180.13602 99 173 91.863982 173 83 L 173 45 C 173 36.136018 180.13602 29 189 29 z M 285 29 L 323 29 C 331.86397 29 339 36.136027 339 45 L 339 83 C 339 91.863973 331.86397 99 323 99 L 285 99 C 276.13603 99 269 91.863973 269 83 L 269 45 C 269 36.136027 276.13603 29 285 29 z M 381 29 L 419 29 C 427.86396 29 435 36.136036 435 45 L 435 83 C 435 91.863964 427.86396 99 419 99 L 381 99 C 372.13604 99 365 91.863964 365 83 L 365 45 C 365 36.136036 372.13604 29 381 29 z M 93 125 L 131 125 C 139.86393 125 147 132.13607 147 141 L 147 179 C 147 187.86393 139.86393 195 131 195 L 93 195 C 84.136063 195 77 187.86393 77 179 L 77 141 C 77 132.13607 84.136063 125 93 125 z M 189 125 L 227 125 C 235.86394 125 243 132.13606 243 141 L 243 179 C 243 187.86394 235.86394 195 227 195 L 189 195 C 180.13606 195 173 187.86394 173 179 L 173 141 C 173 132.13606 180.13606 125 189 125 z M 285 125 L 323 125 C 331.86395 125 339 132.13605 339 141 L 339 179 C 339 187.86395 331.86395 195 323 195 L 285 195 C 276.13605 195 269 187.86395 269 179 L 269 141 C 269 132.13605 276.13605 125 285 125 z M 381 125 L 419 125 C 427.86389 125 435 132.13611 435 141 L 435 275 C 435 283.86389 427.86389 291 419 291 L 381 291 C 372.13611 291 365 283.86389 365 275 L 365 141 C 365 132.13611 372.13611 125 381 125 z M 93 221 L 131 221 C 139.86392 221 147 228.13608 147 237 L 147 275 C 147 283.86392 139.86392 291 131 291 L 93 291 C 84.136072 291 77 283.86392 77 275 L 77 237 C 77 228.13608 84.136072 221 93 221 z M 189 221 L 227 221 C 235.86391 221 243 228.13609 243 237 L 243 275 C 243 283.86391 235.86391 291 227 291 L 189 291 C 180.13609 291 173 283.86391 173 275 L 173 237 C 173 228.13609 180.13609 221 189 221 z M 285 221 L 323 221 C 331.8639 221 339 228.1361 339 237 L 339 275 C 339 283.8639 331.8639 291 323 291 L 285 291 C 276.1361 291 269 283.8639 269 275 L 269 237 C 269 228.1361 276.1361 221 285 221 z M 93 317 L 131 317 C 139.86388 317 147 324.13612 147 333 L 147 371 C 147 379.86388 139.86388 387 131 387 L 93 387 C 84.136108 387 77 379.86388 77 371 L 77 333 C 77 324.13612 84.136108 317 93 317 z M 189 317 L 227 317 C 235.86387 317 243 324.13613 243 333 L 243 371 C 243 379.86387 235.86387 387 227 387 L 189 387 C 180.13613 387 173 379.86387 173 371 L 173 333 C 173 324.13613 180.13613 317 189 317 z M 285 317 L 323 317 C 331.86386 317 339 324.13614 339 333 L 339 371 C 339 379.86386 331.86386 387 323 387 L 285 387 C 276.13614 387 269 379.86386 269 371 L 269 333 C 269 324.13614 276.13614 317 285 317 z M 381 317 L 419 317 C 427.86383 317 435 324.13617 435 333 L 435 467 C 435 475.86383 427.86383 483 419 483 L 381 483 C 372.13617 483 365 475.86383 365 467 L 365 333 C 365 324.13617 372.13617 317 381 317 z M 93 413 L 227 413 C 235.86385 413 243 420.13615 243 429 L 243 467 C 243 475.86385 235.86385 483 227 483 L 93 483 C 84.136135 483 77 475.86385 77 467 L 77 429 C 77 420.13615 84.136135 413 93 413 z M 285 413 L 323 413 C 331.86384 413 339 420.13616 339 429 L 339 467 C 339 475.86384 331.86384 483 323 483 L 285 483 C 276.13616 483 269 475.86384 269 467 L 269 429 C 269 420.13616 276.13616 413 285 413 z "
+     style="fill:#ffffff" />
 </svg>
