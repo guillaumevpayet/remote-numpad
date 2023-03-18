@@ -26,7 +26,6 @@ import java.io.IOException
 import java.io.Writer
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.net.SocketException
 
 /**
  * This class handles the IP connection through which a [IDataSender] object sends data.
@@ -79,7 +78,7 @@ open class SocketConnectionInterface(sender: IDataSender) : AbstractConnectionIn
             writer?.write(string)
             writer?.flush()
             true
-        } catch (e: SocketException) {
+        } catch (e: IOException) {
             closeConnection()
             onConnectionStatusChange(R.string.status_connection_lost)
             false
