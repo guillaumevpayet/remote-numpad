@@ -1,2 +1,2 @@
-json_key_file("pc-api-5284471885349789731-899-038193b8fc7a.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+json_key_file("pc-api-5447520046822692736-859-524bacac717a.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
 package_name("com.guillaumepayet.remotenumpad") # e.g. com.krausefx.app
