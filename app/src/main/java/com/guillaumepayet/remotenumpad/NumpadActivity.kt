@@ -247,12 +247,12 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
 
                     connectionInterface = null
                     contentBinding.statusText.maxLines = 2
-                    com.google.android.material.R.attr.colorError
+                    com.google.android.material.R.attr.colorOnError
                 }
                 else -> {
                     contentBinding.connectButton.text = getString(R.string.button_disconnect)
                     contentBinding.connectButton.isEnabled = true
-                    com.google.android.material.R.attr.colorPrimary
+                    com.google.android.material.R.attr.colorOnPrimary
                 }
             }
 
@@ -284,7 +284,7 @@ class NumpadActivity : AbstractActivity(), View.OnClickListener, IConnectionStat
         }"
 
         val validatorClass = Class.forName(prefix + "HostValidator")
-        val validator = validatorClass.newInstance() as IHostValidator
+        val validator = validatorClass.getDeclaredConstructor().newInstance() as IHostValidator
 
         if (!validator.isHostValid(host)) {
             Snackbar.make(contentBinding.statusText, R.string.snackbar_invalid_host, Snackbar.LENGTH_SHORT).show()

@@ -66,7 +66,7 @@ class SettingsActivity : AbstractActivity() {
             } + "SettingsFragment"
 
             val clazz = Class.forName("$packageName.$className")
-            val newFragment = clazz.newInstance() as Fragment
+            val newFragment = clazz.getDeclaredConstructor().newInstance() as Fragment
 
             if (newFragment::class.java.canonicalName != this::class.java.canonicalName)
                 supportFragmentManager.commit {

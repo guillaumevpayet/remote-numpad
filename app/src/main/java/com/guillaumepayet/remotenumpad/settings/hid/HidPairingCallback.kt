@@ -56,8 +56,8 @@ class HidPairingCallback(private val activity: AbstractActivity) : ActivityResul
 
     @SuppressLint("InlinedApi")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    override fun onActivityResult(result: ActivityResult?) {
-        if (result?.resultCode != Activity.RESULT_OK)
+    override fun onActivityResult(result: ActivityResult) {
+        if (result.resultCode != Activity.RESULT_OK)
             return
 
         try {
