@@ -55,4 +55,4 @@ California Civil Code Section 1798.83, also known as the “Shine The Light” l
 If you have questions or comments about this Privacy Policy, please contact us at:
 
 Guillaume Payet<br>
-<payetguillaume2008@hotmail.fr>
+<guillaumevpayet@gmail.com>

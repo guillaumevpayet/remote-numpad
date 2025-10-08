@@ -53,7 +53,7 @@ interface IBluetoothConnector {
     private val permissionResultCallback
         get() = object : ActivityResultCallback<Boolean> {
 
-            override fun onActivityResult(isGranted: Boolean?) {
+            override fun onActivityResult(result: Boolean) {
                 try {
                     activity.isShowingDialog = false
                     activity.unregisterPermissionResultCallback(this)
@@ -61,7 +61,7 @@ interface IBluetoothConnector {
                     // There is no activity with which to unregister this so do nothing
                 }
 
-                if (isGranted != true)
+                if (result != true)
                     onUserDeclinedBluetooth()
             }
         }
@@ -69,7 +69,7 @@ interface IBluetoothConnector {
     private val activityResultCallback
         get() = object : ActivityResultCallback<ActivityResult> {
 
-            override fun onActivityResult(result: ActivityResult?) {
+            override fun onActivityResult(result: ActivityResult) {
                 try {
                     activity.isShowingDialog = false
                     activity.unregisterActivityResultCallback(this)
@@ -77,7 +77,7 @@ interface IBluetoothConnector {
                     // There is no Activity with which to unregister this so do nothing
                 }
 
-                if (result?.resultCode != RESULT_OK)
+                if (result.resultCode != RESULT_OK)
                     onUserDeclinedBluetooth()
             }
         }

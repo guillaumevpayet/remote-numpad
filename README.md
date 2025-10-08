@@ -6,10 +6,10 @@ This project is a part of a trio of projects:
 
 * Remote Numpad (this project): Written in Kotlin, this is the client which
 runs on an Android device and sends the user's inputs to the computer.
-* [Remote Numpad Server](https://github.com/theolizard/remote-numpad-server):
+* [Remote Numpad Server](https://github.com/guillaumevpayet/remote-numpad-server):
 Written in Kotlin, this is the server that runs on the computer and receives
 the inputs from the Android device and simulates the key presses.
-* [Cocoa Native Server](https://github.com/theolizard/cocoa-native-server):
+* [Cocoa Native Server](https://github.com/guillaumevpayet/cocoa-native-server):
 Written in Objective-C, this is the Bluetooth server library for MacOS X. It
 receives the Bluetooth data and passes it on to the Remote Numpad Server.
 
