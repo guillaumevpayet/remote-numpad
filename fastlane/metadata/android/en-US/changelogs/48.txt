@@ -1,0 +1,3 @@
+Performance and security improvements.
+
+Note: To ensure the software's security, Android KitKat (4.4) is no longer supported. The minimal supported version of is now Android Lollipop (5.0).
