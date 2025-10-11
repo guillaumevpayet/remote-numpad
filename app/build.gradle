@@ -30,16 +30,16 @@ android {
         applicationId 'com.guillaumepayet.remotenumpad'
         minSdk 21
         targetSdk 36
-        versionCode 48
-        versionName '2.2.0'
+        versionCode 49
+        versionName '2.2.1'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources = true
+            minifyEnabled false
+            shrinkResources = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
