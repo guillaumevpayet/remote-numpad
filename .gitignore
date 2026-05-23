@@ -10,3 +10,5 @@
 *.apk
 *.json
 *.keystore
+
+/vendor/bundler/
