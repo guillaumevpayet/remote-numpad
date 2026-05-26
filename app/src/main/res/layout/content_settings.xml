@@ -17,39 +17,31 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="?attr/actionBarSize"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:indeterminate="true"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            tools:visibility="visible" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/common_settings"
+        android:name="com.guillaumepayet.remotenumpad.settings.CommonSettingsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@android:layout/preference_list_fragment" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/common_settings"
-            android:name="com.guillaumepayet.remotenumpad.settings.CommonSettingsFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout="@android:layout/preference_list_fragment" />
+    <FrameLayout
+        android:id="@+id/connection_interface_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-        <FrameLayout
-            android:id="@+id/connection_interface_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

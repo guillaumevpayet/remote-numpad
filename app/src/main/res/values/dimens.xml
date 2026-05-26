@@ -22,4 +22,5 @@
     <dimen name="button_min_font_size">10sp</dimen>
     <dimen name="button_width_percent">0.35</dimen>
     <dimen name="key_corner_size">50%</dimen>
+    <dimen name="screen_top_margin">16dp</dimen>
 </resources>
