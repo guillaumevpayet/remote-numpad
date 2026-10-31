@@ -17,7 +17,7 @@
 #
 
 [versions]
-agp = "9.2.1"
+agp = "9.5.0"
 coreKtx = "1.18.0"
 appCompat = "1.7.1"
 constraintlayout = "2.2.1"
