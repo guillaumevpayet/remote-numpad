@@ -18,10 +18,10 @@
 
 [versions]
 agp = "9.5.0"
-coreKtx = "1.18.0"
-appCompat = "1.7.1"
-constraintlayout = "2.2.1"
-fragmentKtx = "1.8.9"
+coreKtx = "1.19.1"
+appCompat = "1.8.0"
+constraintlayout = "2.2.2"
+fragmentKtx = "1.9.1"
 preferenceKtx = "1.2.1"
 activityKtx = "1.13.0"
 material = "1.14.0"

@@ -28,7 +28,7 @@ android {
     defaultConfig {
         applicationId 'com.guillaumepayet.remotenumpad'
         minSdk 23
-        targetSdk 36
+        targetSdk 37
         versionCode 51
         versionName '2.2.3'
 
