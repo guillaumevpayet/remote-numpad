@@ -64,4 +64,33 @@ class HidDeviceCallback(context: Context, private val proxy: BluetoothHidDevice,
 
         listener.onConnectionStateChanged(device, state)
     }
+
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    override fun onGetReport(device: BluetoothDevice?, type: Byte, id: Byte, bufferSize: Int) {
+        super.onGetReport(device, type, id, bufferSize)
+        if (device == null) return
+        if (type == BluetoothHidDevice.REPORT_TYPE_INPUT && id == KeyboardReport.ID.toByte()) {
+            val emptyReport = ByteArray(8) { 0x00 }
+            proxy.replyReport(device, type, id, emptyReport)
+        } else {
+            proxy.reportError(device, BluetoothHidDevice.ERROR_RSP_INVALID_PARAM)
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    override fun onSetReport(device: BluetoothDevice?, type: Byte, id: Byte, data: ByteArray?) {
+        super.onSetReport(device, type, id, data)
+        if (device == null) return
+        proxy.reportError(device, BluetoothHidDevice.ERROR_RSP_SUCCESS)
+    }
+
+    @SuppressLint("InlinedApi")
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    override fun onSetProtocol(device: BluetoothDevice?, protocol: Byte) {
+        super.onSetProtocol(device, protocol)
+        if (device == null) return
+        proxy.reportError(device, BluetoothHidDevice.ERROR_RSP_SUCCESS)
+    }
 }

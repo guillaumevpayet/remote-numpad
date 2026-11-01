@@ -30,6 +30,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.widget.ProgressBar
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
@@ -44,13 +45,15 @@ import com.guillaumepayet.remotenumpad.helpers.IBluetoothConnector
  * a notification of a successful pairing, the profile proxy is released and the HID app is
  * unregistered.
  */
+@RequiresApi(Build.VERSION_CODES.P)
 class HidPairingStateListener(override val activity: AbstractActivity, private val proxy: BluetoothHidDevice, private val device: BluetoothDevice) : BroadcastReceiver(), IBluetoothConnector {
 
     override var userHasDeclinedBluetooth = false
         private set
 
     private val handler = Handler(Looper.getMainLooper())
-    private val progressBar = activity.findViewById<ProgressBar>(R.id.progress_bar)
+    private val progressBar: ProgressBar? = activity.findViewById(R.id.progress_bar)
+    private var timeoutRunnable: Runnable? = null
 
     @SuppressLint("InlinedApi")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -74,39 +77,54 @@ class HidPairingStateListener(override val activity: AbstractActivity, private v
         if (state != BluetoothDevice.BOND_BONDED)
             return
 
-        activity.unregisterReceiver(this)
+        try {
+            activity.unregisterReceiver(this)
+        } catch (_: IllegalArgumentException) {
+            // Receiver already unregistered
+        }
 
-        if (proxy.getConnectionState(device) == BluetoothProfile.STATE_CONNECTING) {
+        val connState = proxy.getConnectionState(device)
+        if (connState == BluetoothProfile.STATE_CONNECTED || connState == BluetoothProfile.STATE_CONNECTING) {
             runOrRequestPermission @SuppressLint("MissingPermission") {
                 if (!proxy.disconnect(device)) {
                     proxy.unregisterApp()
-                    progressBar.isVisible = false
+                    progressBar?.isVisible = false
 
-                    Snackbar.make(
-                        progressBar,
-                        R.string.snackbar_pairing_failed,
-                        Snackbar.LENGTH_LONG)
-                        .show()
-                } else {
-                    handler.postDelayed({
-                        proxy.unregisterApp()
-                        progressBar.isVisible = false
-
+                    if (progressBar != null) {
                         Snackbar.make(
                             progressBar,
                             R.string.snackbar_pairing_failed,
                             Snackbar.LENGTH_LONG)
                             .show()
-                    }, 10000)
-
-                    Snackbar.make(
-                        progressBar,
-                        R.string.snackbar_pairing_in_postprogress,
-                        Snackbar.LENGTH_LONG)
-                        .show()
+                    }
+                } else {
+                    if (progressBar != null) {
+                        Snackbar.make(
+                            progressBar,
+                            R.string.snackbar_pairing_in_postprogress,
+                            Snackbar.LENGTH_LONG)
+                            .show()
+                    }
                 }
             }
+        } else if (connState == BluetoothProfile.STATE_DISCONNECTED) {
+            runOrRequestPermission @SuppressLint("MissingPermission") {
+                proxy.unregisterApp()
+            }
+            if (progressBar != null) {
+                progressBar.isVisible = false
+                Snackbar.make(
+                    progressBar,
+                    R.string.snackbar_pairing_successful,
+                    Snackbar.LENGTH_LONG)
+                    .show()
+            }
         }
+    }
+
+    fun cancelTimeout() {
+        timeoutRunnable?.let { handler.removeCallbacks(it) }
+        timeoutRunnable = null
     }
 
     override fun onUserDeclinedBluetooth() { userHasDeclinedBluetooth = true }

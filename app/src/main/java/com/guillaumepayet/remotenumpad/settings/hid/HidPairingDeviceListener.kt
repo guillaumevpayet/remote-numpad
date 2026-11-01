@@ -23,7 +23,6 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDevice
 import android.bluetooth.BluetoothProfile
-import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
@@ -91,7 +90,9 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
                 if (device == this.device) {
                     when (state) {
                         BluetoothProfile.STATE_CONNECTED -> {
-                            proxy.disconnect(device)
+                            if (device.bondState == BluetoothDevice.BOND_BONDED) {
+                                proxy.disconnect(device)
+                            }
 
                             if (this::progressBar.isInitialized) {
                                 Snackbar.make(
@@ -128,19 +129,22 @@ class HidPairingDeviceListener(override val activity: AbstractActivity) : IHidDe
      * Unregister the HID app. Method called when the settings activity is exited.
      */
     fun release() {
+        if (this::broadcastReceiver.isInitialized) {
+            broadcastReceiver.cancelTimeout()
+            try {
+                activity.unregisterReceiver(broadcastReceiver)
+            } catch (_: IllegalArgumentException) {
+                // Receiver already unregistered
+            }
+        }
+
         runOrRequestPermission @SuppressLint("MissingPermission") {
             if (this::proxy.isInitialized)
                 proxy.unregisterApp()
         }
 
-        if (this::progressBar.isInitialized) {
+        if (this::progressBar.isInitialized && progressBar.isVisible) {
             progressBar.isVisible = false
-
-            Snackbar.make(
-                progressBar,
-                R.string.snackbar_pairing_interrupted,
-                Snackbar.LENGTH_LONG)
-                .show()
         }
     }
 }

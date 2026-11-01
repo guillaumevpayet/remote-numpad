@@ -82,14 +82,18 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
 
         val result = runOrRequestPermission @SuppressLint("MissingPermission") {
             service?.disconnect(hostDevice)
+            service?.let {
+                it.unregisterApp()
+                bluetoothAdapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, it)
+            }
+            service = null
+            true
         } as Boolean?
 
         if (result != true) {
-            runOrRequestPermission @SuppressLint("MissingPermission") {
-                service?.unregisterApp()
-            }
-
             onConnectionStatusChange(R.string.status_connection_lost)
+        } else {
+            onConnectionStatusChange(R.string.status_disconnected)
         }
     }
 
@@ -120,9 +124,8 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
             val device = bluetoothAdapter.getRemoteDevice(hostAddress)
 
             handler.post {
-                // Fails with Windows if another Bluetooth device is connected (even if not via HID)
                 if (proxy?.connect(device) != true) {
-                    getProfileProxy()
+                    onConnectionStatusChange(R.string.status_could_not_connect)
                 }
             }
 
@@ -148,16 +151,14 @@ class HidConnectionInterface(override val activity: AbstractActivity, sender: ID
             BluetoothProfile.STATE_DISCONNECTED -> {
                 hostDevice = null
 
-                val result = runOrRequestPermission @SuppressLint("MissingPermission") {
-                    service?.unregisterApp()
+                runOrRequestPermission @SuppressLint("MissingPermission") {
+                    service?.let {
+                        it.unregisterApp()
+                        bluetoothAdapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, it)
+                    }
                 }
 
-                if (result == true)
-                    onConnectionStatusChange(R.string.status_disconnected)
-                else {
-                    onConnectionStatusChange(R.string.status_connection_lost)
-                }
-
+                onConnectionStatusChange(R.string.status_disconnected)
                 service = null
             }
             BluetoothProfile.STATE_DISCONNECTING -> {
