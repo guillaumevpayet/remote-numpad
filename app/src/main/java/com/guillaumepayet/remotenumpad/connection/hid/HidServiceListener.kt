@@ -38,39 +38,64 @@ class HidServiceListener(private val context: Context, private val listener: IHi
     companion object {
 
         private val KEYBOARD_DESCRIPTOR = intArrayOf(
-            0x05, 0x01,     // Usage Page (Generic Desktop)
-            0x09, 0x06,     // Usage (Keyboard)
-            0xA1, 0x01,     // Collection (Application)
-            0x85, 0x01,     //     Report ID (1)
-            0x05, 0x07,     //     Usage Page (Keyboard/Keypad)
-            0x19, 0xE0,     //     Usage Minimum (224)
-            0x29, 0xE7,     //     Usage Maximum (231)
-            0x15, 0x00,     //     Logical Minimum (0)
-            0x25, 0x01,     //     Logical Maximum (1)
-            0x75, 0x01,     //     Report Size (1)
-            0x95, 0x08,     //     Report Count (8)
-            0x81, 0x02,     //     Input (Data, Variable, Absolute) - Modifier byte
-            0x95, 0x01,     //     Report Count (1)
-            0x75, 0x08,     //     Report Size (8)
-            0x81, 0x01,     //     Input (Constant) - Reserved byte
-            0x05, 0x08,     //     Usage Page (LEDs)
-            0x19, 0x01,     //     Usage Minimum (1 / Num Lock)
-            0x29, 0x05,     //     Usage Maximum (5 / Kana)
-            0x95, 0x05,     //     Report Count (5)
-            0x75, 0x01,     //     Report Size (1)
-            0x91, 0x02,     //     Output (Data, Variable, Absolute) - LED report
-            0x95, 0x01,     //     Report Count (1)
-            0x75, 0x03,     //     Report Size (3)
-            0x91, 0x01,     //     Output (Constant) - LED padding
-            0x05, 0x07,     //     Usage Page (Keyboard/Keypad)
-            0x19, 0x00,     //     Usage Minimum (0)
-            0x29, 0x65,     //     Usage Maximum (101)
-            0x15, 0x00,     //     Logical Minimum (0)
-            0x25, 0x65,     //     Logical Maximum (101)
-            0x75, 0x08,     //     Report Size (8)
-            0x95, 0x06,     //     Report Count (6)
-            0x81, 0x00,     //     Input (Data, Array, Absolute) - Key array (6 bytes)
-            0xC0            // End Collection
+            0x05, 0x01,     // UsagePage(Generic Desktop)
+            0x09, 0x02,     // UsageId(TouchScreen)
+            0xa1, 0x01,     // Collection(Application)
+            0x09, 0x01,     //     UsageId(Pointer)
+            0xa1, 0x00,     //     Collection(Physical)
+            0x85, 0x01,     //         ReportId(1)
+            0x05, 0x09,     //         UsagePage(Button)
+            0x19, 0x01,     //         UsageIdMin(1)
+            0x29, 0x03,     //         UsageIdMax(3)
+            0x15, 0x00,     //         LogicalMinimum(0)
+            0x25, 0x01,     //         LogicalMaximum(1)
+            0x95, 0x03,     //         ReportCount(3)
+            0x75, 0x01,     //         ReportSize(1)
+            0x81, 0x02,     //         Input(Data, Variable, Absolute)
+            0x95, 0x01,     //         ReportCount(1)
+            0x75, 0x05,     //         ReportSize(5)
+            0x81, 0x03,     //         Input(Constant, Variable, Absolute)
+            0x05, 0x01,     //         UsagePage(Generic Desktop)
+            0x09, 0x30,     //         UsageId(X)
+            0x09, 0x31,     //         UsageId(Y)
+            0x09, 0x38,     //         UsageId(Wheel)
+            0x15, 0x81,     //         LogicalMinimum(-127)
+            0x25, 0x7f,     //         LogicalMaximum(127)
+            0x75, 0x08,     //         ReportSize(8)
+            0x95, 0x03,     //         ReportCount(3)
+            0x81, 0x06,     //         Input(Data, Variable, Relative)
+            0xc0,           //     EndCollection
+            0xc0,           // EndCollection
+
+            0x05, 0x01,     // UsagePage(Generic Desktop)
+            0x09, 0x06,     // UsageId(Keyboard)
+            0xa1, 0x01,     // Collection(Application)
+            0x85, 0x02,     //     ReportId(2)
+            0x05, 0x07,     //     UsagePage(Keyboard/Keypad)
+            0x19, 0xE0,     //     UsageIdMin(224)
+            0x29, 0xE7,     //     UsageIdMax(231)
+            0x15, 0x00,     //     LogicalMinimum(0)
+            0x25, 0x01,     //     LogicalMaximum(1)
+            0x75, 0x01,     //     ReportSize(1)
+            0x95, 0x08,     //     ReportCount(8)
+            0x81, 0x02,     //     Input(Data, Variable, Absolute) - Modifier byte
+            0x95, 0x01,     //     ReportCount(1)
+            0x75, 0x08,     //     ReportSize(8)
+            0x15, 0x00,     //     LogicalMinimum(0)
+            0x25, 0x65,     //     LogicalMaximum(101)
+            0x19, 0x00,     //     UsageIdMin(0)
+            0x29, 0x65,     //     UsageIdMax(101)
+            0x81, 0x00,     //     Input(Data, Array, Absolute) - Keycode byte
+            0x05, 0x08,     //     UsagePage(LEDs)
+            0x95, 0x05,     //     ReportCount(5)
+            0x75, 0x01,     //     ReportSize(1)
+            0x19, 0x01,     //     UsageIdMin(1)
+            0x29, 0x05,     //     UsageIdMax(5)
+            0x91, 0x02,     //     Output(Data, Variable, Absolute) - LED report
+            0x95, 0x01,     //     ReportCount(1)
+            0x75, 0x03,     //     ReportSize(3)
+            0x91, 0x03,     //     Output(Constant, Variable, Absolute) - LED padding
+            0xc0            // End Collection
         ).map { it.toByte() }.toByteArray()
 
         private val SDP: BluetoothHidDeviceAppSdpSettings by lazy {

@@ -71,7 +71,7 @@ class HidDeviceCallback(context: Context, private val proxy: BluetoothHidDevice,
         super.onGetReport(device, type, id, bufferSize)
         if (device == null) return
         if (type == BluetoothHidDevice.REPORT_TYPE_INPUT && id == KeyboardReport.ID.toByte()) {
-            val emptyReport = ByteArray(8) { 0x00 }
+            val emptyReport = ByteArray(2) { 0x00 }
             proxy.replyReport(device, type, id, emptyReport)
         } else {
             proxy.reportError(device, BluetoothHidDevice.ERROR_RSP_INVALID_PARAM)
